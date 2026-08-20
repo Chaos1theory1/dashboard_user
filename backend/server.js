@@ -347,7 +347,7 @@ async function ensureUserManagementSchema() {
       actor_name TEXT NOT NULL,
       actor_role TEXT NOT NULL,
       module TEXT NOT NULL CHECK (module IN ('petri','lc','grain')),
-      action_type TEXT NOT NULL CHECK (action_type IN ('added','modified','photo_added','delete_requested')),
+      action_type TEXT NOT NULL CHECK (action_type IN ('added','modified','photo_added','delete_requested','photo_deleted','delete_approved','delete_rejected')),
       item_id BIGINT NOT NULL,
       item_label TEXT NOT NULL,
       day_index INTEGER,
@@ -452,13 +452,32 @@ async function recordProductionActivity(req, activity) {
       activity.actionType,
       Number(activity.itemId),
       String(activity.itemLabel || activity.itemId),
-      Number.isFinite(Number(activity.dayIndex)) ? Number(activity.dayIndex) : null,
+      activity.dayIndex !== null && activity.dayIndex !== undefined && Number.isFinite(Number(activity.dayIndex)) ? Number(activity.dayIndex) : null,
       JSON.stringify(activity.details || {})
     ]);
   } catch (error) {
     // An audit write must never make the production journal action fail.
     console.error('Production activity audit:', error.message);
   }
+}
+
+function deletionReviewActivity(requestRow, actionType) {
+  const context = requestRow?.context_data && typeof requestRow.context_data === 'object' ? requestRow.context_data : {};
+  const moduleName = String(requestRow?.photo_type || 'petri');
+  const contextualId = moduleName === 'petri' ? context.petriId : moduleName === 'lc' ? context.potId : context.unitId;
+  const itemId = Number(contextualId || requestRow?.photo_record_id);
+  return {
+    module: moduleName,
+    actionType,
+    itemId,
+    itemLabel: context.itemLabel || (contextualId ? (moduleName === 'petri' ? `Petri ID ${contextualId}` : moduleName === 'lc' ? `LC pot ID ${contextualId}` : `Grain unité ID ${contextualId}`) : `Photo ${moduleName.toUpperCase()} #${requestRow?.photo_record_id}`),
+    dayIndex: context.dayIndex,
+    details: {
+      request_id: Number(requestRow?.id),
+      photo_record_id: Number(requestRow?.photo_record_id),
+      requested_by: requestRow?.requested_by_name || null
+    }
+  };
 }
 
 async function queuePhotoDeletion(req, res, photoType, photoRecordId, photoUrl, contextData = {}) {
@@ -732,7 +751,7 @@ app.get('/api/admin/users', requirePermission('users.manage'), async (_req, res)
 });
 
 const productionModuleLabels = { petri:'Boîtes de Petri',lc:'Mycélium liquide',grain:'Mycélium sur grain' };
-const productionActionLabels = { added:'Ajout du suivi',modified:'Modification du suivi',photo_added:'Photo ajoutée',delete_requested:'Suppression demandée' };
+const productionActionLabels = { added:'Ajout du suivi',modified:'Modification du suivi',photo_added:'Photo ajoutée',delete_requested:'Suppression demandée',photo_deleted:'Photo supprimée',delete_approved:'Suppression approuvée',delete_rejected:'Suppression refusée' };
 
 async function loadProductionActivityReport(query) {
   await ensureUserManagementSchema();
@@ -923,6 +942,7 @@ app.post('/api/admin/photo-deletion-requests/:id/reject', requirePermission('pho
   try {
     const result = await realPool.query(`UPDATE photo_deletion_requests SET status='rejected',reviewed_by=$2,reviewed_by_name=$3,reviewed_at=now(),review_note=$4 WHERE id=$1 AND status='pending' RETURNING *`, [Number(req.params.id),req.adminSession?.userId || null,req.adminSession?.username || 'Admin',String(req.body?.note || '')]);
     if (!result.rows.length) return res.status(409).json({ error: 'Cette demande a déjà été traitée.' });
+    await recordProductionActivity(req, deletionReviewActivity(result.rows[0], 'delete_rejected'));
     res.json({ success: true });
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
@@ -939,6 +959,7 @@ app.post('/api/admin/photo-deletion-requests/:id/approve', requirePermission('ph
     await performApprovedPhotoDeletion(locked.rows[0]);
     await client.query(`UPDATE photo_deletion_requests SET status='approved',reviewed_by=$2,reviewed_by_name=$3,reviewed_at=now(),review_note=$4 WHERE id=$1 AND status='pending'`, [Number(req.params.id),req.adminSession?.userId || null,req.adminSession?.username || 'Admin',String(req.body?.note || '')]);
     await client.query('COMMIT');
+    await recordProductionActivity(req, deletionReviewActivity(locked.rows[0], 'delete_approved'));
     res.json({ success: true });
   } catch (e) {
     try { await client.query('ROLLBACK'); } catch (_) {}
@@ -3591,10 +3612,16 @@ app.delete('/api/lc-workflow/lots/:lotId/journal/:journalId/photo', async (req, 
       [fileUrl]
     );
     let storageWarning = '';
+    let storageDeleted = false;
     if (!req.demoMode && Number(refs.rows[0]?.total || 0) === 0) {
-      try { await deleteStoredFile(fileUrl, SITE_DIR); }
+      try { await deleteStoredFile(fileUrl, SITE_DIR); storageDeleted = true; }
       catch (storageError) { storageWarning = storageError.message || String(storageError); }
     }
+    await recordProductionActivity(req, {
+      module:'lc',actionType:'photo_deleted',itemId:found.rows[0].lc_pot_id,
+      itemLabel:`LC pot ID ${found.rows[0].lc_pot_id}`,dayIndex:found.rows[0].day_index,
+      details:{ lot_id:lotId,journal_id:journalId,storage_deleted:storageDeleted }
+    });
     res.json({ success: true, storage_warning: storageWarning || undefined });
   } catch (e) {
     try { await client.query('ROLLBACK'); } catch (_) {}
@@ -4784,10 +4811,16 @@ app.delete('/api/grain-units/:unitId/journal/:journalId/photo', async (req, res)
       [fileUrl]
     );
     let storageWarning = '';
+    let storageDeleted = false;
     if (!req.demoMode && Number(refs.rows[0]?.total || 0) === 0) {
-      try { await deleteStoredFile(fileUrl, SITE_DIR); }
+      try { await deleteStoredFile(fileUrl, SITE_DIR); storageDeleted = true; }
       catch (storageError) { storageWarning = storageError.message || String(storageError); }
     }
+    await recordProductionActivity(req, {
+      module:'grain',actionType:'photo_deleted',itemId:unitId,
+      itemLabel:`Grain unité ID ${unitId}`,dayIndex:found.rows[0].day_index,
+      details:{ journal_id:journalId,storage_deleted:storageDeleted }
+    });
     res.json({ success: true, storage_warning: storageWarning || undefined });
   } catch (e) {
     try { await client.query('ROLLBACK'); } catch (_) {}
@@ -5908,10 +5941,16 @@ app.delete("/api/album-photos/:id", async (req, res) => {
       [fileUrl]
     );
     let storageWarning = '';
+    let storageDeleted = false;
     if (!req.demoMode && fileUrl && Number(refs.rows[0]?.total || 0) === 0) {
-      try { await deleteStoredFile(fileUrl, SITE_DIR); }
+      try { await deleteStoredFile(fileUrl, SITE_DIR); storageDeleted = true; }
       catch (storageError) { storageWarning = storageError.message || String(storageError); }
     }
+    await recordProductionActivity(req, {
+      module:'petri',actionType:'photo_deleted',itemId:photo.petri_id,
+      itemLabel:`Petri ID ${photo.petri_id}`,dayIndex:photo.day_index,
+      details:{ album_photo_id:photoId,storage_deleted:storageDeleted }
+    });
     res.json({ success: true, storage_warning: storageWarning || undefined });
   } catch (e) {
     try { await client.query('ROLLBACK'); } catch (_) {}
