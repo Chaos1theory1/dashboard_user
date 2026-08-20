@@ -339,8 +339,57 @@ async function ensureUserManagementSchema() {
       reviewed_at TIMESTAMPTZ,
       review_note TEXT
     );
+    CREATE TABLE IF NOT EXISTS production_activity_log (
+      id BIGSERIAL PRIMARY KEY,
+      actor_user_id UUID,
+      actor_name TEXT NOT NULL,
+      actor_role TEXT NOT NULL,
+      module TEXT NOT NULL CHECK (module IN ('petri','lc','grain')),
+      action_type TEXT NOT NULL CHECK (action_type IN ('added','modified','photo_added','delete_requested')),
+      item_id BIGINT NOT NULL,
+      item_label TEXT NOT NULL,
+      day_index INTEGER,
+      details JSONB NOT NULL DEFAULT '{}'::jsonb,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+    );
     CREATE UNIQUE INDEX IF NOT EXISTS ux_photo_deletion_pending
       ON photo_deletion_requests(photo_type, photo_record_id) WHERE status='pending';
+    CREATE INDEX IF NOT EXISTS ix_production_activity_created_at ON production_activity_log(created_at DESC);
+    CREATE INDEX IF NOT EXISTS ix_production_activity_actor_month ON production_activity_log(actor_user_id,created_at DESC);
+    CREATE INDEX IF NOT EXISTS ix_production_activity_item ON production_activity_log(module,item_id,created_at DESC);
+  `);
+  // Upgrade the earlier RBAC draft, which used app_users.user_id and fewer columns.
+  await realPool.query(`
+    DO $$ BEGIN
+      IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_schema='public' AND table_name='app_users' AND column_name='user_id')
+         AND NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_schema='public' AND table_name='app_users' AND column_name='auth_user_id') THEN
+        ALTER TABLE app_users RENAME COLUMN user_id TO auth_user_id;
+      END IF;
+    END $$;
+    ALTER TABLE app_users ADD COLUMN IF NOT EXISTS email TEXT;
+    ALTER TABLE app_users ADD COLUMN IF NOT EXISTS display_name TEXT;
+    ALTER TABLE app_users ADD COLUMN IF NOT EXISTS active BOOLEAN NOT NULL DEFAULT TRUE;
+    ALTER TABLE app_users ADD COLUMN IF NOT EXISTS must_change_password BOOLEAN NOT NULL DEFAULT FALSE;
+    ALTER TABLE app_users ADD COLUMN IF NOT EXISTS last_seen_at TIMESTAMPTZ;
+    ALTER TABLE app_users ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ NOT NULL DEFAULT now();
+    ALTER TABLE photo_deletion_requests ADD COLUMN IF NOT EXISTS context_data JSONB NOT NULL DEFAULT '{}'::jsonb;
+    ALTER TABLE photo_deletion_requests ADD COLUMN IF NOT EXISTS reason TEXT;
+    ALTER TABLE photo_deletion_requests ADD COLUMN IF NOT EXISTS requested_by_name TEXT;
+    ALTER TABLE photo_deletion_requests ADD COLUMN IF NOT EXISTS reviewed_by UUID;
+    ALTER TABLE photo_deletion_requests ADD COLUMN IF NOT EXISTS reviewed_by_name TEXT;
+    ALTER TABLE photo_deletion_requests ADD COLUMN IF NOT EXISTS reviewed_at TIMESTAMPTZ;
+    ALTER TABLE photo_deletion_requests ADD COLUMN IF NOT EXISTS review_note TEXT;
+    UPDATE photo_deletion_requests SET requested_by_name='Utilisateur' WHERE requested_by_name IS NULL;
+    CREATE UNIQUE INDEX IF NOT EXISTS ux_app_users_email ON app_users(lower(email)) WHERE email IS NOT NULL;
+  `);
+  // When DATABASE_URL points at Supabase, recover emails for rows made with the old SQL.
+  await realPool.query(`
+    DO $$ BEGIN
+      IF to_regclass('auth.users') IS NOT NULL THEN
+        UPDATE app_users u SET email=a.email, updated_at=now()
+        FROM auth.users a WHERE a.id=u.auth_user_id AND (u.email IS NULL OR u.email='');
+      END IF;
+    END $$;
   `);
   const roles = [['admin','Administrateur'],['operator','Opérateur'],['viewer','Lecture seule']];
   for (const [code, name] of roles) await realPool.query(`INSERT INTO app_roles(code,name) VALUES($1,$2) ON CONFLICT(code) DO UPDATE SET name=EXCLUDED.name`, [code, name]);
@@ -384,6 +433,32 @@ function requirePermission(permission) {
   return (req, res, next) => hasPermission(req, permission) ? next() : res.status(403).json({ error: 'Permission refusée' });
 }
 
+async function recordProductionActivity(req, activity) {
+  const session = req.adminSession || {};
+  if (!session.username || session.role === 'visitor') return;
+  try {
+    await ensureUserManagementSchema();
+    await realPool.query(`
+      INSERT INTO production_activity_log
+        (actor_user_id,actor_name,actor_role,module,action_type,item_id,item_label,day_index,details)
+      VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9::jsonb)
+    `, [
+      session.userId || null,
+      session.username,
+      session.role || 'operator',
+      activity.module,
+      activity.actionType,
+      Number(activity.itemId),
+      String(activity.itemLabel || activity.itemId),
+      Number.isFinite(Number(activity.dayIndex)) ? Number(activity.dayIndex) : null,
+      JSON.stringify(activity.details || {})
+    ]);
+  } catch (error) {
+    // An audit write must never make the production journal action fail.
+    console.error('Production activity audit:', error.message);
+  }
+}
+
 async function queuePhotoDeletion(req, res, photoType, photoRecordId, photoUrl, contextData = {}) {
   if (hasPermission(req, 'photo.delete.direct')) return false;
   if (!hasPermission(req, 'photo.delete.request')) {
@@ -396,8 +471,17 @@ async function queuePhotoDeletion(req, res, photoType, photoRecordId, photoUrl, 
     VALUES($1,$2,$3,$4::jsonb,$5,$6)
     ON CONFLICT (photo_type,photo_record_id) WHERE status='pending'
     DO UPDATE SET reason=COALESCE(photo_deletion_requests.reason,EXCLUDED.reason)
-    RETURNING id,status
+    RETURNING id,status,(xmax=0) AS created
   `, [photoType,photoRecordId,photoUrl,JSON.stringify(contextData),req.adminSession?.userId || null,req.adminSession?.username || 'Utilisateur']);
+  const itemId = photoType === 'petri' ? contextData.petriId : photoType === 'lc' ? contextData.potId : contextData.unitId;
+  if (itemId && result.rows[0].created) await recordProductionActivity(req, {
+    module: photoType,
+    actionType: 'delete_requested',
+    itemId,
+    itemLabel: contextData.itemLabel || (photoType === 'petri' ? `Petri ID ${itemId}` : photoType === 'lc' ? `LC pot ID ${itemId}` : `Grain unité ID ${itemId}`),
+    dayIndex: contextData.dayIndex,
+    details: { request_id: result.rows[0].id, photo_record_id: Number(photoRecordId) }
+  });
   res.status(202).json({ success: true, pending: true, request_id: result.rows[0].id, message: 'Demande envoyée à un administrateur.' });
   return true;
 }
@@ -642,6 +726,39 @@ app.get('/api/admin/users', requirePermission('users.manage'), async (_req, res)
       ORDER BY online DESC,lower(u.username)
     `);
     res.json(result.rows);
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+app.get('/api/admin/production-activity', requirePermission('users.manage'), async (req, res) => {
+  try {
+    await ensureUserManagementSchema();
+    const month = String(req.query.month || '').trim();
+    const moduleName = String(req.query.module || '').trim();
+    const userId = String(req.query.user_id || '').trim();
+    if (!/^\d{4}-(0[1-9]|1[0-2])$/.test(month)) return res.status(400).json({ error: 'Mois invalide (format YYYY-MM).' });
+    if (moduleName && !['petri','lc','grain'].includes(moduleName)) return res.status(400).json({ error: 'Module invalide.' });
+    const [year, monthNumber] = month.split('-').map(Number);
+    const values = [year, monthNumber];
+    const filters = [`a.created_at >= make_timestamptz($1,$2,1,0,0,0,'Europe/Berlin')`, `a.created_at < make_timestamptz($1,$2,1,0,0,0,'Europe/Berlin') + interval '1 month'`];
+    if (moduleName) { values.push(moduleName); filters.push(`a.module=$${values.length}`); }
+    if (userId) { values.push(userId); filters.push(`a.actor_user_id=$${values.length}::uuid`); }
+    const where = filters.join(' AND ');
+    const rows = await realPool.query(`
+      SELECT a.id,a.actor_user_id,a.actor_name,a.actor_role,a.module,a.action_type,a.item_id,
+             a.item_label,a.day_index,a.details,a.created_at,
+             to_char(a.created_at AT TIME ZONE 'Europe/Berlin','YYYY-MM-DD') AS activity_day
+      FROM production_activity_log a
+      WHERE ${where}
+      ORDER BY a.created_at DESC,a.id DESC
+      LIMIT 2000
+    `, values);
+    const summary = await realPool.query(`
+      SELECT count(*)::int AS total_actions,
+             count(DISTINCT (a.module,a.item_id))::int AS distinct_items,
+             count(DISTINCT (a.created_at AT TIME ZONE 'Europe/Berlin')::date)::int AS active_days
+      FROM production_activity_log a WHERE ${where}
+    `, values);
+    res.json({ rows: rows.rows, summary: summary.rows[0] || { total_actions:0,distinct_items:0,active_days:0 } });
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
@@ -3254,11 +3371,12 @@ app.post('/api/lc-workflow/lots/:id/journal', async (req, res) => {
     const dayIndex = Number(b.day_index);
     if (!lotId || !potId || !Number.isFinite(dayIndex)) return res.status(400).json({ error: 'lot, pot et day_index obligatoires' });
     await client.query('BEGIN');
-    let pcheck = await client.query('SELECT id FROM lc_pots WHERE id=$1 AND lc_lot_id=$2 AND deleted_at IS NULL', [potId, lotId]);
+    let pcheck = await client.query('SELECT id,pot_number,code FROM lc_pots WHERE id=$1 AND lc_lot_id=$2 AND deleted_at IS NULL', [potId, lotId]);
     if (!pcheck.rows.length) {
       await client.query('ROLLBACK');
       return res.status(404).json({ error: 'Pot LC introuvable pour ce lot' });
     }
+    const existingJournal = await client.query('SELECT id FROM lc_pot_journal WHERE lc_pot_id=$1 AND day_index=$2 LIMIT 1', [potId,dayIndex]);
     const photo = String(b.photo_url || '').trim();
     let refUrl = String(b.reference_image_url || '').trim();
     if (!refUrl) {
@@ -3337,6 +3455,11 @@ app.post('/api/lc-workflow/lots/:id/journal', async (req, res) => {
     }
 
     await client.query('COMMIT');
+    await recordProductionActivity(req, {
+      module: 'lc', actionType: existingJournal.rows.length ? 'modified' : 'added', itemId: potId,
+      itemLabel: pcheck.rows[0].code || `LC pot ${pcheck.rows[0].pot_number || potId}`, dayIndex,
+      details: { lot_id: lotId, journal_id: up.rows[0].id, has_photo: Boolean(photo) }
+    });
     res.status(201).json(up.rows[0]);
   } catch (e) {
     try { await client.query('ROLLBACK'); } catch (_) {}
@@ -3360,7 +3483,7 @@ app.delete('/api/lc-workflow/lots/:lotId/journal/:journalId/photo', async (req, 
 
     await client.query('BEGIN');
     const found = await client.query(
-      `SELECT id, photo_url FROM lc_pot_journal WHERE id=$1 AND lc_lot_id=$2 FOR UPDATE`,
+      `SELECT id,lc_pot_id,day_index,photo_url FROM lc_pot_journal WHERE id=$1 AND lc_lot_id=$2 FOR UPDATE`,
       [journalId, lotId]
     );
     if (!found.rows.length) {
@@ -3374,7 +3497,7 @@ app.delete('/api/lc-workflow/lots/:lotId/journal/:journalId/photo', async (req, 
     }
     if (!hasPermission(req, 'photo.delete.direct')) {
       await client.query('ROLLBACK');
-      if (await queuePhotoDeletion(req,res,'lc',journalId,fileUrl,{ lotId,journalId })) return;
+      if (await queuePhotoDeletion(req,res,'lc',journalId,fileUrl,{ lotId,journalId,potId:found.rows[0].lc_pot_id,dayIndex:found.rows[0].day_index })) return;
     }
 
     await client.query(`DELETE FROM lc_reference_day_images WHERE journal_id=$1 OR file_url=$2`, [journalId, fileUrl]);
@@ -4452,6 +4575,7 @@ app.post('/api/grain-units/:id/journal', async (req, res) => {
       return res.status(404).json({ error: 'Pot/sac grain introuvable.' });
     }
     const unit = unitQ.rows[0];
+    const existingJournal = await client.query(`SELECT id FROM myc_grain_journal WHERE grain_unit_id=$1 AND day_index=$2 LIMIT 1`, [unitId,dayIndex]);
     let refUrl = String(b.reference_image_url || '').trim();
     if (!refUrl) {
       const rr = await client.query(`SELECT file_url FROM myc_grain_reference_images WHERE batch_id=$1 AND day_index=$2`, [unit.batch_id, dayIndex]);
@@ -4530,6 +4654,11 @@ app.post('/api/grain-units/:id/journal', async (req, res) => {
     }
 
     await client.query('COMMIT');
+    await recordProductionActivity(req, {
+      module: 'grain', actionType: existingJournal.rows.length ? 'modified' : 'added', itemId: unitId,
+      itemLabel: unit.code || `Grain unité ID ${unitId}`, dayIndex,
+      details: { batch_id: unit.batch_id, journal_id: saved.rows[0].id, has_photo: Boolean(String(b.photo_url || '').trim()) }
+    });
     res.status(201).json(saved.rows[0]);
   } catch (e) {
     try { await client.query('ROLLBACK'); } catch (_) {}
@@ -4552,7 +4681,7 @@ app.delete('/api/grain-units/:unitId/journal/:journalId/photo', async (req, res)
 
     await client.query('BEGIN');
     const found = await client.query(
-      `SELECT id, photo_url FROM myc_grain_journal WHERE id=$1 AND grain_unit_id=$2 FOR UPDATE`,
+      `SELECT id,grain_unit_id,day_index,photo_url FROM myc_grain_journal WHERE id=$1 AND grain_unit_id=$2 FOR UPDATE`,
       [journalId, unitId]
     );
     if (!found.rows.length) {
@@ -4566,7 +4695,7 @@ app.delete('/api/grain-units/:unitId/journal/:journalId/photo', async (req, res)
     }
     if (!hasPermission(req, 'photo.delete.direct')) {
       await client.query('ROLLBACK');
-      if (await queuePhotoDeletion(req,res,'grain',journalId,fileUrl,{ unitId,journalId })) return;
+      if (await queuePhotoDeletion(req,res,'grain',journalId,fileUrl,{ unitId,journalId,dayIndex:found.rows[0].day_index })) return;
     }
 
     await client.query(`DELETE FROM myc_grain_reference_images WHERE journal_id=$1 OR file_url=$2`, [journalId, fileUrl]);
@@ -5569,7 +5698,7 @@ app.post("/api/journal/observation", async (req, res) => {
       (b.q6 ? 3 : 0);
 
     // récupérer j0 du petri pour calculer journal_date
-    const petriRes = await pool.query(`SELECT id, isolement_id, j0 FROM iso_petris WHERE id=$1 LIMIT 1`, [petriId]);
+    const petriRes = await pool.query(`SELECT id, isolement_id, phase, j0 FROM iso_petris WHERE id=$1 LIMIT 1`, [petriId]);
     if (!petriRes.rows.length) return res.status(404).json({ success: false, error: "Petri introuvable" });
 
     const j0 = parseYMD(petriRes.rows[0].j0);
@@ -5578,6 +5707,7 @@ app.post("/api/journal/observation", async (req, res) => {
     const d = new Date(j0);
     d.setDate(d.getDate() + day);
     const journal_date = ymd(d);
+    const existingJournal = await pool.query(`SELECT id FROM iso_petri_journal WHERE petri_id=$1 AND journal_date=$2 LIMIT 1`, [petriId,journal_date]);
 
     let manipulation_type = String(b.manipulation_type || b.type_manipulation || "Observation quotidienne").trim();
     let is_pickable = !!(b.is_pickable || b.mycelium_pickable);
@@ -5629,6 +5759,11 @@ app.post("/api/journal/observation", async (req, res) => {
       ]
     );
 
+    await recordProductionActivity(req, {
+      module: 'petri', actionType: existingJournal.rows.length ? 'modified' : 'added', itemId: petriId,
+      itemLabel: `P${Number(petriRes.rows[0].phase || parsed.phase || 0)} ID ${petriId}`, dayIndex: day,
+      details: { isolement_id: petriRes.rows[0].isolement_id, journal_id: r.rows[0].id }
+    });
     return res.json({ success: true, data: { id_observation: r.rows[0].id } });
   } catch (e) {
     console.error("POST /api/journal/observation", e);
@@ -5681,7 +5816,7 @@ app.delete("/api/album-photos/:id", async (req, res) => {
     fileUrl = String(photo.file_url || '').trim();
     if (!hasPermission(req, 'photo.delete.direct')) {
       await client.query('ROLLBACK');
-      if (await queuePhotoDeletion(req,res,'petri',photoId,fileUrl,{ petriId:photo.petri_id,albumPhotoId:photoId })) return;
+      if (await queuePhotoDeletion(req,res,'petri',photoId,fileUrl,{ petriId:photo.petri_id,albumPhotoId:photoId,dayIndex:photo.day_index,itemLabel:`Petri ID ${photo.petri_id}` })) return;
     }
 
     await client.query(`DELETE FROM iso_reference_phase_images WHERE album_photo_id=$1 OR file_url=$2`, [photoId, fileUrl]);
@@ -5866,6 +6001,12 @@ app.post("/api/journal/image", upload.single("photo"), async (req, res) => {
        WHERE id=$2`,
       [file_url, id_observation, groupReferenceUrl, becomesReference]
     );
+
+    await recordProductionActivity(req, {
+      module: 'petri', actionType: 'photo_added', itemId: petriId,
+      itemLabel: `P${phase} ID ${petriId}`, dayIndex,
+      details: { isolement_id: isolementId, journal_id: id_observation, album_photo_id: albumPhoto.id }
+    });
 
     res.json({
       success: true,

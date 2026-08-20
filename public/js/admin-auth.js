@@ -250,6 +250,7 @@
       link.textContent='Utilisateurs';
       menu.appendChild(link);
     }
+    document.querySelectorAll('[data-admin-only]').forEach(el=>{ el.style.display=auth.role==='admin'?'':'none'; });
     if(currentPage()==='admin-users.html'&&auth.role!=='admin')location.replace('admin.html');
 
     document.documentElement.classList.toggle("mtd-visitor-mode", isVisitor);
