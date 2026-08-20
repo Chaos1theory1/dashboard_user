@@ -348,6 +348,15 @@
 
   document.addEventListener("DOMContentLoaded", function () {
     if (currentPage() !== "login-admin.html") {
+      if (currentPage() !== "admin.html") {
+        const shellCss = document.createElement("link");
+        shellCss.rel = "stylesheet";
+        shellCss.href = "css/admin-dashboard-shell.css";
+        document.head.appendChild(shellCss);
+        const shellScript = document.createElement("script");
+        shellScript.src = "js/admin-dashboard-shell.js";
+        document.body.appendChild(shellScript);
+      }
       renderSessionChrome(readUiAuth());
       verifyServerSession().then(startHeartbeat);
     }
