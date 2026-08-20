@@ -755,53 +755,329 @@ const productionActionLabels = { added:'Ajout du suivi',modified:'Modification d
 
 // Read-only dashboard data. Each value is calculated from the production tables;
 // the frontend never invents or stores a dashboard number.
-app.get('/api/dashboard/summary', async (_req, res) => {
+app.get('/api/dashboard/summary', async (req, res) => {
   try {
     await ensureUserManagementSchema();
-    const [petri, lc, grain, statusRows, trendRows, recentRows] = await Promise.all([
-      realPool.query(`SELECT count(*)::int AS total FROM iso_petris WHERE UPPER(COALESCE(status,'EN_INCUBATION')) NOT IN ('STOCK_FRIGO','CONSERVATION_FRIGORIFIQUE','STOCK','CONSERVATION','VALIDE','PIQUE','PERIME','PERIMEE','SUPPRIME','A_DETRUIRE','CONTAMINE')`),
-      realPool.query(`SELECT count(*)::int AS total FROM lc_pots WHERE deleted_at IS NULL AND UPPER(COALESCE(status,'ACTIF')) NOT IN ('STOCK','UTILISE','SUPPRIME','REJETE','CONTAMINE')`),
-      realPool.query(`SELECT count(*)::int AS total FROM myc_grain_units WHERE UPPER(COALESCE(statut,'PREPARE')) NOT IN ('SUPPRIME','CONTAMINE','UTILISE','PERIME','PERIMEE','REJETE')`),
+    await ensureIsoPetrisStorageSchema();
+    await ensureLcPotWorkflowSchema();
+    await ensureGrainWorkflowSchema();
+
+    const isAdmin = req.adminSession?.role === 'admin';
+    const canWrite = req.adminSession?.role !== 'viewer';
+
+    const [
+      petriActive,
+      lcActive,
+      grainActive,
+      petriTotal,
+      lcTotal,
+      grainTotal,
+      statusRows,
+      trendRows,
+      recentRows,
+      p3ReadyRows,
+      validatedLcRows,
+      strainRows,
+      userRows,
+      pendingDeletionRows
+    ] = await Promise.all([
       realPool.query(`
-        SELECT stored_status AS status, count(*)::int AS total FROM (
-          SELECT COALESCE(NULLIF(UPPER(TRIM(status)),''),'EN_INCUBATION') AS stored_status FROM iso_petris
-          UNION ALL SELECT COALESCE(NULLIF(UPPER(TRIM(status)),''),'ACTIF') AS stored_status FROM lc_pots WHERE deleted_at IS NULL
-          UNION ALL SELECT COALESCE(NULLIF(UPPER(TRIM(statut)),''),'PREPARE') AS stored_status FROM myc_grain_units
-        ) statuses GROUP BY stored_status ORDER BY total DESC,stored_status ASC
+        SELECT count(*)::int AS total
+        FROM iso_petris
+        WHERE deleted_at IS NULL
+          AND UPPER(COALESCE(status,'EN_INCUBATION')) NOT IN
+            ('STOCK_FRIGO','CONSERVATION_FRIGORIFIQUE','STOCK','CONSERVATION','VALIDE','PIQUE','PERIME','PERIMEE','SUPPRIME','A_DETRUIRE','CONTAMINE')
+      `),
+      realPool.query(`
+        SELECT count(*)::int AS total
+        FROM lc_pots
+        WHERE deleted_at IS NULL
+          AND COALESCE(fridge_stored,FALSE)=FALSE
+          AND UPPER(COALESCE(status,'ACTIF')) NOT IN ('STOCK','UTILISE','SUPPRIME','REJETE','CONTAMINE')
+      `),
+      realPool.query(`
+        SELECT count(*)::int AS total
+        FROM myc_grain_units
+        WHERE storage_at IS NULL
+          AND UPPER(COALESCE(statut,'PREPARE')) NOT IN
+          ('STOCK','EN_STOCK','STOCKE','STOCKEE','FRIGO','SUPPRIME','CONTAMINE','UTILISE','PERIME','PERIMEE','REJETE')
+      `),
+      realPool.query(`SELECT count(*)::int AS total FROM iso_petris WHERE deleted_at IS NULL`),
+      realPool.query(`SELECT count(*)::int AS total FROM lc_pots WHERE deleted_at IS NULL`),
+      realPool.query(`SELECT count(*)::int AS total FROM myc_grain_units`),
+      realPool.query(`
+        WITH classified AS (
+          SELECT CASE
+            WHEN deleted_at IS NOT NULL OR UPPER(COALESCE(status,'')) IN ('SUPPRIME','PIQUE','UTILISE') THEN 'Retiré / terminé'
+            WHEN UPPER(COALESCE(status,'')) IN ('CONTAMINE','PERIME','PERIMEE','A_DETRUIRE') THEN 'À surveiller'
+            WHEN UPPER(COALESCE(status,'')) IN ('STOCK_FRIGO','CONSERVATION_FRIGORIFIQUE','STOCK','CONSERVATION') THEN 'Stock / conservation'
+            WHEN UPPER(COALESCE(status,'')) IN ('VALIDE','VALIDÉ','PRETE','PRET') THEN 'Prêt / validé'
+            ELSE 'En cours'
+          END AS category
+          FROM iso_petris
+
+          UNION ALL
+
+          SELECT CASE
+            WHEN deleted_at IS NOT NULL OR UPPER(COALESCE(status,'')) IN ('SUPPRIME','UTILISE') THEN 'Retiré / terminé'
+            WHEN UPPER(COALESCE(status,'')) IN ('CONTAMINE','REJETE','PERIME','PERIMEE') THEN 'À surveiller'
+            WHEN COALESCE(fridge_stored,FALSE)=TRUE OR UPPER(COALESCE(status,''))='STOCK' THEN 'Stock / conservation'
+            WHEN COALESCE(lc_validated,FALSE)=TRUE OR UPPER(COALESCE(status,'')) IN ('LC_VALIDEE','PRET','PRETE') THEN 'Prêt / validé'
+            ELSE 'En cours'
+          END AS category
+          FROM lc_pots
+
+          UNION ALL
+
+          SELECT CASE
+            WHEN UPPER(COALESCE(statut,'')) IN ('SUPPRIME','UTILISE') THEN 'Retiré / terminé'
+            WHEN UPPER(COALESCE(statut,'')) IN ('CONTAMINE','REJETE','PERIME','PERIMEE') THEN 'À surveiller'
+            WHEN UPPER(COALESCE(statut,'')) IN ('STOCK','EN_STOCK','STOCKE','STOCKEE','FRIGO') OR storage_at IS NOT NULL THEN 'Stock / conservation'
+            WHEN UPPER(COALESCE(statut,'')) IN ('PRET','PRETE','VALIDE','VALIDÉ') THEN 'Prêt / validé'
+            ELSE 'En cours'
+          END AS category
+          FROM myc_grain_units
+        )
+        SELECT category AS status, count(*)::int AS total
+        FROM classified
+        GROUP BY category
+        ORDER BY CASE category
+          WHEN 'En cours' THEN 1
+          WHEN 'Prêt / validé' THEN 2
+          WHEN 'Stock / conservation' THEN 3
+          WHEN 'À surveiller' THEN 4
+          ELSE 5 END
       `),
       realPool.query(`
         WITH days AS (
-          SELECT generate_series((CURRENT_TIMESTAMP AT TIME ZONE 'Europe/Berlin')::date - 6,(CURRENT_TIMESTAMP AT TIME ZONE 'Europe/Berlin')::date,interval '1 day')::date AS activity_day
-        ), counts AS (
-          SELECT (created_at AT TIME ZONE 'Europe/Berlin')::date AS activity_day,module,count(*)::int AS total
-          FROM production_activity_log
-          WHERE created_at >= ((CURRENT_TIMESTAMP AT TIME ZONE 'Europe/Berlin')::date - 6)::timestamp AT TIME ZONE 'Europe/Berlin' AND module IN ('petri','lc','grain')
-          GROUP BY 1,2
+          SELECT generate_series(CURRENT_DATE - 6,CURRENT_DATE,interval '1 day')::date AS activity_day
+        ), petri AS (
+          SELECT COALESCE(treated_at::date,updated_at::date,created_at::date,journal_date::date) AS activity_day,
+                 count(*)::int AS total
+          FROM iso_petri_journal
+          WHERE COALESCE(treated_at::date,updated_at::date,created_at::date,journal_date::date) >= CURRENT_DATE - 6
+          GROUP BY 1
+        ), lc AS (
+          SELECT treated_at::date AS activity_day,count(*)::int AS total
+          FROM lc_pot_journal
+          WHERE treated_at::date >= CURRENT_DATE - 6
+          GROUP BY 1
+        ), grain AS (
+          SELECT (treated_at AT TIME ZONE 'Europe/Berlin')::date AS activity_day,count(*)::int AS total
+          FROM myc_grain_journal
+          WHERE (treated_at AT TIME ZONE 'Europe/Berlin')::date >= CURRENT_DATE - 6
+          GROUP BY 1
         )
         SELECT to_char(days.activity_day,'YYYY-MM-DD') AS day,
-          COALESCE(max(counts.total) FILTER (WHERE counts.module='petri'),0)::int AS petri,
-          COALESCE(max(counts.total) FILTER (WHERE counts.module='lc'),0)::int AS lc,
-          COALESCE(max(counts.total) FILTER (WHERE counts.module='grain'),0)::int AS grain
-        FROM days LEFT JOIN counts ON counts.activity_day=days.activity_day
-        GROUP BY days.activity_day ORDER BY days.activity_day
+               COALESCE(petri.total,0)::int AS petri,
+               COALESCE(lc.total,0)::int AS lc,
+               COALESCE(grain.total,0)::int AS grain
+        FROM days
+        LEFT JOIN petri USING(activity_day)
+        LEFT JOIN lc USING(activity_day)
+        LEFT JOIN grain USING(activity_day)
+        ORDER BY days.activity_day
       `),
-      realPool.query(`SELECT id,actor_name,actor_role,module,action_type,item_id,item_label,day_index,created_at FROM production_activity_log ORDER BY created_at DESC,id DESC LIMIT 5`)
+      realPool.query(`
+        SELECT id,actor_name,actor_role,module,action_type,item_id,item_label,day_index,created_at
+        FROM production_activity_log
+        ORDER BY created_at DESC,id DESC
+        LIMIT 8
+      `),
+      realPool.query(`
+        WITH last_j AS (
+          SELECT DISTINCT ON (petri_id) petri_id,is_pickable,choices
+          FROM iso_petri_journal
+          ORDER BY petri_id,day_index DESC,treated_at DESC,id DESC
+        )
+        SELECT count(*)::int AS total
+        FROM iso_petris p
+        LEFT JOIN last_j lj ON lj.petri_id=p.id
+        WHERE p.phase=3 AND p.deleted_at IS NULL
+          AND (COALESCE(lj.is_pickable,FALSE)=TRUE OR COALESCE((lj.choices->>'is_pickable')::boolean,FALSE)=TRUE)
+      `),
+      realPool.query(`
+        SELECT count(*)::int AS total
+        FROM lc_pots
+        WHERE deleted_at IS NULL AND COALESCE(lc_validated,FALSE)=TRUE
+      `),
+      realPool.query(`
+        SELECT count(*)::int AS total
+        FROM strains
+        WHERE COALESCE(status::text,'ACTIVE') <> 'ARCHIVED'
+      `),
+      isAdmin
+        ? realPool.query(`
+            SELECT count(*) FILTER (WHERE active)::int AS active,
+                   count(*) FILTER (WHERE active AND last_seen_at >= now()-interval '15 minutes')::int AS online,
+                   count(*)::int AS total
+            FROM app_users
+          `)
+        : Promise.resolve({ rows: [{ active: 0, online: 0, total: 0 }] }),
+      isAdmin
+        ? realPool.query(`SELECT count(*)::int AS total FROM photo_deletion_requests WHERE status='pending'`)
+        : Promise.resolve({ rows: [{ total: 0 }] })
     ]);
-    res.json({
+
+    const p3Ready = Number(p3ReadyRows.rows[0]?.total || 0);
+    const validatedLc = Number(validatedLcRows.rows[0]?.total || 0);
+    const activeStrains = Number(strainRows.rows[0]?.total || 0);
+    const userSummary = userRows.rows[0] || { active: 0, online: 0, total: 0 };
+    const pendingDeletions = Number(pendingDeletionRows.rows[0]?.total || 0);
+
+    const quickActions = [
+      {
+        id: 'scan-petri',
+        label: 'Scanner une boîte',
+        description: 'Ouvrir un journal Petri par QR ou identifiant.',
+        href: 'admin-isolement.html#scan-inline-card',
+        icon: 'scan-line',
+        enabled: true,
+        badge: `${Number(petriActive.rows[0]?.total || 0)} actives`
+      },
+      {
+        id: 'new-isolation',
+        label: 'Nouvel isolement',
+        description: 'Créer une isolation et ses premières boîtes.',
+        href: 'admin-isolement.html?action=new-isolation',
+        icon: 'flask-conical',
+        enabled: canWrite,
+        badge: canWrite ? 'Disponible' : 'Lecture seule'
+      },
+      {
+        id: 'new-lc',
+        label: 'Créer un lot LC',
+        description: p3Ready ? `${p3Ready} P3 transférable${p3Ready > 1 ? 's' : ''}.` : 'Aucun P3 transférable actuellement.',
+        href: 'admin-myc-liquide.html#p3-ready-body',
+        icon: 'beaker',
+        enabled: canWrite && p3Ready > 0,
+        badge: `${p3Ready} P3 prêt${p3Ready > 1 ? 's' : ''}`
+      },
+      {
+        id: 'new-grain',
+        label: 'Préparer du grain',
+        description: validatedLc ? `${validatedLc} pot${validatedLc > 1 ? 's' : ''} LC validé${validatedLc > 1 ? 's' : ''}.` : 'Aucun pot LC validé actuellement.',
+        href: 'admin-myc-grain.html',
+        icon: 'wheat',
+        enabled: canWrite && validatedLc > 0,
+        badge: `${validatedLc} LC validée${validatedLc > 1 ? 's' : ''}`
+      }
+    ];
+
+    if (isAdmin) {
+      quickActions.push({
+        id: 'users',
+        label: 'Gérer les utilisateurs',
+        description: pendingDeletions ? `${pendingDeletions} demande${pendingDeletions > 1 ? 's' : ''} à examiner.` : 'Rôles, accès et approbations.',
+        href: 'admin-users.html',
+        icon: 'users',
+        enabled: true,
+        badge: `${Number(userSummary.online || 0)} en ligne`
+      });
+    }
+
+    return res.json({
       generated_at: new Date().toISOString(),
-      counts:{petri_active:petri.rows[0]?.total||0,lc_active:lc.rows[0]?.total||0,grain_active:grain.rows[0]?.total||0},
-      status_distribution:statusRows.rows,
-      activity_trend:trendRows.rows,
-      recent_activity:recentRows.rows,
-      definitions:{
-        petri_active:'iso_petris hors statuts de stockage, conservation, validation, retrait ou contamination',
-        lc_active:'lc_pots non supprimés hors stock, utilisation, retrait ou contamination',
-        grain_active:'myc_grain_units hors suppression, utilisation, retrait ou contamination'
+      counts: {
+        petri_active: Number(petriActive.rows[0]?.total || 0),
+        lc_active: Number(lcActive.rows[0]?.total || 0),
+        grain_active: Number(grainActive.rows[0]?.total || 0),
+        petri_total: Number(petriTotal.rows[0]?.total || 0),
+        lc_total: Number(lcTotal.rows[0]?.total || 0),
+        grain_total: Number(grainTotal.rows[0]?.total || 0),
+        strains_active: activeStrains,
+        p3_ready: p3Ready,
+        validated_lc: validatedLc,
+        pending_deletions: pendingDeletions
+      },
+      users: isAdmin ? {
+        total: Number(userSummary.total || 0),
+        active: Number(userSummary.active || 0),
+        online: Number(userSummary.online || 0)
+      } : null,
+      status_distribution: statusRows.rows,
+      activity_trend: trendRows.rows,
+      recent_activity: recentRows.rows,
+      quick_actions: quickActions,
+      sources: {
+        kpis: ['iso_petris','lc_pots','myc_grain_units','strains','app_users'],
+        activity_trend: ['iso_petri_journal','lc_pot_journal','myc_grain_journal'],
+        status_distribution: ['iso_petris','lc_pots','myc_grain_units'],
+        recent_activity: ['production_activity_log'],
+        users: ['app_users','app_roles'],
+        quick_actions: ['iso_petris','iso_petri_journal','lc_pots']
+      },
+      definitions: {
+        petri_active: 'Boîtes non supprimées hors stockage, conservation, validation, retrait ou contamination.',
+        lc_active: 'Pots non supprimés, non stockés et hors utilisation, rejet ou contamination.',
+        grain_active: 'Unités hors stock, utilisation, retrait, péremption ou contamination.',
+        activity_trend: 'Nombre réel d’entrées de journal enregistrées par jour sur Petri, LC et grain.'
       }
     });
   } catch (e) {
-    console.error('Dashboard summary:',e.message);
-    res.status(500).json({error:'Impossible de charger les données réelles du tableau de bord.'});
+    console.error('Dashboard summary:', e);
+    return res.status(500).json({ error: 'Impossible de charger les données réelles du tableau de bord.' });
+  }
+});
+
+// Search across real production entities used by the global dashboard header.
+app.get('/api/search', async (req, res) => {
+  try {
+    const q = String(req.query.q || '').trim();
+    if (q.length < 2) return res.json({ query: q, results: [] });
+    const like = `%${q.replace(/!/g, '!!').replace(/%/g, '!%').replace(/_/g, '!_')}%`;
+
+    const [petris, isolements, lcLots, lcPots, grainUnits, strains] = await Promise.all([
+      pool.query(`
+        SELECT p.id,p.isolement_id,i.code AS iso_code,i.champignon,p.phase,p.status
+        FROM iso_petris p JOIN isolements i ON i.id=p.isolement_id
+        WHERE p.deleted_at IS NULL AND (p.id::text ILIKE $1 ESCAPE '!' OR i.code ILIKE $1 ESCAPE '!' OR i.champignon ILIKE $1 ESCAPE '!')
+        ORDER BY p.id DESC LIMIT 5
+      `,[like]),
+      pool.query(`
+        SELECT id,code,champignon,origine,statut
+        FROM isolements
+        WHERE code ILIKE $1 ESCAPE '!' OR champignon ILIKE $1 ESCAPE '!' OR origine ILIKE $1 ESCAPE '!'
+        ORDER BY id DESC LIMIT 5
+      `,[like]),
+      pool.query(`
+        SELECT id,code,parent_iso_code,champignon,cycle_status
+        FROM lc_lots
+        WHERE code ILIKE $1 ESCAPE '!' OR COALESCE(parent_iso_code,'') ILIKE $1 ESCAPE '!' OR COALESCE(champignon,'') ILIKE $1 ESCAPE '!'
+        ORDER BY id DESC LIMIT 5
+      `,[like]),
+      pool.query(`
+        SELECT p.id,p.code,p.pot_number,p.status,l.id AS lc_lot_id,l.code AS lot_code
+        FROM lc_pots p JOIN lc_lots l ON l.id=p.lc_lot_id
+        WHERE p.deleted_at IS NULL AND (COALESCE(p.code,'') ILIKE $1 ESCAPE '!' OR p.id::text ILIKE $1 ESCAPE '!' OR l.code ILIKE $1 ESCAPE '!')
+        ORDER BY p.id DESC LIMIT 5
+      `,[like]),
+      pool.query(`
+        SELECT u.id,u.code,u.statut,b.code AS batch_code,b.champignon
+        FROM myc_grain_units u JOIN myc_grain_batches b ON b.id=u.batch_id
+        WHERE u.code ILIKE $1 ESCAPE '!' OR u.id::text ILIKE $1 ESCAPE '!' OR b.code ILIKE $1 ESCAPE '!' OR COALESCE(b.champignon,'') ILIKE $1 ESCAPE '!'
+        ORDER BY u.id DESC LIMIT 5
+      `,[like]),
+      pool.query(`
+        SELECT id,code,name,species,status
+        FROM strains
+        WHERE code ILIKE $1 ESCAPE '!' OR name ILIKE $1 ESCAPE '!' OR species ILIKE $1 ESCAPE '!'
+        ORDER BY id DESC LIMIT 5
+      `,[like])
+    ]);
+
+    const results = [];
+    for (const row of petris.rows) results.push({ type:'petri', icon:'flask-conical', label:`Petri #${row.id} · P${row.phase || '—'}`, meta:`${row.iso_code || 'Isolation'} · ${row.champignon || ''}`, href:`admin-isolement-journal.html?iso=${row.isolement_id}&petri=${row.id}` });
+    for (const row of isolements.rows) results.push({ type:'isolement', icon:'microscope', label:row.code || `Isolation #${row.id}`, meta:`${row.champignon || ''}${row.origine ? ' · '+row.origine : ''}`, href:`admin-isolement.html?iso=${row.id}` });
+    for (const row of lcLots.rows) results.push({ type:'lc', icon:'beaker', label:row.code || `Lot LC #${row.id}`, meta:`${row.parent_iso_code || ''}${row.champignon ? ' · '+row.champignon : ''}`, href:`admin-lc-cycle.html?lc_id=${row.id}` });
+    for (const row of lcPots.rows) results.push({ type:'lc-pot', icon:'test-tube-2', label:row.code || `${row.lot_code} · pot ${row.pot_number}`, meta:`Pot #${row.id} · ${row.status || ''}`, href:`admin-lc-cycle.html?lc_id=${row.lc_lot_id}&pot_id=${row.id}` });
+    for (const row of grainUnits.rows) results.push({ type:'grain', icon:'wheat', label:row.code || `Grain #${row.id}`, meta:`${row.batch_code || ''}${row.champignon ? ' · '+row.champignon : ''}`, href:`admin-myc-grain-journal.html?grain_unit_id=${row.id}` });
+    for (const row of strains.rows) results.push({ type:'strain', icon:'sprout', label:row.code || `Souche #${row.id}`, meta:`${row.name || ''}${row.species ? ' · '+row.species : ''}`, href:`admin-souches.html?strain_id=${row.id}` });
+
+    return res.json({ query: q, results: results.slice(0, 14) });
+  } catch (e) {
+    console.error('GET /api/search', e.message);
+    return res.status(500).json({ error: 'Recherche indisponible.' });
   }
 });
 
