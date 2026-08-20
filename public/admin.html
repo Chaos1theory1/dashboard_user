@@ -1,328 +1,80 @@
-<!DOCTYPE html>
-<html class="wide wow-animation" lang="fr">
-  <head>
-    <title>Biotech Agro – Admin</title>
-    <meta charset="utf-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, height=device-height, initial-scale=1.0"
-    />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-
-    <link rel="icon" href="images/logo.png" type="image/png" />
-    <link
-      rel="stylesheet"
-      type="text/css"
-      href="//fonts.googleapis.com/css?family=Montserrat:300,400,700%7CPoppins:300,400,500,700,900"
-    />
-    <link rel="stylesheet" href="css/bootstrap.css" />
-    <link rel="stylesheet" href="css/fonts.css" />
-    <link rel="stylesheet" href="css/style.css" />
-
-    <style>
-      :root {
-        --baslyagro-green: #2fa35a;
-        --baslyagro-green-dark: #1f7a41;
-        --baslyagro-dark: #111712;
-      }
-
-      body {
-        background: #0e1410;
-        color: #fff;
-        min-height: 100vh;
-      }
-
-      /* Header admin */
-      .admin-topbar {
-        background: rgba(0, 0, 0, 0.65);
-        backdrop-filter: blur(10px);
-        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-        padding: 14px 0;
-      }
-
-      .admin-brand {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-      }
-
-      .admin-brand img {
-        width: 44px;
-        height: 44px;
-        border-radius: 50%;
-        object-fit: cover;
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.45);
-      }
-
-      .admin-brand-title {
-        line-height: 1.1;
-      }
-
-      .admin-brand-title .name {
-        font-weight: 700;
-        font-size: 15px;
-      }
-
-      .admin-brand-title .sub {
-        font-size: 12px;
-        color: rgba(255, 255, 255, 0.7);
-      }
-
-      /* Session bar */
-      .admin-session-bar {
-        display: none;
-        align-items: center;
-        justify-content: space-between;
-        gap: 12px;
-        padding: 10px 14px;
-        border-radius: 12px;
-        background: rgba(0, 0, 0, 0.55);
-        backdrop-filter: blur(8px);
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35);
-        margin: 16px 0 18px 0;
-      }
-
-      .admin-session-left {
-        font-size: 13px;
-        color: #fff;
-      }
-
-      .button-primary {
-        background-color: var(--baslyagro-green) !important;
-        border-color: var(--baslyagro-green) !important;
-        color: #fff !important;
-        height: 38px;
-        font-weight: 600;
-        border-radius: 10px;
-        padding: 0 14px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-      }
-
-      .button-primary:hover {
-        background-color: var(--baslyagro-green-dark) !important;
-        border-color: var(--baslyagro-green-dark) !important;
-      }
-
-      /* Layout */
-      .admin-main {
-        padding: 26px 0 40px 0;
-      }
-
-      .admin-card {
-        background: rgba(0, 0, 0, 0.55);
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        border-radius: 16px;
-        padding: 18px;
-        box-shadow: 0 18px 45px rgba(0, 0, 0, 0.35);
-      }
-
-      .admin-card h2 {
-        font-size: 18px;
-        margin: 0 0 8px 0;
-        font-weight: 700;
-      }
-
-      .admin-card p {
-        font-size: 13px;
-        color: rgba(255, 255, 255, 0.75);
-        margin: 0 0 14px 0;
-      }
-
-      .admin-links a {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 10px;
-        padding: 12px 14px;
-        border-radius: 12px;
-        background: rgba(255, 255, 255, 0.04);
-        border: 1px solid rgba(255, 255, 255, 0.07);
-        color: #fff;
-        text-decoration: none;
-        margin-bottom: 10px;
-        transition: transform 0.12s ease;
-      }
-
-      .admin-links a:hover {
-        transform: translateY(-1px);
-        border-color: rgba(47, 163, 90, 0.5);
-      }
-
-      .admin-links .muted {
-        font-size: 12px;
-        color: rgba(255, 255, 255, 0.65);
-      }
-
-      /* Footer */
-      .footer-classic {
-        background: rgba(0, 0, 0, 0.75);
-        padding: 12px 0;
-        color: rgba(255, 255, 255, 0.75);
-        text-align: center;
-        font-size: 12px;
-      }
-    </style>
-  </head>
-
-  <body>
-    <!-- ===== HEADER ===== -->
-    <header class="admin-topbar">
-      <div class="container">
-        <div class="d-flex align-items-center justify-content-between">
-          <div class="admin-brand">
-            <img src="images/logo.png" alt="BaslyAgro Logo" />
-            <div class="admin-brand-title">
-              <div class="name">Biotech Agro – Admin</div>
-              <div class="sub">Espace interne • Traçabilité & Production</div>
-            </div>
-          </div>
-
-          <a class="button-primary" href="admin.html">Tableau de bord</a>
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tableau de bord — Mycelium Tech Digital</title>
+  <link rel="icon" href="images/logo-agro.jpeg" type="image/jpeg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Outfit:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{--forest:#0b2d1a;--forest-2:#123d25;--green:#2fa35a;--green-bright:#4ecb71;--cream:#f6f8f5;--ink:#17221b;--muted:#6e786f;--line:#e5ebe6;--card:#fff;--shadow:0 12px 30px rgba(23,51,32,.08)}*{box-sizing:border-box}body{margin:0;background:var(--cream);color:var(--ink);font-family:"DM Sans",Arial,sans-serif}#mtd-session-strip{display:none!important}.dashboard{display:grid;grid-template-columns:252px minmax(0,1fr);min-height:100vh}.sidebar{position:sticky;top:0;height:100vh;padding:22px 14px;background:linear-gradient(165deg,#0b2b19,#123f27 60%,#0b2516);color:#fff;display:flex;flex-direction:column}.brand{display:flex;align-items:center;gap:11px;padding:0 8px 25px}.brand img{width:48px;height:48px;object-fit:cover;border-radius:50%;background:#fff;border:2px solid rgba(255,255,255,.25)}.brand strong{display:block;font:700 16px/1 "Outfit",sans-serif;letter-spacing:.02em}.brand span{font-size:9px;letter-spacing:.12em;color:#b9d7c4}.nav{display:grid;gap:5px}.nav a{display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:8px;text-decoration:none;color:#dcebe1;font-size:13px;font-weight:600;transition:.16s}.nav a:hover,.nav a.active{background:linear-gradient(90deg,#2fa35a,#43b965);color:#fff;box-shadow:0 6px 16px rgba(0,0,0,.16)}.nav i{font-style:normal;width:17px;text-align:center}.nav .admin-link{display:none}.system-card{margin-top:auto;padding:15px;border-radius:12px;background:linear-gradient(135deg,rgba(63,157,87,.42),rgba(21,75,43,.7));border:1px solid rgba(255,255,255,.1)}.system-card small{display:block;color:#cfdfd2;font-size:11px}.system-card strong{display:flex;align-items:center;gap:7px;margin:9px 0 14px;font-size:13px}.system-card strong::before{content:"✓";display:grid;place-items:center;width:20px;height:20px;border-radius:50%;background:#50c877;color:#143b24}.system-card .backup{padding-top:12px;border-top:1px solid rgba(255,255,255,.13);font-size:10px;line-height:1.5;color:#cbe0d1}.sidebar-footer{padding:18px 8px 0;color:#d4e1d7;font-size:10px;line-height:1.55}.content{min-width:0}.topbar{height:70px;padding:0 30px;display:flex;align-items:center;gap:20px;background:rgba(255,255,255,.92);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:8;backdrop-filter:blur(12px)}.menu-button{display:none;border:0;background:transparent;font-size:23px}.search{width:min(390px,40vw);height:38px;display:flex;align-items:center;gap:9px;padding:0 12px;border:1px solid #dde5df;border-radius:12px;background:#fafcfb;color:#8a948d}.search input{width:100%;border:0;outline:0;background:transparent;font:12px inherit;color:var(--ink)}.top-spacer{flex:1}.icon-button{position:relative;width:39px;height:39px;border:0;border-radius:10px;background:transparent;color:#263b2e;font-size:18px;cursor:pointer}.icon-button:hover{background:#edf5ef}.notification-wrap{position:relative}.notification-badge{position:absolute;top:-3px;right:-3px;min-width:17px;height:17px;padding:0 4px;border-radius:99px;background:#e44848;color:#fff;border:2px solid #fff;font:700 10px/13px Arial;text-align:center}.notification-panel{display:none;position:absolute;right:0;top:46px;width:min(360px,calc(100vw - 30px));max-height:410px;overflow:auto;padding:12px;border:1px solid #dce6de;border-radius:14px;background:#fff;box-shadow:0 18px 40px rgba(18,48,28,.18)}.notification-panel.open{display:block}.notification-panel h3{margin:2px 3px 10px;font:700 15px "Outfit",sans-serif}.request{display:flex;gap:10px;padding:10px;border-radius:10px;background:#fbfdfb;border:1px solid #eef2ef;margin-top:7px}.request-type{display:grid;place-items:center;width:31px;height:31px;flex:none;border-radius:8px;background:#fff0ee;color:#d74438}.request strong{display:block;font-size:12px}.request small{display:block;margin-top:3px;color:var(--muted);font-size:11px}.notification-empty{padding:15px;color:var(--muted);font-size:12px;text-align:center}.review-link{display:block;margin:12px 3px 2px;text-align:center;text-decoration:none;color:#177640;font-size:12px;font-weight:700}.profile{display:flex;align-items:center;gap:9px;padding-left:7px}.profile img{width:34px;height:34px;object-fit:cover;border-radius:50%;background:#fff;border:1px solid #d9e4db}.profile strong,.profile small{display:block;line-height:1.25}.profile strong{font-size:12px}.profile small{font-size:10px;color:var(--muted)}.logout{border:0;background:transparent;color:#405447;font-size:18px;cursor:pointer}.main{max-width:1500px;margin:0 auto;padding:25px 28px 30px}.hero{min-height:148px;position:relative;overflow:hidden;padding:25px 28px;border-radius:16px;background:linear-gradient(105deg,#fefefc 0%,#f9fbf7 47%,rgba(20,70,40,.95) 100%);box-shadow:var(--shadow)}.hero::after{content:"";position:absolute;inset:0 0 0 48%;background:linear-gradient(90deg,rgba(255,255,255,0),rgba(8,42,22,.2)),url("images/imagearriereplan.png") center/cover;opacity:.8}.hero h1,.hero p{position:relative;z-index:1;margin:0}.hero h1{font:700 25px "Outfit",sans-serif;letter-spacing:-.02em}.hero h1 span{color:#267e45}.hero p{margin-top:9px;font-size:12px;color:#516157}.quick-panel{position:absolute;z-index:2;right:20px;top:14px;width:230px;padding:14px;border:1px solid rgba(136,202,153,.28);border-radius:13px;background:rgba(4,33,17,.81);backdrop-filter:blur(5px);color:#fff}.quick-panel h2{margin:0 0 10px;font:600 14px "Outfit",sans-serif}.quick-panel a{display:flex;align-items:center;gap:9px;margin-top:6px;padding:8px;border-radius:7px;background:rgba(117,205,135,.13);color:#e6f4e9;text-decoration:none;font-size:10px;font-weight:600}.quick-panel a:hover{background:rgba(117,205,135,.27)}.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:13px;margin-top:16px}.metric{display:flex;align-items:center;gap:12px;padding:15px;border:1px solid var(--line);border-radius:13px;background:#fff;box-shadow:0 5px 14px rgba(25,53,35,.04);text-decoration:none;color:inherit}.metric-icon{display:grid;place-items:center;width:43px;height:43px;border-radius:11px;font-size:20px}.metric:nth-child(1) .metric-icon{background:#e7f6ea}.metric:nth-child(2) .metric-icon{background:#e7f0ff}.metric:nth-child(3) .metric-icon{background:#fff0d6}.metric:nth-child(4) .metric-icon{background:#efe7ff}.metric small{display:block;color:var(--muted);font-size:10px;font-weight:600}.metric strong{display:block;margin-top:2px;font:700 22px "Outfit",sans-serif}.metric em{display:block;margin-top:2px;color:#27964b;font-size:9px;font-style:normal;font-weight:700}.layout{display:grid;grid-template-columns:minmax(0,1.72fr) minmax(250px,.78fr);gap:16px;margin-top:16px}.panel{padding:18px;border:1px solid var(--line);border-radius:14px;background:var(--card);box-shadow:0 5px 14px rgba(25,53,35,.04)}.panel-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}.panel h2{margin:0;font:600 14px "Outfit",sans-serif}.panel-head span{color:var(--muted);font-size:10px}.module-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.module-card{padding:15px;border-radius:12px;background:#f7faf7;border:1px solid #ebf0ec;text-decoration:none;color:var(--ink)}.module-card:hover{border-color:#9fd6ad;transform:translateY(-1px)}.module-card i{display:grid;place-items:center;width:34px;height:34px;border-radius:9px;background:#e7f4ea;font-style:normal}.module-card strong{display:block;margin-top:12px;font-size:13px}.module-card small{display:block;margin-top:4px;color:var(--muted);font-size:10px;line-height:1.35}.activity-list{display:grid;gap:0}.activity-row{display:grid;grid-template-columns:32px minmax(0,1fr) auto;gap:10px;align-items:center;padding:10px 0;border-top:1px solid #eef1ee}.activity-row:first-child{border-top:0}.activity-row i{display:grid;place-items:center;width:29px;height:29px;border-radius:8px;background:#e8f5eb;font-style:normal;font-size:13px}.activity-row strong{display:block;font-size:11px}.activity-row small{display:block;color:var(--muted);font-size:10px;margin-top:2px}.activity-row time{font-size:10px;color:var(--muted);white-space:nowrap}.all-activity{display:block;margin-top:14px;text-align:center;padding:9px;border-radius:8px;background:#2e9e57;color:#fff;text-decoration:none;font-size:11px;font-weight:700}.alert{display:flex;gap:10px;padding:11px 0;border-top:1px solid #edf0ed}.alert:first-of-type{border-top:0}.alert i{font-style:normal}.alert strong{display:block;font-size:11px}.alert small{display:block;margin-top:3px;color:var(--muted);font-size:10px}.alert a{margin-left:auto;align-self:center;color:#66756a;text-decoration:none}.footer{margin-top:18px;text-align:center;color:#849087;font-size:10px}.mobile-overlay{display:none}@media(max-width:1100px){.dashboard{grid-template-columns:220px minmax(0,1fr)}.metrics{grid-template-columns:repeat(2,1fr)}.quick-panel{display:none}.hero::after{inset:0 0 0 38%}}@media(max-width:800px){.dashboard{display:block}.sidebar{position:fixed;z-index:30;left:0;top:0;width:252px;transform:translateX(-102%);transition:.2s}.sidebar.open{transform:translateX(0)}.mobile-overlay.open{display:block;position:fixed;z-index:20;inset:0;background:rgba(0,0,0,.35)}.menu-button{display:block}.topbar{padding:0 14px;gap:9px}.search{width:auto;flex:1}.profile div{display:none}.main{padding:18px 14px}.hero{min-height:128px;padding:22px 18px}.hero::after{inset:0 0 0 25%;opacity:.42}.layout{grid-template-columns:1fr}.sidebar-footer,.system-card{display:none}}@media(max-width:480px){.metrics,.module-grid{grid-template-columns:1fr}.topbar .icon-button:first-of-type{display:none}.hero h1{font-size:21px}.notification-panel{right:-44px}}
+  </style>
+</head>
+<body>
+  <div class="mobile-overlay" id="mobile-overlay"></div>
+  <div class="dashboard">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand"><img src="images/logo-agro.jpeg" alt="Logo Mycelium Tech Digital"><div><strong>MYCELIUM</strong><span>TECH DIGITAL</span></div></div>
+      <nav class="nav" aria-label="Navigation principale">
+        <a class="active" href="admin.html"><i>⌂</i>Tableau de bord</a>
+        <a href="admin-isolement.html"><i>⚗</i>Isolement tissulaire</a>
+        <a href="admin-myc-liquide.html"><i>▣</i>Mycélium liquide (LC)</a>
+        <a href="admin-myc-grain.html"><i>✺</i>Mycélium sur grain</a>
+        <a href="admin-souches.html"><i>✦</i>Souches</a>
+        <a href="admin-taches.html"><i>✓</i>Tâches obligatoires</a>
+        <a class="admin-link" data-admin-only href="admin-users.html"><i>♟</i>Utilisateurs</a>
+      </nav>
+      <div class="system-card"><small>État du système</small><strong>Opérationnel</strong><div class="backup">Données et photos protégées dans Supabase.</div></div>
+      <div class="sidebar-footer">Cultiver l’avenir, naturellement.<br><strong>Mycelium Tech Digital</strong></div>
+    </aside>
+    <section class="content">
+      <header class="topbar">
+        <button class="menu-button" id="menu-button" type="button" aria-label="Ouvrir le menu">☰</button>
+        <label class="search"><span>⌕</span><input type="search" placeholder="Rechercher une boîte, souche, matrice…" aria-label="Rechercher"></label>
+        <div class="top-spacer"></div>
+        <button class="icon-button" type="button" title="Apparence">☼</button>
+        <div class="notification-wrap" id="notification-wrap" hidden>
+          <button class="icon-button" id="notification-button" type="button" aria-label="Demandes de suppression" title="Demandes de suppression">🔔<span class="notification-badge" id="notification-badge" hidden>0</span></button>
+          <section class="notification-panel" id="notification-panel" aria-label="Demandes de suppression"><h3>Demandes de suppression</h3><div id="notification-requests"><div class="notification-empty">Chargement…</div></div><a class="review-link" href="admin-users.html">Gérer les demandes →</a></section>
         </div>
-      </div>
-    </header>
-
-    <!-- ===== MAIN ===== -->
-    <main class="admin-main">
-      <div class="container">
-        <!-- Session bar (connecté + déconnexion) -->
-        <div class="admin-session-bar" id="admin-session-bar">
-          <div class="admin-session-left">
-            Connecté en tant que <strong id="admin-username"></strong>
-            <span class="muted" id="admin-login-time"></span>
+        <div class="profile"><img src="images/logo-agro.jpeg" alt=""><div><strong id="profile-name">Utilisateur</strong><small id="profile-role">Connexion…</small></div></div>
+        <button class="logout" type="button" onclick="logoutAdmin()" title="Déconnexion" aria-label="Déconnexion">⌄</button>
+      </header>
+      <main class="main">
+        <section class="hero"><h1>Bonjour, <span id="welcome-name">Utilisateur</span> 👋</h1><p>Voici un aperçu de votre laboratoire aujourd’hui.</p><aside class="quick-panel"><h2>Actions rapides</h2><a href="admin-isolement.html">⌘ Scanner une boîte (QR)</a><a href="admin-isolement.html">⊕ Créer un nouvel isolement</a><a href="admin-myc-liquide.html">▣ Nouveau pot LC</a><a href="admin-myc-grain.html">✺ Nouvelle unité grain</a></aside></section>
+        <section class="metrics" aria-label="Accès rapide aux modules">
+          <a class="metric" href="admin-isolement.html"><span class="metric-icon">⚗</span><span><small>Boîtes d’isolement</small><strong>Petri</strong><em>Ouvrir le suivi →</em></span></a>
+          <a class="metric" href="admin-myc-liquide.html"><span class="metric-icon">▣</span><span><small>Production</small><strong>LC</strong><em>Gérer les lots →</em></span></a>
+          <a class="metric" href="admin-myc-grain.html"><span class="metric-icon">✺</span><span><small>Production</small><strong>Grain</strong><em>Gérer les unités →</em></span></a>
+          <a class="metric" href="admin-taches.html"><span class="metric-icon">✓</span><span><small>Suivi quotidien</small><strong>Tâches</strong><em>Voir les actions →</em></span></a>
+        </section>
+        <section class="layout">
+          <div>
+            <section class="panel"><div class="panel-head"><h2>Modules de production</h2><span>Accès rapide</span></div><div class="module-grid"><a class="module-card" href="admin-isolement.html"><i>⚗</i><strong>Isolement tissulaire</strong><small>Boîtes de Petri, cycles et journaux d’observation.</small></a><a class="module-card" href="admin-myc-liquide.html"><i>▣</i><strong>Mycélium liquide</strong><small>Lots, pots LC, incubation et suivi journalier.</small></a><a class="module-card" href="admin-myc-grain.html"><i>✺</i><strong>Mycélium sur grain</strong><small>Préparation, inoculation et unités de production.</small></a><a class="module-card" href="admin-souches.html"><i>✦</i><strong>Souches</strong><small>Bibliothèque de souches et traçabilité biologique.</small></a></div></section>
+            <section class="panel" style="margin-top:16px"><div class="panel-head"><h2>Activités récentes</h2><span id="activity-status">Suivi de production</span></div><div class="activity-list" id="recent-activity"><div class="notification-empty">Les activités récentes sont réservées aux administrateurs.</div></div><a class="all-activity" id="activity-link" href="admin-users.html" hidden>Voir tout l’historique →</a></section>
           </div>
-          <button type="button" class="button-primary" id="admin-logout-btn">
-            Déconnexion
-          </button>
-        </div>
-
-        <div class="row g-4">
-          <div class="col-lg-7">
-            <div class="admin-card">
-              <h2>Tableau de bord Admin</h2>
-              <p>
-                Accès aux modules internes (lots, souches, incubation,
-                stérilisation, QC, traçabilité).
-              </p>
-
-              <div class="admin-links">
-                <a href="admin-taches.html">
-                  <div>
-                    <div><strong>Tâches obligatoires</strong></div>
-                    <div class="muted">Checklist quotidienne • Hygiène • QC</div>
-                  </div>
-                  <div class="muted">→</div>
-                </a>
-
-                <a href="admin-myc-liquide.html">
-                  <div>
-                    <div><strong>Mycélium liquide</strong></div>
-                    <div class="muted">Création lots LC • Incubation • Logs</div>
-                  </div>
-                  <div class="muted">→</div>
-                </a>
-
-                <a href="admin-souches.html">
-                  <div>
-                    <div><strong>Souches</strong></div>
-                    <div class="muted">Ajouter • Suprimé • Cycle de vie</div>
-                  </div>
-                  <div class="muted">→</div>
-                </a>
-
-                <a href="admin-myc-grain.html">
-                  <div>
-                    <div><strong>Mycélium sur grain</strong></div>
-                    <div class="muted">Stérilisation • Inoculation • Incubation</div>
-                  </div>
-                  <div class="muted">→</div>
-                </a>
-
-                <a href="admin-isolement.html">
-                  <div>
-                    <div><strong>Isolation tissulaire</strong></div>
-                    <div class="muted">Suivie • Alert • Isolement tissulaire</div>
-                  </div>
-                  <div class="muted">→</div>
-                </a>
-
-                <a href="admin-users.html" data-admin-only style="display:none">
-                  <div>
-                    <div><strong>Utilisateurs et suivi</strong></div>
-                    <div class="muted">Comptes • Approbations • Activité opérateurs</div>
-                  </div>
-                  <div class="muted">→</div>
-                </a>
-              </div>
-            </div>
-          </div>
-
-          <div class="col-lg-5">
-            <div class="admin-card">
-              <h2>Règles d’accès</h2>
-              <p>
-                Si vous n’êtes pas connecté, l’accès à l’interface Admin est
-                bloqué et vous serez redirigé vers la page de connexion.
-              </p>
-
-              <div class="admin-links">
-                <a href="login-admin.html">
-                  <div>
-                    <div><strong>Aller à la connexion</strong></div>
-                    <div class="muted">login-admin.html</div>
-                  </div>
-                  <div class="muted">→</div>
-                </a>
-              </div>
-
-              <p class="muted" style="margin-top: 10px;">
-                Note : pour protéger la base de données, il faudra aussi une
-                vérification côté serveur (token/middleware).
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </main>
-
-    <!-- ===== securité  ===== -->
-    <script src="js/admin-auth.js"></script>
-    <script>
-      document.addEventListener("DOMContentLoaded", () => {
-        // Utilise le système localStorage (admin-auth.js)
-        renderAdminSessionUI({
-          usernameTargetId: "admin-username",
-          logoutBtnId: "admin-logout-btn"
-        });
-
-        // Affiche la barre session une fois connecté
-        const bar = document.getElementById("admin-session-bar");
-        if (bar) bar.style.display = "flex";
-      });
-    </script>
-
-    <!-- ===== FOOTER ===== -->
-    <footer class="footer-classic">
-      © Biotech Agro – Interface Admin
-    </footer>
-
-    <!-- ===== 1) GUARD : (DÉSACTIVÉ) ===== -->
-    <script>
-      // Désactivé : sessionStorage provoquait une boucle (clignotement).
-      // On utilise uniquement localStorage via admin-auth.js
-      (function requireAdminSession() {
-        return;
-      })();
-    </script>
-
-    <!-- ===== 2) UI SESSION : (DÉSACTIVÉ) ===== -->
-    <script>
-      // Désactivé : cette fonction entrait en conflit avec renderAdminSessionUI() de admin-auth.js
-      (function renderAdminSessionUI() {
-        return;
-      })();
-    </script>
-  </body>
+          <aside>
+            <section class="panel"><div class="panel-head"><h2>Alertes importantes</h2><span>À surveiller</span></div><div class="alert"><i>⚠️</i><div><strong>Consultez les tâches obligatoires</strong><small>Les actions quotidiennes et retards apparaissent dans ce module.</small></div><a href="admin-taches.html">›</a></div><div class="alert"><i>🧫</i><div><strong>Vérifiez vos journaux</strong><small>Documentez chaque observation et photo de référence.</small></div><a href="admin-isolement.html">›</a></div><div class="alert" id="deletion-alert" hidden><i>🗑️</i><div><strong id="deletion-alert-title">Demandes de suppression</strong><small>À examiner dans Utilisateurs.</small></div><a href="admin-users.html">›</a></div></section>
+            <section class="panel" style="margin-top:16px;background:linear-gradient(135deg,#edf8ef,#fff)"><div class="panel-head"><h2>Version 2.0.0</h2><span>Mycelium Tech Digital</span></div><small style="color:var(--muted);font-size:11px">Traçabilité centralisée : Petri, LC, grain, photos et activités opérateurs.</small></section>
+          </aside>
+        </section>
+        <footer class="footer">© Mycelium Tech Digital — Interface interne de production</footer>
+      </main>
+    </section>
+  </div>
+  <script src="js/admin-auth.js"></script>
+  <script>
+    const esc=value=>String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
+    const dateLabel=value=>value?new Date(value).toLocaleString('fr-FR',{dateStyle:'short',timeStyle:'short'}):'';
+    const moduleLabel={petri:'Boîte de Petri',lc:'Mycélium liquide',grain:'Mycélium sur grain'};
+    const actionLabel={added:'Suivi ajouté',modified:'Suivi modifié',photo_added:'Photo ajoutée',delete_requested:'Suppression demandée',photo_deleted:'Photo supprimée',delete_approved:'Suppression approuvée',delete_rejected:'Suppression refusée'};
+    function renderSession(auth){const user=auth||window.mtdSession||{};const name=user.username||'Utilisateur';const isAdmin=user.role==='admin';document.getElementById('profile-name').textContent=name;document.getElementById('welcome-name').textContent=name;document.getElementById('profile-role').textContent=isAdmin?'Administrateur':user.role==='operator'?'Opérateur':'Lecture seule';document.querySelectorAll('[data-admin-only]').forEach(el=>el.style.display=isAdmin?'flex':'none');document.getElementById('notification-wrap').hidden=!isAdmin;if(isAdmin){loadDeletionRequests();loadRecentActivity();}}
+    async function loadDeletionRequests(){try{const res=await fetch('/api/admin/photo-deletion-requests',{credentials:'same-origin'});if(!res.ok)throw new Error();const pending=(await res.json()).filter(row=>row.status==='pending');const badge=document.getElementById('notification-badge');badge.hidden=!pending.length;badge.textContent=pending.length>99?'99+':pending.length;document.getElementById('notification-requests').innerHTML=pending.length?pending.slice(0,8).map(row=>`<div class="request"><span class="request-type">🗑</span><div><strong>${esc((row.photo_type||'photo').toUpperCase())} — photo #${esc(row.photo_record_id)}</strong><small>Demandée par ${esc(row.requested_by_name||'Utilisateur')} · ${esc(dateLabel(row.requested_at))}</small></div></div>`).join(''):'<div class="notification-empty">Aucune demande en attente.</div>';const alert=document.getElementById('deletion-alert');alert.hidden=!pending.length;document.getElementById('deletion-alert-title').textContent=`${pending.length} demande${pending.length>1?'s':''} de suppression`; }catch(_){document.getElementById('notification-requests').innerHTML='<div class="notification-empty">Impossible de charger les demandes.</div>';}}
+    async function loadRecentActivity(){try{const month=new Date().toISOString().slice(0,7);const res=await fetch(`/api/admin/production-activity?month=${month}&page=1`,{credentials:'same-origin'});if(!res.ok)throw new Error();const data=await res.json();const rows=data.rows||[];document.getElementById('recent-activity').innerHTML=rows.length?rows.slice(0,5).map(row=>`<div class="activity-row"><i>${row.module==='petri'?'⚗':row.module==='lc'?'▣':'✺'}</i><div><strong>${esc(actionLabel[row.action_type]||row.action_type)} · ${esc(row.item_label)}</strong><small>${esc(moduleLabel[row.module]||row.module)} · ${esc(row.actor_name)}</small></div><time>${esc(dateLabel(row.created_at))}</time></div>`).join(''):'<div class="notification-empty">Aucune activité ce mois-ci.</div>';document.getElementById('activity-link').hidden=false;}catch(_){document.getElementById('activity-status').textContent='Disponible dans Utilisateurs';}}
+    document.addEventListener('DOMContentLoaded',()=>{window.requireAdminAuth();const sidebar=document.getElementById('sidebar'),overlay=document.getElementById('mobile-overlay');document.getElementById('menu-button').addEventListener('click',()=>{sidebar.classList.toggle('open');overlay.classList.toggle('open')});overlay.addEventListener('click',()=>{sidebar.classList.remove('open');overlay.classList.remove('open')});const panel=document.getElementById('notification-panel');document.getElementById('notification-button').addEventListener('click',()=>panel.classList.toggle('open'));document.addEventListener('click',event=>{if(!document.getElementById('notification-wrap').contains(event.target))panel.classList.remove('open')});renderSession(window.mtdSession);});
+    window.addEventListener('mtd:session-ready',event=>renderSession(event.detail));
+  </script>
+</body>
 </html>
