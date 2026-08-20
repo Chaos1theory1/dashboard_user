@@ -353,9 +353,18 @@
         shellCss.rel = "stylesheet";
         shellCss.href = "css/admin-dashboard-shell.css";
         document.head.appendChild(shellCss);
-        const shellScript = document.createElement("script");
-        shellScript.src = "js/admin-dashboard-shell.js";
-        document.body.appendChild(shellScript);
+        const loadShell = () => {
+          const shellScript = document.createElement("script");
+          shellScript.src = "js/admin-dashboard-shell.js";
+          document.body.appendChild(shellScript);
+        };
+        if (window.lucide) loadShell();
+        else {
+          const lucideScript = document.createElement("script");
+          lucideScript.src = "https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js";
+          lucideScript.onload = loadShell;
+          document.head.appendChild(lucideScript);
+        }
       }
       renderSessionChrome(readUiAuth());
       verifyServerSession().then(startHeartbeat);

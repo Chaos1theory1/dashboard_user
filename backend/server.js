@@ -753,6 +753,58 @@ app.get('/api/admin/users', requirePermission('users.manage'), async (_req, res)
 const productionModuleLabels = { petri:'Boîtes de Petri',lc:'Mycélium liquide',grain:'Mycélium sur grain' };
 const productionActionLabels = { added:'Ajout du suivi',modified:'Modification du suivi',photo_added:'Photo ajoutée',delete_requested:'Suppression demandée',photo_deleted:'Photo supprimée',delete_approved:'Suppression approuvée',delete_rejected:'Suppression refusée' };
 
+// Read-only dashboard data. Each value is calculated from the production tables;
+// the frontend never invents or stores a dashboard number.
+app.get('/api/dashboard/summary', async (_req, res) => {
+  try {
+    await ensureUserManagementSchema();
+    const [petri, lc, grain, statusRows, trendRows, recentRows] = await Promise.all([
+      realPool.query(`SELECT count(*)::int AS total FROM iso_petris WHERE UPPER(COALESCE(status,'EN_INCUBATION')) NOT IN ('STOCK_FRIGO','CONSERVATION_FRIGORIFIQUE','STOCK','CONSERVATION','VALIDE','PIQUE','PERIME','PERIMEE','SUPPRIME','A_DETRUIRE','CONTAMINE')`),
+      realPool.query(`SELECT count(*)::int AS total FROM lc_pots WHERE deleted_at IS NULL AND UPPER(COALESCE(status,'ACTIF')) NOT IN ('STOCK','UTILISE','SUPPRIME','REJETE','CONTAMINE')`),
+      realPool.query(`SELECT count(*)::int AS total FROM myc_grain_units WHERE UPPER(COALESCE(statut,'PREPARE')) NOT IN ('SUPPRIME','CONTAMINE','UTILISE','PERIME','PERIMEE','REJETE')`),
+      realPool.query(`
+        SELECT stored_status AS status, count(*)::int AS total FROM (
+          SELECT COALESCE(NULLIF(UPPER(TRIM(status)),''),'EN_INCUBATION') AS stored_status FROM iso_petris
+          UNION ALL SELECT COALESCE(NULLIF(UPPER(TRIM(status)),''),'ACTIF') AS stored_status FROM lc_pots WHERE deleted_at IS NULL
+          UNION ALL SELECT COALESCE(NULLIF(UPPER(TRIM(statut)),''),'PREPARE') AS stored_status FROM myc_grain_units
+        ) statuses GROUP BY stored_status ORDER BY total DESC,stored_status ASC
+      `),
+      realPool.query(`
+        WITH days AS (
+          SELECT generate_series((CURRENT_TIMESTAMP AT TIME ZONE 'Europe/Berlin')::date - 6,(CURRENT_TIMESTAMP AT TIME ZONE 'Europe/Berlin')::date,interval '1 day')::date AS activity_day
+        ), counts AS (
+          SELECT (created_at AT TIME ZONE 'Europe/Berlin')::date AS activity_day,module,count(*)::int AS total
+          FROM production_activity_log
+          WHERE created_at >= ((CURRENT_TIMESTAMP AT TIME ZONE 'Europe/Berlin')::date - 6)::timestamp AT TIME ZONE 'Europe/Berlin' AND module IN ('petri','lc','grain')
+          GROUP BY 1,2
+        )
+        SELECT to_char(days.activity_day,'YYYY-MM-DD') AS day,
+          COALESCE(max(counts.total) FILTER (WHERE counts.module='petri'),0)::int AS petri,
+          COALESCE(max(counts.total) FILTER (WHERE counts.module='lc'),0)::int AS lc,
+          COALESCE(max(counts.total) FILTER (WHERE counts.module='grain'),0)::int AS grain
+        FROM days LEFT JOIN counts ON counts.activity_day=days.activity_day
+        GROUP BY days.activity_day ORDER BY days.activity_day
+      `),
+      realPool.query(`SELECT id,actor_name,actor_role,module,action_type,item_id,item_label,day_index,created_at FROM production_activity_log ORDER BY created_at DESC,id DESC LIMIT 5`)
+    ]);
+    res.json({
+      generated_at: new Date().toISOString(),
+      counts:{petri_active:petri.rows[0]?.total||0,lc_active:lc.rows[0]?.total||0,grain_active:grain.rows[0]?.total||0},
+      status_distribution:statusRows.rows,
+      activity_trend:trendRows.rows,
+      recent_activity:recentRows.rows,
+      definitions:{
+        petri_active:'iso_petris hors statuts de stockage, conservation, validation, retrait ou contamination',
+        lc_active:'lc_pots non supprimés hors stock, utilisation, retrait ou contamination',
+        grain_active:'myc_grain_units hors suppression, utilisation, retrait ou contamination'
+      }
+    });
+  } catch (e) {
+    console.error('Dashboard summary:',e.message);
+    res.status(500).json({error:'Impossible de charger les données réelles du tableau de bord.'});
+  }
+});
+
 async function loadProductionActivityReport(query) {
   await ensureUserManagementSchema();
   const month = String(query.month || '').trim();
