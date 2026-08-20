@@ -8,6 +8,8 @@ let cors = require("cors");
 let multer = require("multer");
 let crypto = require("crypto");
 let sharp = require("sharp");
+const ExcelJS = require("exceljs");
+const PDFDocument = require("pdfkit");
 const { AsyncLocalStorage } = require("async_hooks");
 const { Pool } = require("pg");
 const { createClient: createSupabaseClient } = require("@supabase/supabase-js");
@@ -729,37 +731,104 @@ app.get('/api/admin/users', requirePermission('users.manage'), async (_req, res)
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
+const productionModuleLabels = { petri:'Boîtes de Petri',lc:'Mycélium liquide',grain:'Mycélium sur grain' };
+const productionActionLabels = { added:'Ajout du suivi',modified:'Modification du suivi',photo_added:'Photo ajoutée',delete_requested:'Suppression demandée' };
+
+async function loadProductionActivityReport(query) {
+  await ensureUserManagementSchema();
+  const month = String(query.month || '').trim();
+  const moduleName = String(query.module || '').trim();
+  const userId = String(query.user_id || '').trim();
+  if (!/^\d{4}-(0[1-9]|1[0-2])$/.test(month)) { const e=new Error('Mois invalide (format YYYY-MM).');e.status=400;throw e; }
+  if (moduleName && !['petri','lc','grain'].includes(moduleName)) { const e=new Error('Module invalide.');e.status=400;throw e; }
+  const [year, monthNumber] = month.split('-').map(Number);
+  const values = [year, monthNumber];
+  const filters = [`a.created_at >= make_timestamptz($1,$2,1,0,0,0,'Europe/Berlin')`, `a.created_at < make_timestamptz($1,$2,1,0,0,0,'Europe/Berlin') + interval '1 month'`];
+  if (moduleName) { values.push(moduleName); filters.push(`a.module=$${values.length}`); }
+  if (userId) { values.push(userId); filters.push(`a.actor_user_id=$${values.length}::uuid`); }
+  const where = filters.join(' AND ');
+  const rows = await realPool.query(`
+    SELECT a.id,a.actor_user_id,a.actor_name,a.actor_role,a.module,a.action_type,a.item_id,
+           a.item_label,a.day_index,a.details,a.created_at,
+           to_char(a.created_at AT TIME ZONE 'Europe/Berlin','YYYY-MM-DD') AS activity_day
+    FROM production_activity_log a WHERE ${where}
+    ORDER BY a.created_at DESC,a.id DESC LIMIT 2000
+  `, values);
+  const summary = await realPool.query(`
+    SELECT count(*)::int AS total_actions,
+           count(DISTINCT (a.module,a.item_id))::int AS distinct_items,
+           count(DISTINCT (a.created_at AT TIME ZONE 'Europe/Berlin')::date)::int AS active_days
+    FROM production_activity_log a WHERE ${where}
+  `, values);
+  let operatorLabel = 'Tous les opérateurs';
+  if (userId) {
+    const user = await realPool.query(`SELECT username FROM app_users WHERE auth_user_id=$1::uuid`,[userId]);
+    operatorLabel = user.rows[0]?.username || userId;
+  }
+  return {
+    rows: rows.rows,
+    summary: summary.rows[0] || { total_actions:0,distinct_items:0,active_days:0 },
+    filters: { month,operator:operatorLabel,module:moduleName ? productionModuleLabels[moduleName] : 'Tous les modules' }
+  };
+}
+
 app.get('/api/admin/production-activity', requirePermission('users.manage'), async (req, res) => {
+  try { res.json(await loadProductionActivityReport(req.query)); }
+  catch (e) { res.status(e.status || 500).json({ error: e.message }); }
+});
+
+app.get('/api/admin/production-activity/export.xlsx', requirePermission('users.manage'), async (req, res) => {
   try {
-    await ensureUserManagementSchema();
-    const month = String(req.query.month || '').trim();
-    const moduleName = String(req.query.module || '').trim();
-    const userId = String(req.query.user_id || '').trim();
-    if (!/^\d{4}-(0[1-9]|1[0-2])$/.test(month)) return res.status(400).json({ error: 'Mois invalide (format YYYY-MM).' });
-    if (moduleName && !['petri','lc','grain'].includes(moduleName)) return res.status(400).json({ error: 'Module invalide.' });
-    const [year, monthNumber] = month.split('-').map(Number);
-    const values = [year, monthNumber];
-    const filters = [`a.created_at >= make_timestamptz($1,$2,1,0,0,0,'Europe/Berlin')`, `a.created_at < make_timestamptz($1,$2,1,0,0,0,'Europe/Berlin') + interval '1 month'`];
-    if (moduleName) { values.push(moduleName); filters.push(`a.module=$${values.length}`); }
-    if (userId) { values.push(userId); filters.push(`a.actor_user_id=$${values.length}::uuid`); }
-    const where = filters.join(' AND ');
-    const rows = await realPool.query(`
-      SELECT a.id,a.actor_user_id,a.actor_name,a.actor_role,a.module,a.action_type,a.item_id,
-             a.item_label,a.day_index,a.details,a.created_at,
-             to_char(a.created_at AT TIME ZONE 'Europe/Berlin','YYYY-MM-DD') AS activity_day
-      FROM production_activity_log a
-      WHERE ${where}
-      ORDER BY a.created_at DESC,a.id DESC
-      LIMIT 2000
-    `, values);
-    const summary = await realPool.query(`
-      SELECT count(*)::int AS total_actions,
-             count(DISTINCT (a.module,a.item_id))::int AS distinct_items,
-             count(DISTINCT (a.created_at AT TIME ZONE 'Europe/Berlin')::date)::int AS active_days
-      FROM production_activity_log a WHERE ${where}
-    `, values);
-    res.json({ rows: rows.rows, summary: summary.rows[0] || { total_actions:0,distinct_items:0,active_days:0 } });
-  } catch (e) { res.status(500).json({ error: e.message }); }
+    const report = await loadProductionActivityReport(req.query);
+    const workbook = new ExcelJS.Workbook();
+    workbook.creator = 'Mycelium Tech Digital';
+    workbook.created = new Date();
+    const summarySheet = workbook.addWorksheet('Résumé',{views:[{showGridLines:false}]});
+    summarySheet.columns=[{width:28},{width:34}];
+    summarySheet.mergeCells('A1:B1');summarySheet.getCell('A1').value='Suivi de l’activité de production';
+    summarySheet.getCell('A1').font={bold:true,size:18,color:{argb:'FFFFFFFF'}};summarySheet.getCell('A1').fill={type:'pattern',pattern:'solid',fgColor:{argb:'FF1F7A41'}};summarySheet.getCell('A1').alignment={vertical:'middle'};summarySheet.getRow(1).height=30;
+    [['Mois',report.filters.month],['Opérateur',report.filters.operator],['Module',report.filters.module],['Actions au total',report.summary.total_actions],['Éléments distincts',report.summary.distinct_items],['Jours actifs',report.summary.active_days]].forEach((r,i)=>{const row=summarySheet.getRow(i+3);row.values=r;row.getCell(1).font={bold:true,color:{argb:'FF1F7A41'}};row.getCell(2).alignment={horizontal:'left'};});
+    const sheet = workbook.addWorksheet('Activités',{views:[{state:'frozen',ySplit:1}]});
+    sheet.columns=[{header:'Date et heure',key:'date',width:22},{header:'Opérateur',key:'operator',width:22},{header:'Rôle',key:'role',width:16},{header:'Module',key:'module',width:23},{header:'Élément travaillé',key:'item',width:30},{header:'ID',key:'id',width:12},{header:'Jour cycle',key:'day',width:12},{header:'Action',key:'action',width:26}];
+    report.rows.forEach(x=>sheet.addRow({date:new Date(x.created_at),operator:x.actor_name,role:x.actor_role,module:productionModuleLabels[x.module]||x.module,item:x.item_label,id:x.item_id,day:x.day_index==null?'':x.day_index,action:productionActionLabels[x.action_type]||x.action_type}));
+    sheet.getColumn('date').numFmt='dd/mm/yyyy hh:mm';
+    sheet.getRow(1).font={bold:true,color:{argb:'FFFFFFFF'}};sheet.getRow(1).fill={type:'pattern',pattern:'solid',fgColor:{argb:'FF1F7A41'}};sheet.getRow(1).alignment={vertical:'middle'};sheet.getRow(1).height=24;
+    sheet.autoFilter={from:'A1',to:'H1'};sheet.eachRow((row,rowNumber)=>{if(rowNumber>1){if(rowNumber%2===1)row.fill={type:'pattern',pattern:'solid',fgColor:{argb:'FFF0F7F2'}};row.alignment={vertical:'top'};}});
+    const buffer = await workbook.xlsx.writeBuffer();
+    res.setHeader('Content-Type','application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.setHeader('Content-Disposition',`attachment; filename="suivi-activite-${report.filters.month}.xlsx"`);
+    res.send(Buffer.from(buffer));
+  } catch (e) { res.status(e.status || 500).json({ error:e.message }); }
+});
+
+app.get('/api/admin/production-activity/export.pdf', requirePermission('users.manage'), async (req, res) => {
+  try {
+    const report = await loadProductionActivityReport(req.query);
+    const doc = new PDFDocument({size:'A4',layout:'landscape',margin:34,info:{Title:'Suivi de l’activité de production',Author:'Mycelium Tech Digital'}});
+    const chunks=[];doc.on('data',c=>chunks.push(c));const completed=new Promise((resolve,reject)=>{doc.on('end',()=>resolve(Buffer.concat(chunks)));doc.on('error',reject);});
+    let page=1;
+    const widths=[88,94,105,170,48,137],left=34,rowHeight=22;
+    const drawHeader=()=>{
+      doc.fillColor('#1f7a41').font('Helvetica-Bold').fontSize(17).text('Suivi de l’activité de production',left,28);
+      doc.fillColor('#425348').font('Helvetica').fontSize(9).text(`Mois : ${report.filters.month}   |   Opérateur : ${report.filters.operator}   |   Module : ${report.filters.module}`,left,53);
+      doc.font('Helvetica-Bold').fontSize(10).fillColor('#1f7a41').text(`Actions : ${report.summary.total_actions}     Éléments distincts : ${report.summary.distinct_items}     Jours actifs : ${report.summary.active_days}`,left,70);
+      const y=92;doc.rect(left,y,widths.reduce((a,b)=>a+b,0),20).fill('#1f7a41');
+      const headers=['Date','Opérateur','Module','Élément','Jour','Action'];let x=left;doc.fillColor('#ffffff').font('Helvetica-Bold').fontSize(8);headers.forEach((h,i)=>{doc.text(h,x+4,y+6,{width:widths[i]-8,height:10});x+=widths[i];});
+      return 112;
+    };
+    const footer=()=>doc.fillColor('#667085').font('Helvetica').fontSize(8).text(`Mycelium Tech Digital - page ${page}`,left,558,{width:773,align:'right'});
+    let y=drawHeader();
+    for(const x of report.rows){
+      if(y+rowHeight>550){footer();doc.addPage();page+=1;y=drawHeader();}
+      if((Math.floor((y-112)/rowHeight)%2)===1)doc.rect(left,y,widths.reduce((a,b)=>a+b,0),rowHeight).fill('#f0f7f2');
+      const values=[new Date(x.created_at).toLocaleString('fr-FR',{timeZone:'Europe/Berlin'}),x.actor_name,productionModuleLabels[x.module]||x.module,x.item_label,x.day_index==null?'-':`J${x.day_index}`,productionActionLabels[x.action_type]||x.action_type];
+      let cellX=left;doc.fillColor('#26352b').font('Helvetica').fontSize(7.5);values.forEach((value,i)=>{doc.text(String(value),cellX+4,y+6,{width:widths[i]-8,height:rowHeight-8,ellipsis:true});cellX+=widths[i];});
+      doc.moveTo(left,y+rowHeight).lineTo(left+widths.reduce((a,b)=>a+b,0),y+rowHeight).strokeColor('#dce6df').lineWidth(.4).stroke();y+=rowHeight;
+    }
+    if(!report.rows.length)doc.fillColor('#667085').font('Helvetica').fontSize(10).text('Aucune activité pour les filtres sélectionnés.',left,y+15);
+    footer();doc.end();const buffer=await completed;
+    res.setHeader('Content-Type','application/pdf');res.setHeader('Content-Disposition',`attachment; filename="suivi-activite-${report.filters.month}.pdf"`);res.send(buffer);
+  } catch (e) { res.status(e.status || 500).json({ error:e.message }); }
 });
 
 app.post('/api/admin/users', requirePermission('users.manage'), async (req, res) => {
