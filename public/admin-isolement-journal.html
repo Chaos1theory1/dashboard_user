@@ -1,0 +1,2026 @@
+<!DOCTYPE html>
+<html class="wide wow-animation" lang="fr">
+<head>
+  <title>Biotech Agro – Journal d'Isolement</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0" />
+  <link rel="icon" href="images/logo.png" type="image/png" />
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Montserrat:300,400,700%7CPoppins:300,400,500,700,900" />
+  <link rel="stylesheet" href="css/bootstrap.css" />
+  <link rel="stylesheet" href="css/fonts.css" />
+  <link rel="stylesheet" href="css/style.css" />
+
+  <style>
+    :root {
+      --baslyagro-green: #2fa35a;
+      --baslyagro-green-dark: #1f7a41;
+      --baslyagro-red: #c0392b;
+      --baslyagro-orange: #d68a00;
+      --baslyagro-blue: #3498db;
+    }
+    body {
+      background-image: linear-gradient(rgba(255,255,255,0.25),rgba(255,255,255,0.45)), url("images/imagearriereplan.png");
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      color: #222;
+    }
+    .admin-wrapper { padding: 30px 0 60px; }
+    .rd-navbar-main-outer { background: transparent !important; }
+
+    .admin-connected-badge {
+      position: fixed; top: 14px; right: 14px; z-index: 9999;
+      display: none; align-items: center; gap: 8px;
+      padding: 8px 12px; border-radius: 999px;
+      background: rgba(255,255,255,0.92);
+      border: 1px solid rgba(0,0,0,0.08);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+      font-size: 12px; cursor: pointer;
+    }
+    .admin-connected-dot {
+      width: 10px; height: 10px; border-radius: 50%;
+      background: var(--baslyagro-green);
+      box-shadow: 0 0 0 3px rgba(47,163,90,0.18);
+    }
+    .admin-connected-badge:hover { background: #fff; }
+
+    .admin-logout-modal {
+      position: fixed; inset: 0; z-index: 10000;
+      display: none; align-items: center; justify-content: center;
+      padding: 18px; background: rgba(0,0,0,0.45);
+    }
+    .admin-logout-card {
+      width: 100%; max-width: 420px; background: #fff;
+      border-radius: 14px; box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+    }
+    .admin-logout-card-header {
+      padding: 16px 18px; border-bottom: 1px solid #eee;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .admin-logout-close {
+      border: 0; background: transparent;
+      font-size: 20px; cursor: pointer;
+    }
+    .admin-logout-card-body { padding: 16px 18px; font-size: 13px; }
+    .admin-logout-card-actions {
+      padding: 14px 18px 18px; display: flex;
+      gap: 10px; justify-content: flex-end;
+    }
+    .admin-btn {
+      padding: 10px 14px; border-radius: 10px;
+      font-weight: 700; font-size: 12px;
+      border: 1px solid transparent; cursor: pointer;
+    }
+    .admin-btn-cancel { background: #fff; border-color: #ddd; color: #333; }
+    .admin-btn-danger { background: var(--baslyagro-red); color: #fff; }
+
+    .admin-big-logo { text-align: center; margin: 10px 0; }
+    .admin-big-logo img {
+      max-height: 120px;
+      filter: drop-shadow(0 6px 10px rgba(0,0,0,0.45));
+      background: #fff; padding: 10px; border-radius: 50%;
+      border: 4px solid var(--baslyagro-green);
+    }
+
+    .admin-menu-bar {
+      background: #fff; padding: 15px 0;
+      border-bottom: 2px solid #e5e5e5;
+      text-align: center; margin-bottom: 30px;
+    }
+    .admin-menu-bar a {
+      margin: 0 15px; font-weight: 600;
+      text-transform: uppercase; font-size: 13px;
+      text-decoration: none; color: #444;
+    }
+    .admin-menu-bar a:hover { color: var(--baslyagro-green-dark); }
+    .admin-menu-bar a.active { color: var(--baslyagro-green); }
+
+    .admin-card {
+      background: #fff; padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.07);
+      margin-bottom: 30px;
+    }
+    .admin-card h4 { margin-bottom: 20px; font-weight: 700; }
+
+    
+    /* ✅ FIX: labels toujours au bon endroit (le template met parfois label en absolute) */
+    .admin-wrapper label,
+    .admin-wrapper .form-label {
+      position: static !important;
+      display: block !important;
+      transform: none !important;
+      top: auto !important;
+      bottom: auto !important;
+      left: auto !important;
+      right: auto !important;
+      margin: 0 0 6px 0 !important;
+      padding: 0 !important;
+      opacity: 1 !important;
+      height: auto !important;
+      line-height: 1.2 !important;
+      pointer-events: auto !important;
+      z-index: auto !important;
+    }
+
+.alert-untreated {
+      background: #fff3cd;
+      border: 2px solid #ffc107;
+      border-left: 6px solid #ffc107;
+      color: #856404;
+      padding: 15px 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      font-weight: 600;
+      display: none;
+    }
+    .alert-untreated.show { display: block; }
+    .alert-untreated ul {
+      margin: 10px 0 0 20px;
+      list-style: none;
+    }
+    .alert-untreated li:before {
+      content: "⚠️ ";
+      margin-right: 8px;
+    }
+
+    .info-header {
+      background: linear-gradient(135deg, #2fa35a 0%, #1f7a41 100%);
+      color: white; padding: 20px;
+      border-radius: 10px; margin-bottom: 20px;
+    }
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin-top: 15px;
+    }
+    .info-item {
+      background: rgba(255,255,255,0.2);
+      padding: 12px;
+      border-radius: 8px;
+    }
+    .info-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      opacity: 0.9;
+      margin-bottom: 5px;
+    }
+    .info-value {
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .timeline-container {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+    }
+    .timeline-days {
+      display: flex;
+      justify-content: space-between;
+      margin: 20px 0;
+      position: relative;
+    }
+    .timeline-line {
+      position: absolute;
+      top: 20px;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: #e0e0e0;
+      z-index: 0;
+    }
+    .timeline-day {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+    }
+    .day-marker {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: white;
+      border: 3px solid #e0e0e0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 12px;
+      position: relative;
+      z-index: 1;
+    }
+    .day-marker.past {
+      background: var(--baslyagro-green);
+      border-color: var(--baslyagro-green);
+      color: white;
+    }
+    .day-marker.untreated {
+      background: #ffc107;
+      border-color: #ffc107;
+      color: #000;
+    }
+    .day-marker.current {
+      background: var(--baslyagro-blue);
+      border-color: var(--baslyagro-blue);
+      color: white;
+      animation: pulse 2s infinite;
+    }
+    .day-marker.optimal {
+      box-shadow: 0 0 0 3px rgba(255, 152, 0, 0.3);
+    }
+    .day-status {
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 10px;
+      background: #f0f0f0;
+      color: #666;
+      font-weight: 600;
+    }
+    .day-status.optimal {
+      background: rgba(255, 152, 0, 0.2);
+      color: #d68a00;
+    }
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(52, 152, 219, 0.4); }
+      50% { box-shadow: 0 0 0 10px rgba(52, 152, 219, 0); }
+    }
+
+    .journal-entry {
+      background: #f8f9fa;
+      padding: 20px;
+      border-radius: 10px;
+      margin-bottom: 15px;
+      border-left: 4px solid #e0e0e0;
+    }
+    .journal-entry.active {
+      background: #e8f8f0;
+      border-left-color: var(--baslyagro-green);
+    }
+    .journal-entry.disabled {
+      opacity: 0.4;
+      pointer-events: none;
+    }
+    .journal-entry.untreated {
+      background: #fff9e6;
+      border-left-color: #ffc107;
+    }
+    .entry-header {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 15px;
+      color: var(--baslyagro-green-dark);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .entry-badge {
+      font-size: 11px;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-weight: 600;
+    }
+    .entry-badge.active {
+      background: var(--baslyagro-blue);
+      color: white;
+    }
+    .entry-badge.treated {
+      background: var(--baslyagro-green);
+      color: white;
+    }
+    .entry-badge.untreated {
+      background: #ffc107;
+      color: #000;
+    }
+
+    .questions-section {
+      background: white;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 15px;
+    }
+    .questions-section h5 {
+      margin: 0 0 15px;
+      font-size: 14px;
+      font-weight: 700;
+      color: #333;
+    }
+    .question-item {
+      margin-bottom: 12px;
+      padding: 10px;
+      background: #f8f9fa;
+      border-radius: 6px;
+    }
+    .question-item label {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      font-size: 13px;
+    }
+    .question-item input[type="checkbox"] {
+      margin-right: 10px;
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+    }
+    .question-note {
+      margin-left: 28px;
+      font-size: 11px;
+      color: #666;
+      font-style: italic;
+    }
+    .total-score {
+      margin-top: 10px;
+      padding: 10px;
+      background: #e8f8f0;
+      border-left: 4px solid var(--baslyagro-green);
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    .comparison-section {
+      background: white;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 15px;
+    }
+    .comparison-section h5 {
+      margin: 0 0 15px;
+      font-size: 14px;
+      font-weight: 700;
+      color: #333;
+    }
+    .images-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      margin-bottom: 15px;
+    }
+    .image-box {
+      border: 2px dashed #ccc;
+      border-radius: 8px;
+      padding: 15px;
+      text-align: center;
+    }
+    .image-box h6 {
+      margin: 0 0 10px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #666;
+    }
+    .image-box img {
+      max-width: 100%;
+      border-radius: 6px;
+      margin-bottom: 10px;
+    }
+    .image-upload-btn {
+      background: var(--baslyagro-green);
+      color: white;
+      padding: 8px 16px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 12px;
+    }
+    .image-upload-btn:hover {
+      background: var(--baslyagro-green-dark);
+    }
+    .rating-section {
+      background: #f8f9fa;
+      padding: 15px;
+      border-radius: 8px;
+    }
+    .rating-section h6 {
+      margin: 0 0 10px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+    .rating-slider {
+      width: 100%;
+      margin-bottom: 10px;
+    }
+    .rating-display {
+      text-align: center;
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--baslyagro-green);
+      margin-top: 10px;
+    }
+    .rating-guide {
+      font-size: 11px;
+      color: #666;
+      margin-top: 8px;
+      line-height: 1.4;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 80px;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-family: inherit;
+      resize: vertical;
+      margin-top: 10px;
+    }
+
+    .button-primary {
+      background: var(--baslyagro-green) !important;
+      color: #fff !important;
+      padding: 12px 24px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 14px;
+      border: none;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 15px;
+    }
+    .button-primary:hover {
+      background: var(--baslyagro-green-dark) !important;
+    }
+    .button-primary:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .save-all-section {
+      background: linear-gradient(135deg, #2fa35a 0%, #1f7a41 100%);
+      color: white;
+      padding: 20px;
+      border-radius: 10px;
+      margin-top: 30px;
+      text-align: center;
+    }
+    .save-all-section h4 {
+      margin: 0 0 15px;
+      font-size: 18px;
+    }
+    .save-all-section .button-primary {
+      background: white !important;
+      color: var(--baslyagro-green) !important;
+      font-size: 16px;
+      padding: 15px 30px;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 40px;
+      color: #999;
+    }
+
+    /* ✅ iPhone/mobile : les jours passent à la ligne au lieu de déborder */
+    @media (max-width: 767.98px) {
+      .timeline-container {
+        overflow: visible;
+      }
+      .timeline-days {
+        flex-wrap: wrap;
+        justify-content: flex-start;
+        gap: 12px 10px;
+        margin: 16px 0;
+      }
+      .timeline-line {
+        display: none;
+      }
+      .timeline-day {
+        flex: 0 0 auto;
+        min-width: 46px;
+      }
+      .day-marker {
+        width: 38px;
+        height: 38px;
+        font-size: 11px;
+      }
+      .day-status {
+        white-space: nowrap;
+        font-size: 9px;
+      }
+    }
+
+  </style>
+</head>
+
+<body>
+  <div id="admin-connected-badge" class="admin-connected-badge">
+    <span class="admin-connected-dot"></span>
+    <span>Connecté : <strong id="admin-username">Admin</strong></span>
+  </div>
+
+  <div id="admin-logout-modal" class="admin-logout-modal">
+    <div class="admin-logout-card">
+      <div class="admin-logout-card-header">
+        <h5>Déconnexion</h5>
+        <button type="button" class="admin-logout-close" id="admin-logout-close">×</button>
+      </div>
+      <div class="admin-logout-card-body">Voulez-vous vous déconnecter ?</div>
+      <div class="admin-logout-card-actions">
+        <button type="button" class="admin-btn admin-btn-cancel" id="admin-logout-cancel">Non</button>
+        <button type="button" class="admin-btn admin-btn-danger" id="admin-logout-confirm">Oui</button>
+      </div>
+    </div>
+  </div>
+
+
+
+<script src="js/admin-auth.js"></script>
+  <!-- ✅ MODAL CONFIRMATION (Valider / Annuler) -->
+  <div class="admin-logout-modal" id="actionConfirmModal" style="display:none;">
+    <div class="admin-logout-card">
+      <div class="admin-logout-card-header">
+        <strong id="actionConfirmTitle">Confirmation</strong>
+        <button class="admin-logout-close" onclick="hideActionConfirm()">×</button>
+      </div>
+      <div class="admin-logout-card-body" id="actionConfirmBody"></div>
+      <div class="admin-logout-card-actions">
+        <button class="admin-btn admin-btn-cancel" onclick="hideActionConfirm()">Annuler</button>
+        <button class="admin-btn" id="actionConfirmOkBtn" style="background: var(--baslyagro-green); color: #fff;" onclick="confirmActionConfirm()">Valider</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      const auth = typeof requireAdminAuth === "function" ? requireAdminAuth() : null;
+      if (auth) {
+        document.getElementById("admin-connected-badge").style.display = "flex";
+        document.getElementById("admin-username").textContent = auth.username || "Admin";
+      }
+
+      const modal = document.getElementById("admin-logout-modal");
+      document.getElementById("admin-connected-badge").addEventListener("click", () => modal.style.display = "flex");
+      document.getElementById("admin-logout-close").addEventListener("click", () => modal.style.display = "none");
+      document.getElementById("admin-logout-cancel").addEventListener("click", () => modal.style.display = "none");
+      document.getElementById("admin-logout-confirm").addEventListener("click", () => {
+        if (typeof logoutAdmin === "function") logoutAdmin();
+        else window.location.href = "login-admin.html";
+      });
+    });
+  </script>
+
+  <div class="admin-big-logo">
+    <img src="images/logo.png" alt="BaslyAgro.Biotech" />
+  </div>
+
+  <div class="admin-menu-bar">
+    <a href="admin.html">Tableau de bord</a>
+    <a href="admin-taches.html">Tâches obligatoires</a>
+    <a href="admin-souches.html">Souches</a>
+    <a class="active" href="admin-isolement.html">Isolement tissulaire</a>
+    <a href="admin-myc-liquide.html">Mycélium liquide</a>
+    <a href="admin-myc-grain.html">Mycélium sur grain</a>
+  </div>
+
+  <section class="section admin-wrapper">
+    <div class="container">
+      <div class="admin-card">
+        <div id="loading" class="loading">
+          <h4>🔄 Chargement des données...</h4>
+          <p>Connexion à la base de données en cours...</p>
+        </div>
+
+        <div id="content" style="display:none;">
+          <h4>📋 Journal d'Isolement - <span id="boxTitle">---</span></h4>
+
+          <div id="alertUntreated" class="alert-untreated">
+            <strong>⚠️ ATTENTION : Jours non traités détectés</strong>
+            <ul id="untreatedDaysList"></ul>
+            <p style="margin-top:10px; font-size:12px;">Ces jours resteront enregistrés comme "NON TRAITÉ" dans le système.</p>
+          </div>
+
+          <div class="info-header">
+            <h5 style="margin:0 0 10px;">📦 Informations de la boîte</h5>
+            <div class="info-grid">
+              <div class="info-item">
+                <div class="info-label">ID Boîte</div>
+                <div class="info-value" id="boxId">---</div>
+              </div>
+              <div class="info-item">
+                <div class="info-label">Espèce</div>
+                <div class="info-value" id="species">---</div>
+              </div>
+              <div class="info-item">
+                <div class="info-label">Cycle</div>
+                <div class="info-value" id="cycle">---</div>
+              </div>
+              <div class="info-item">
+                <div class="info-label">Jour actuel</div>
+                <div class="info-value" id="currentDay">---</div>
+              </div>
+              <div class="info-item">
+                <div class="info-label">Fenêtre optimale</div>
+                <div class="info-value" id="optimalWindow">---</div>
+              </div>
+              <div class="info-item">
+                <div class="info-label">Date début</div>
+                <div class="info-value" id="startDate">---</div>
+              </div>
+            </div>
+          </div>
+
+
+          <!-- ✅ BOUTON PIQUAGE (P1 / P2) -->
+          <div id="btnPiquageContainer" style="display: none; margin: 20px 0; padding: 20px; background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); border: 2px solid #3498db; border-radius: 12px; box-shadow: 0 4px 12px rgba(52, 152, 219, 0.15);">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+              <h4 style="color: #1d4ed8; margin: 0; font-size: 18px; font-weight: 700;">🧫 Piquage</h4>
+              <span id="statutPiquageBadge" style="padding: 6px 14px; background: white; border-radius: 20px; font-size: 12px; font-weight: 600; display: none;"></span>
+            </div>
+            <p style="color: #1e3a8a; margin: 12px 0; font-size: 14px; line-height: 1.6;">
+              <strong>Important :</strong> Cette boîte est dans sa période de piquage optimale. Le piquage créera automatiquement la boîte suivante (P2 ou P3) et lancera l'impression de l'étiquette.
+            </p>
+            <div id="PiquageInfo" style="background: white; padding: 12px; border-radius: 8px; margin: 12px 0; font-size: 13px; color: #666;">
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                <div><strong style="color: #1d4ed8;">Jour actuel :</strong> <span id="PiquageJourActuel">---</span></div>
+                <div><strong style="color: #1d4ed8;">Fenêtre optimale :</strong> <span id="PiquageFenetreOptimale">---</span></div>
+              </div>
+            </div>
+            <button id="btnPiquage" onclick="piquerBoite()" style="background: #3498db; color: white; border: none; padding: 14px 28px; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 15px; box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3); transition: all 0.3s; width: 100%;">🧫 PIQUER (CRÉER LA BOÎTE SUIVANTE)</button>
+            <p id="infoApresPiquage" style="display: none; margin-top: 12px; padding: 12px; background: #fef3c7; border-radius: 8px; font-size: 13px; color: #92400e;">ℹ️ <strong>Après piquage :</strong> Une nouvelle boîte sera créée et ajoutée à la liste des boîtes de cet isolement.</p>
+          </div>
+
+          <!-- ✅ BOUTON VALIDER P3 -->
+          <div id="btnValiderP3Container" style="display: none; margin: 20px 0; padding: 20px; background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); border: 2px solid #2fa35a; border-radius: 12px; box-shadow: 0 4px 12px rgba(47, 163, 90, 0.15);">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+              <h4 style="color: #1f7a41; margin: 0; font-size: 18px; font-weight: 700;">🎯 Validation P3</h4>
+              <span id="statutP3Badge" style="padding: 6px 14px; background: white; border-radius: 20px; font-size: 12px; font-weight: 600; display: none;"></span>
+            </div>
+            <p style="color: #166534; margin: 12px 0; font-size: 14px; line-height: 1.6;">
+              <strong>Important :</strong> À la <strong>fin du cycle</strong>, le P3 est <strong>stocké au froid</strong>. Vous devez décider manuellement :
+              <br>✅ <strong>VALIDER</strong> = P3 prêt pour production
+              <br>⛔ <strong>PÉRIMÉ</strong> = P3 à détruire plus tard (géré dans une autre page)
+            </p>
+            <div id="P3ValidationInfo" style="background: white; padding: 12px; border-radius: 8px; margin: 12px 0; font-size: 13px; color: #666;">
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                <div><strong style="color: #1f7a41;">Jour actuel :</strong> <span id="P3JourActuel">---</span></div>
+                <div><strong style="color: #1f7a41;">Fenêtre optimale :</strong> <span id="P3FenetreOptimale">---</span></div>
+              </div>
+            </div>
+            <button id="btnValiderP3" onclick="validerP3()" style="background: #2fa35a; color: white; border: none; padding: 14px 28px; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 15px; box-shadow: 0 4px 12px rgba(47, 163, 90, 0.3); transition: all 0.3s; width: 100%;">✅ VALIDER CE P3</button>
+            <button id="btnStockFrigo" onclick="stockerFrigo()" style="margin-top: 10px; background: #3498db; color: white; border: none; padding: 14px 28px; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 15px; box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3); transition: all 0.3s; width: 100%;">❄️ STOCKER AU FRIGO</button>
+            <button id="btnPerimerP3" onclick="perimerP3()" style="margin-top: 10px; background: #c0392b; color: white; border: none; padding: 14px 28px; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 15px; box-shadow: 0 4px 12px rgba(192, 57, 43, 0.3); transition: all 0.3s; width: 100%;">⛔ MARQUER P3 PÉRIMÉ</button>
+            <p id="infoApresPerime" style="display: none; margin-top: 12px; padding: 12px; background: #fee2e2; border-radius: 8px; font-size: 13px; color: #991b1b;">ℹ️ <strong>Après PÉRIMÉ :</strong> Ce P3 sera marqué à détruire (gestion dans une autre page).</p>
+            <p id="infoApresValidation" style="display: none; margin-top: 12px; padding: 12px; background: #fef3c7; border-radius: 8px; font-size: 13px; color: #92400e;">ℹ️ <strong>Après validation :</strong> Ce P3 est <strong>prêt pour production</strong> (stock frigo) et peut servir de source (LC / souches internes).</p>
+          </div>
+
+          <div class="timeline-container">
+            <h5>⏱️ Suivi simplifié</h5>
+            <p style="margin:0 0 12px;color:#666;font-size:13px;">Affichage limité au jour courant et aux jours déjà traités.</p>
+            <div class="timeline-days" id="timeline">
+              <div class="timeline-line"></div>
+            </div>
+          </div>
+
+          <div id="journalEntries"></div>
+
+          <div class="save-all-section" style="display:none;">
+            <h4>💾 Fin du traitement</h4>
+            <p style="margin-bottom:15px; font-size:14px;">
+              Sauvegarde finale masquée : chaque jour est enregistré directement depuis son bloc.
+            </p>
+          </div>
+
+          <button class="button-primary" style="background:#6c757d !important; margin-top:20px;" onclick="window.location.href='admin-isolement.html'">
+            ← Retour à l'isolement
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script
+  src="/js/media-avif-upload.js?v=20260816-3"
+  onload="console.log('✅ Fichier AVIF téléchargé')"
+  onerror="console.error('❌ Fichier AVIF impossible à télécharger')">
+</script>
+
+  <script>
+    // ==================================================
+    // CONFIGURATION API
+    // ==================================================
+    const API_URL = window.location.origin + "/api";
+
+    // ==================================================
+    // VARIABLES GLOBALES
+    // ==================================================
+    let currentBox = null;
+    let currentCycle = null;
+    let observations = [];
+    let alertes = [];
+    let currentIsoId = null;
+    let currentPetriId = null;
+    let editingTreatedDay = null;
+
+    const QUESTIONS = [
+      { id: 'q1', field: 'q1_croissance_visible', text: 'Croissance mycélienne visible', note: 4 },
+      { id: 'q2', field: 'q2_colonisation_complete', text: 'Colonisation complète de la gélose', note: 5 },
+      { id: 'q3', field: 'q3_absence_contamination', text: 'Absence de contamination', note: 5 },
+      { id: 'q4', field: 'q4_mycelium_blanc_dense', text: 'Mycélium blanc et dense', note: 3 },
+      { id: 'q5', field: 'q5_odeur_caracteristique', text: 'Odeur caractéristique (agréable)', note: 3 }
+    ];
+
+    const REFERENCE_IMAGE = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgZmlsbD0iI2YwZjBmMCIvPjx0ZXh0IHg9IjUwJSIgeT0iNDAlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTgiIGZpbGw9IiM2NjYiIHRleHQtYW5jaG9yPSJtaWRkbGUiPvCfjI8gSU1BR0UgREUgUsOJRsOJUkVOQ0U8L3RleHQ+PHRleHQgeD0iNTAlIiB5PSI1NSUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+TXljw6lsaXVtIGRlIHLDqWbDqXJlbmNlPC90ZXh0Pjx0ZXh0IHg9IjUwJSIgeT0iNjUlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTIiIGZpbGw9IiNiYmIiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkNvbXBhcmV6IGF2ZWMgdm90cmUgcGhvdG88L3RleHQ+PC9zdmc+';
+
+    // ==================================================
+    // INITIALISATION
+    // ==================================================
+    document.addEventListener('DOMContentLoaded', async function() {
+      console.log('🚀 Initialisation du journal d\'isolement');
+
+      const params = new URLSearchParams(window.location.search);
+      const isoId = params.get('iso');
+      const petriId = params.get('petri');
+      currentIsoId = isoId;
+      currentPetriId = petriId;
+
+      if (!isoId || !petriId) {
+        alert('⚠️ Paramètres manquants. Redirection...');
+        window.location.href = 'admin-isolement.html';
+        return;
+      }
+
+      const boxId = `ISO-${isoId}-P${petriId}`;
+      console.log('📦 Chargement boîte:', boxId);
+
+      await loadJournalData(boxId);
+    });
+
+    // ==================================================
+    // CHARGEMENT DES DONNÉES DEPUIS L'API
+    // ==================================================
+    async function loadJournalData(boxId) {
+      try {
+        console.log(`📡 Appel API: GET /journal/${boxId}`);
+
+        const response = await fetch(`${API_URL}/journal/${boxId}`);
+
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+
+        const result = await response.json();
+
+        if (!result.success) {
+          throw new Error(result.error || 'Erreur inconnue');
+        }
+
+        console.log('✅ Données reçues:', result.data);
+
+        // Stocker les données
+        currentBox = result.data.boite;
+        observations = result.data.observations;
+        alertes = result.data.alertes;
+
+        currentCycle = {
+          cycleDuration: currentBox.cycle_duree_jours,
+          optimalStart: currentBox.fenetre_optimale_debut,
+          optimalEnd: currentBox.fenetre_optimale_fin
+        };
+
+        // Afficher l'interface
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('content').style.display = 'block';
+
+        // Remplir l'interface
+        updateHeader();
+        createTimeline();
+        createJournalEntries();
+        showAlertes();
+        await ensurePhaseAndStatus();
+        updateActionButtons(); // ✅ Boutons Piquage / Validation
+
+      } catch (error) {
+        console.error('❌ Erreur chargement:', error);
+        document.getElementById('loading').innerHTML = `
+          <h4>❌ Erreur de chargement</h4>
+          <p>${error.message}</p>
+          <p style="color:#666; font-size:12px;">Vérifiez que le backend est démarré sur la même adresse</p>
+          <button class="button-primary" onclick="location.reload()">🔄 Réessayer</button>
+        `;
+      }
+    }
+
+    
+    // ==================================================
+    // RÉCUPÉRER PHASE / STATUS SI ABSENT (compat backend)
+    // ==================================================
+    async function ensurePhaseAndStatus() {
+      if (!currentBox) return;
+      if (currentBox.phase !== undefined && currentBox.phase !== null) return;
+
+      // Fallback: récupérer via endpoint petri si disponible
+      try {
+        const resp = await fetch(`${API_URL}/petris/${currentPetriId}`);
+        if (!resp.ok) return;
+        const data = await resp.json();
+        if (data && data.success && data.data) {
+          currentBox.phase = data.data.phase;
+          currentBox.status = data.data.status;
+        }
+      } catch (_) {
+        // Ignore fallback errors
+      }
+    }
+
+// ==================================================
+    // MISE À JOUR DE L'EN-TÊTE
+    // ==================================================
+    function updateHeader() {
+      document.getElementById('boxTitle').textContent = currentBox.id_boite;
+      document.getElementById('boxId').textContent = currentBox.code_boite;
+      document.getElementById('species').textContent = currentBox.espece;
+      document.getElementById('cycle').textContent = `J0 → J${currentCycle.cycleDuration}`;
+      document.getElementById('currentDay').textContent = `J${currentBox.jour_actuel}`;
+      document.getElementById('optimalWindow').textContent =
+        currentCycle.optimalStart === currentCycle.optimalEnd
+          ? `J${currentCycle.optimalStart}`
+          : `J${currentCycle.optimalStart}-J${currentCycle.optimalEnd}`;
+      document.getElementById('startDate').textContent = new Date(currentBox.date_debut).toLocaleDateString('fr-FR');
+    }
+
+    // ==================================================
+    // AFFICHER LES ALERTES
+    // ==================================================
+    function showAlertes() {
+      if (alertes && alertes.length > 0) {
+        const list = document.getElementById('untreatedDaysList');
+        list.innerHTML = '';
+        alertes.forEach(alerte => {
+          const li = document.createElement('li');
+          li.textContent = `Jour ${alerte.jour_cycle} (${new Date(alerte.date_observation).toLocaleDateString('fr-FR')}) - Non traité`;
+          list.appendChild(li);
+        });
+        document.getElementById('alertUntreated').classList.add('show');
+      }
+    }
+
+    // ==================================================
+    // CRÉER LA TIMELINE
+    // ==================================================
+    function createTimeline() {
+      const timeline = document.getElementById('timeline');
+      timeline.innerHTML = '';
+
+      const currentDay = Number(currentBox.jour_actuel || 0);
+      const daysToShow = [];
+
+      observations
+        .filter(o => o && o.traite)
+        .map(o => Number(o.jour_cycle))
+        .filter(day => Number.isFinite(day) && day !== currentDay)
+        .sort((a, b) => a - b)
+        .forEach(day => daysToShow.push(day));
+
+      daysToShow.push(currentDay);
+
+      if (!daysToShow.length) {
+        timeline.innerHTML = '<p style="margin:0;color:#666;">Aucun jour traité pour le moment.</p>';
+        return;
+      }
+
+      daysToShow.forEach(day => {
+        const obs = observations.find(o => Number(o.jour_cycle) === Number(day));
+        const isCurrent = day === currentDay;
+        const isTreated = obs && obs.traite;
+        const isOptimal = day >= currentCycle.optimalStart && day <= currentCycle.optimalEnd;
+
+        const dayContainer = document.createElement('div');
+        dayContainer.className = 'timeline-day';
+
+        const marker = document.createElement('div');
+        marker.className = 'day-marker';
+        marker.textContent = `J${day}`;
+
+        if (isTreated) marker.classList.add('past');
+        if (isCurrent) marker.classList.add('current');
+        if (isOptimal) marker.classList.add('optimal');
+
+        dayContainer.appendChild(marker);
+
+        const status = document.createElement('div');
+        status.className = isOptimal ? 'day-status optimal' : 'day-status';
+        status.textContent = isCurrent ? 'Jour courant' : 'Traité';
+        dayContainer.appendChild(status);
+
+        timeline.appendChild(dayContainer);
+      });
+    }
+
+    // ==================================================
+    // CRÉER LES ENTRÉES DU JOURNAL
+    // ==================================================
+    function createJournalEntries() {
+      const container = document.getElementById('journalEntries');
+      container.innerHTML = '';
+
+      const currentDay = Number(currentBox.jour_actuel || 0);
+      const currentObs = observations.find(o => Number(o.jour_cycle) === currentDay);
+
+      // 1) Le jour courant reste en premier pour enregistrer sans descendre.
+      container.appendChild(createDayEntry(currentDay, currentObs));
+
+      // 2) Les anciens jours NON traités restent visibles pour pouvoir les compléter.
+      const untreatedPastDays = [];
+      for (let d = 0; d < currentDay; d++) {
+        const obs = observations.find(o => Number(o.jour_cycle) === d);
+        if (!obs || !obs.traite) untreatedPastDays.push({ day: d, obs: obs || null });
+      }
+
+      if (untreatedPastDays.length) {
+        const title = document.createElement('h5');
+        title.style.margin = '25px 0 12px';
+        title.style.color = '#856404';
+        title.textContent = '⚠️ Jours non traités à compléter';
+        container.appendChild(title);
+
+        untreatedPastDays.forEach(item => {
+          container.appendChild(createDayEntry(item.day, item.obs));
+        });
+      }
+
+      // 3) Les jours déjà traités sont gardés en historique résumé.
+      const treatedDays = observations
+        .filter(o => o && o.traite && Number(o.jour_cycle) !== currentDay)
+        .sort((a, b) => Number(a.jour_cycle) - Number(b.jour_cycle));
+
+      if (treatedDays.length) {
+        const title = document.createElement('h5');
+        title.style.margin = '25px 0 12px';
+        title.style.color = '#1f7a41';
+        title.textContent = '✅ Jours déjà traités';
+        container.appendChild(title);
+
+        treatedDays.forEach(obs => {
+          const day = Number(obs.jour_cycle);
+          container.appendChild(createDayEntry(day, obs));
+        });
+      }
+    }
+
+
+    // ==================================================
+    // MODIFIER UN JOUR DÉJÀ TRAITÉ
+    // ==================================================
+    function modifierJour(day) {
+      editingTreatedDay = Number(day);
+      createJournalEntries();
+      setTimeout(function() {
+        const entry = document.getElementById('entry-' + day);
+        if (entry) entry.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 80);
+    }
+    window.modifierJour = modifierJour;
+
+    function createDayEntry(day, obs) {
+      const entry = document.createElement('div');
+      entry.className = 'journal-entry';
+      entry.id = `entry-${day}`;
+
+      const isCurrent = day === currentBox.jour_actuel;
+      const isPast = day < currentBox.jour_actuel;
+      const isFuture = day > currentBox.jour_actuel;
+      const isTreated = obs && obs.traite;
+
+      if (isCurrent) entry.classList.add('active');
+      if (isFuture) entry.classList.add('disabled');
+      if (isPast && !isTreated) entry.classList.add('untreated');
+
+      let badge = '';
+      if (isCurrent) badge = '<span class="entry-badge active">📅 AUJOURD\'HUI</span>';
+      else if (isTreated) badge = '<span class="entry-badge treated">✅ Traité</span>';
+      else if (isPast) badge = '<span class="entry-badge untreated">⚠️ Non traité</span>';
+
+      const dateStr = new Date(new Date(currentBox.date_debut).getTime() + day*86400000).toLocaleDateString('fr-FR');
+
+      if (isTreated && editingTreatedDay === Number(day)) {
+        entry.innerHTML = createActiveEntry(day, dateStr, badge, obs);
+      } else if (isCurrent || (isPast && !isTreated)) {
+        entry.innerHTML = createActiveEntry(day, dateStr, badge, obs);
+      } else if (isTreated) {
+        entry.innerHTML = createTreatedEntry(day, dateStr, badge, obs);
+      } else {
+        entry.innerHTML = createFutureEntry(day, dateStr);
+      }
+
+      return entry;
+    }
+
+    function getReferenceImageForDay(day) {
+      // Logique corrigée : référence exacte du groupe biologique
+      // même isolation + même phase P + même jour J.
+      // Aucune reprise automatique J4 -> J5/J6.
+      const obsExact = observations.find(o => Number(o.jour_cycle) === Number(day));
+      if (obsExact && obsExact.reference_image_url) return obsExact.reference_image_url;
+
+      if (currentBox && currentBox.reference_images_by_day) {
+        const ref = currentBox.reference_images_by_day[String(Number(day))];
+        if (ref && ref.file_url) return ref.file_url;
+      }
+
+      // Secours strict : uniquement si la photo du même jour est elle-même référence.
+      if (obsExact && obsExact.is_reference && obsExact.image_url) return obsExact.image_url;
+
+      return REFERENCE_IMAGE;
+    }
+
+    function createManipulationControls(day, obs) {
+      const manipulation = obs && obs.manipulation_type ? obs.manipulation_type : 'Observation quotidienne';
+      const pickable = obs && obs.is_pickable ? 'checked' : '';
+      return `
+        <div class="questions-section">
+          <h5>🧪 Type de manipulation</h5>
+          <select id="manipulation-${day}" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:8px;">
+            <option value="Observation quotidienne" ${manipulation === 'Observation quotidienne' ? 'selected' : ''}>Observation quotidienne</option>
+            <option value="Piquage préparé" ${manipulation === 'Piquage préparé' ? 'selected' : ''}>Piquage préparé</option>
+            <option value="Piquage réalisé" ${manipulation === 'Piquage réalisé' ? 'selected' : ''}>Piquage réalisé</option>
+            <option value="Stockage frigo" ${manipulation === 'Stockage frigo' ? 'selected' : ''}>Stockage frigo</option>
+            <option value="Contamination suspectée" ${manipulation === 'Contamination suspectée' ? 'selected' : ''}>Contamination suspectée</option>
+            <option value="Autre" ${manipulation === 'Autre' ? 'selected' : ''}>Autre</option>
+          </select>
+          <div class="question-item" style="margin-top:12px; background:#eff6ff; border-left:4px solid #3498db;">
+            <label>
+              <input type="checkbox" id="pickable-${day}" ${pickable}>
+              Mycélium piquable aujourd'hui
+            </label>
+            <div class="question-note">À cocher seulement si une zone blanche, propre et prélevable est visible.</div>
+          </div>
+        </div>
+      `;
+    }
+
+    function createActiveEntry(day, dateStr, badge, obs) {
+      const score = obs ? obs.score_questions : 0;
+      const rating = obs ? obs.note_evolution : 10;
+      const notes = obs ? obs.notes_observation : '';
+      const refImage = getReferenceImageForDay(day);
+      const hasCurrentImage = obs && obs.image_url;
+      const currentPreview = hasCurrentImage
+        ? `<img src="${obs.image_url}" style="max-width:100%; border-radius:6px;"><p style="font-size:11px;color:#666;">Photo déjà enregistrée</p>${obs.album_photo_id ? `<button type="button" class="button-primary" style="background:#c0392b!important;margin-top:8px;" onclick="deletePetriJournalPhoto(${day},${Number(obs.album_photo_id)})">🗑️ Supprimer la photo</button>` : ''}`
+        : 'Aucune photo';
+
+      const questionsHtml = day <= 2 ? '' : `
+        <div class="questions-section">
+          <h5>🔬 Évaluation mycologique (cochez ce qui s'applique)</h5>
+          ${QUESTIONS.map(q => `
+            <div class="question-item">
+              <label>
+                <input type="checkbox"
+                       id="q${day}_${q.id}"
+                       data-note="${q.note}"
+                       ${obs && obs[q.field] ? 'checked' : ''}
+                       onchange="updateScore(${day})">
+                ${q.text}
+              </label>
+              <div class="question-note">+${q.note} points</div>
+            </div>
+          `).join('')}
+          <div class="total-score" id="score-${day}">
+            Score total : <span id="score-value-${day}">${score}</span> / 20 points
+          </div>
+        </div>`;
+
+      return `
+        <div class="entry-header">
+          <span>📄 ${Number(day) === Number(currentBox.jour_actuel || 0) ? 'Jour courant' : 'Jour non traité'} J${day} - ${dateStr}</span>
+          ${badge}
+        </div>
+
+        ${createManipulationControls(day, obs)}
+        ${questionsHtml}
+
+        <div class="comparison-section">
+          <h5>📸 Comparaison visuelle avec photo de référence évolutive</h5>
+          <div class="images-grid">
+            <div class="image-box">
+              <h6>🖼️ Référence commune<br><small>même isolation + même phase P + même jour J${day}</small></h6>
+              <img src="${refImage}" alt="Référence">
+              <p style="font-size:11px; color:#666; margin:0;">Meilleure photo du groupe : isolation + phase + jour. Pas de reprise d’un ancien jour.</p>
+            </div>
+            <div class="image-box">
+              <h6>📷 Photo du jour<br><small>stockée dans l’album de cette boîte</small></h6>
+              <input type="file"
+                     id="photo-${day}"
+                     accept="image/*"
+                     style="display:none"
+                     onchange="previewImage(${day}, this)">
+              <div id="preview-${day}" style="min-height:150px; display:flex; align-items:center; justify-content:center; color:#999; flex-direction:column;">
+                ${currentPreview}
+              </div>
+              <button class="image-upload-btn" onclick="document.getElementById('photo-${day}').click()">
+                📸 Ajouter à l’album / remplacer la photo du jour
+              </button>
+            </div>
+          </div>
+
+          <div class="rating-section">
+            <h6>⭐ Notation de l'évolution (0-20)</h6>
+            <p class="rating-guide">La photo est enregistrée dans l’album de cette boîte. Si sa note est supérieure à 10, elle devient la référence commune du groupe exact : même isolation + même phase + même jour.</p>
+            <input type="range"
+                   class="rating-slider"
+                   id="rating-${day}"
+                   min="0"
+                   max="20"
+                   value="${rating}"
+                   oninput="updateRating(${day}, this.value)">
+            <div class="rating-display" id="rating-display-${day}">${rating} / 20</div>
+          </div>
+        </div>
+
+        <div>
+          <label style="font-weight:600; display:block; margin-bottom:8px;">📝 Remarque / observation</label>
+          <textarea id="notes-${day}" placeholder="Type de manipulation, remarque, contamination, décision...">${notes}</textarea>
+        </div>
+
+        <button class="button-primary" onclick="saveDay(${day})">
+          💾 Enregistrer le traitement de J${day}
+        </button>
+      `;
+    }
+
+    function createTreatedEntry(day, dateStr, badge, obs) {
+      const isRef = obs.is_reference ? '<span style="color:#2fa35a; font-weight:700;"> — Photo référence</span>' : '';
+      const pic = obs.image_url ? `<div style="margin-top:10px;"><img src="${obs.image_url}" style="max-width:220px; border-radius:8px; border:1px solid #ddd;">${obs.album_photo_id ? `<br><button type="button" class="button-primary" style="background:#c0392b!important;margin-top:8px;max-width:220px;" onclick="deletePetriJournalPhoto(${day},${Number(obs.album_photo_id)})">🗑️ Supprimer la photo</button>` : ''}</div>` : '';
+      const pickable = obs.is_pickable ? 'Oui' : 'Non';
+      const manipulation = obs.manipulation_type || 'Observation quotidienne';
+      return `
+        <details class="journal-entry-summary">
+          <summary style="cursor:pointer; font-weight:700; color:#1f7a41;">
+            ✅ Jour ${day} traité - ${dateStr} — ${manipulation} — Score ${obs.score_questions || 0}/20 — Note ${obs.note_evolution || 0}/20${isRef}
+          </summary>
+          <div style="margin-top:12px; background:white; padding:12px; border-radius:8px;">
+            <p><strong>Type de manipulation :</strong> ${manipulation}</p>
+            <p><strong>Mycélium piquable :</strong> ${pickable}</p>
+            <p><strong>Score :</strong> ${obs.score_questions || 0} / 20 points</p>
+            <p><strong>Note évolution :</strong> ${obs.note_evolution || 0} / 20</p>
+            <p><strong>Opérateur :</strong> ${obs.operator_name || '—'}</p>
+            <p><strong>Remarque :</strong> ${obs.notes_observation || 'Aucune remarque'}</p>
+            ${pic}
+  
+          <button type="button"
+                  class="button-primary"
+                  style="background:#3498db !important; margin-top:12px;"
+                  onclick="window.modifierJour(${day})">
+            ✏️ Modifier / corriger
+          </button>
+        </div>
+        </details>
+      `;
+    }
+
+    function createFutureEntry(day, dateStr) {
+      return `
+        <div class="entry-header">
+          <span>📍 Jour ${day} - ${dateStr}</span>
+        </div>
+        <p style="color:#999; text-align:center; padding:20px;">
+          Cette entrée sera disponible le ${dateStr}
+        </p>
+      `;
+    }
+
+    window.deletePetriJournalPhoto = async function(day, photoId) {
+      if (!photoId || !confirm(`Supprimer définitivement la photo de J${day} ?\n\nSi elle sert de référence commune, cette référence sera également retirée.`)) return;
+      try {
+        const response = await fetch(`${API_URL}/album-photos/${photoId}`, { method: 'DELETE' });
+        const result = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(result.error || 'Suppression impossible');
+        await loadJournalData(currentBox.id_boite);
+        if (result.pending) return alert('⏳ Demande envoyée à un administrateur. La photo reste visible jusqu’à son approbation.');
+        if (result.storage_warning) alert('Photo retirée du journal, mais le fichier distant n’a pas pu être supprimé : ' + result.storage_warning);
+      } catch (e) {
+        alert('❌ ' + (e.message || e));
+      }
+    };
+
+    // ==================================================
+    // FONCTIONS UTILITAIRES
+    // ==================================================
+    function updateScore(day) {
+      let total = 0;
+      QUESTIONS.forEach(q => {
+        const checkbox = document.getElementById(`q${day}_${q.id}`);
+        if (checkbox && checkbox.checked) {
+          total += q.note;
+        }
+      });
+      document.getElementById(`score-value-${day}`).textContent = total;
+    }
+
+    function updateRating(day, value) {
+      document.getElementById(`rating-display-${day}`).textContent = `${value} / 20`;
+    }
+
+    function previewImage(day, input) {
+      const file = input.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          document.getElementById(`preview-${day}`).innerHTML =
+            `<img src="${e.target.result}" style="max-width:100%; border-radius:6px;">`;
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+
+
+
+async function ensureAvifModule() {
+  if (typeof window.uploadLabImage === 'function') {
+    return true;
+  }
+
+  console.warn(
+    'Module AVIF absent. Tentative de chargement...'
+  );
+
+  await new Promise((resolve, reject) => {
+
+    const existing =
+      document.querySelector(
+        'script[data-avif-module="1"]'
+      );
+
+    if (existing) {
+      existing.remove();
+    }
+
+    const script =
+      document.createElement('script');
+
+    script.src =
+      '/js/media-avif-upload.js?v=' +
+      Date.now();
+
+    script.async = true;
+
+    script.dataset.avifModule =
+      '1';
+
+    script.onload = () => {
+      if (
+        typeof window.uploadLabImage ===
+        'function'
+      ) {
+        resolve();
+      } else {
+        reject(
+          new Error(
+            'Le fichier AVIF est chargé mais uploadLabImage est absent.'
+          )
+        );
+      }
+    };
+
+    script.onerror = () => {
+      reject(
+        new Error(
+          'Impossible de charger /js/media-avif-upload.js'
+        )
+      );
+    };
+
+    document.head.appendChild(
+      script
+    );
+
+  });
+
+  return (
+    typeof window.uploadLabImage ===
+    'function'
+  );
+}
+
+
+
+
+
+
+
+
+
+
+
+
+    // ==================================================
+    // SAUVEGARDER UNE OBSERVATION
+    // ==================================================
+    async function saveDay(day) {
+      try {
+        // Photo obligatoire seulement si aucune photo n'existe déjà pour ce jour.
+        const photoInput = document.getElementById(`photo-${day}`);
+        const existingObs = observations.find(o => Number(o.jour_cycle) === Number(day));
+        if (!photoInput.files[0] && !(existingObs && existingObs.image_url)) {
+          alert('⚠️ Veuillez ajouter une photo avant de valider.');
+          return;
+        }
+
+        // Collecter les données
+        const data = {
+          id_boite: currentBox.id_boite,
+          jour_cycle: day,
+          q1: document.getElementById(`q${day}_q1`)?.checked || false,
+          q2: document.getElementById(`q${day}_q2`)?.checked || false,
+          q3: document.getElementById(`q${day}_q3`)?.checked || false,
+          q4: document.getElementById(`q${day}_q4`)?.checked || false,
+          q5: document.getElementById(`q${day}_q5`)?.checked || false,
+          note_evolution: parseInt(document.getElementById(`rating-${day}`).value, 10),
+          manipulation_type: document.getElementById(`manipulation-${day}`)?.value || 'Observation quotidienne',
+          is_pickable: document.getElementById(`pickable-${day}`)?.checked || false,
+          notes: document.getElementById(`notes-${day}`).value,
+          operateur: document.getElementById('admin-username').textContent
+        };
+
+        console.log(`💾 Sauvegarde J${day}:`, data);
+
+        // Sauvegarder l'observation
+        const response = await fetch(`${API_URL}/journal/observation`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+
+        const result = await response.json();
+
+        if (!result.success) {
+          throw new Error(result.error || 'Erreur sauvegarde');
+        }
+
+        console.log('✅ Observation sauvegardée:', result);
+
+        // Upload hybride: navigateur -> Supabase temporaire -> Edge Function -> AVIF final.
+        // Ensuite on enregistre uniquement l'URL AVIF dans le système album/référence existant.
+        if (photoInput.files[0]) {
+          await ensureAvifModule();
+
+if (
+  typeof window.uploadLabImage !==
+  'function'
+) {
+  throw new Error(
+    'Module AVIF impossible à charger'
+  );
+}
+
+const converted =
+  await window.uploadLabImage(
+            photoInput.files[0],
+            'petri',
+            status => {
+              const preview = document.getElementById(`preview-${day}`);
+              if (preview) preview.innerHTML = `<div style="padding:20px;color:#666;font-weight:700;">${status}</div>`;
+            },
+            {
+              entityId: Number(currentPetriId)
+            }
+          );
+
+          if (!converted.file_url) {
+            throw new Error('Conversion Petri AVIF sans URL');
+          }
+
+          const imgResponse = await fetch(`${API_URL}/journal/image`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              id_boite: currentBox.id_boite,
+              jour_cycle: day,
+              id_observation: result.data.id_observation,
+              type_image: 'actuelle',
+              operateur: data.operateur,
+              file_url: converted.file_url
+            })
+          });
+
+          const imgResult = await imgResponse.json().catch(() => ({}));
+          if (!imgResponse.ok || !imgResult.success) {
+            throw new Error(imgResult.error || `Erreur enregistrement image (${imgResponse.status})`);
+          }
+
+          console.log('✅ Image Petri AVIF enregistrée:', imgResult);
+          if (imgResult.data && imgResult.data.album_photo_id) {
+            console.log('📁 Photo ajoutée à l’album:', imgResult.data.album_photo_id);
+          }
+          if (imgResult.data && imgResult.data.is_reference) {
+            alert('🏆 Cette photo AVIF est ajoutée à l’album et devient la référence commune du groupe.');
+          }
+        }
+
+        alert(`✅ Jour ${day} sauvegardé avec succès !`);
+
+        // Recharger les données
+        await loadJournalData(currentBox.id_boite);
+
+      } catch (error) {
+        console.error('❌ Erreur sauvegarde:', error);
+        alert(`❌ Erreur: ${error.message}`);
+      }
+    }
+
+    // ==================================================
+    // FINALISER LE JOURNAL
+    // ==================================================
+    async function saveFinalJournal() {
+      if (!confirm('📁 Voulez-vous sauvegarder définitivement tout le journal ?\n\nCette action finalisera le traitement.')) {
+        return;
+      }
+
+      try {
+        console.log('📁 Finalisation du journal');
+
+        const response = await fetch(`${API_URL}/journal/finaliser`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            id_boite: currentBox.id_boite,
+            operateur: document.getElementById('admin-username').textContent
+          })
+        });
+
+        const result = await response.json();
+
+        if (!result.success) {
+          throw new Error(result.error || 'Erreur finalisation');
+        }
+
+        console.log('✅ Journal finalisé:', result);
+
+        alert('✅ Journal sauvegardé avec succès !\n\nToutes les données ont été enregistrées.');
+
+        window.location.href = 'admin-isolement.html';
+
+      } catch (error) {
+        console.error('❌ Erreur finalisation:', error);
+        alert(`❌ Erreur: ${error.message}`);
+      }
+    }
+
+    
+    // ===================================================================
+    // ✅ ACTIONS : PIQUAGE (P1/P2) + VALIDATION (P3)
+    // ===================================================================
+
+    function isInOptimalWindow() {
+      if (!currentBox || !currentCycle) return false;
+      const j = currentBox.jour_actuel;
+      const s = currentCycle.optimalStart;
+      const e = currentCycle.optimalEnd;
+      return j >= s && j <= e;
+    }
+
+    function isCycleTermine() {
+      if (!currentBox || !currentCycle) return false;
+      // Fin de cycle atteinte quand jour_actuel >= durée du cycle (ex: J10 pour Pleurotus)
+      return Number(currentBox.jour_actuel) >= Number(currentCycle.cycleDuration);
+    }
+
+    function updateActionButtons() {
+      const piq = document.getElementById('btnPiquageContainer');
+      const val = document.getElementById('btnValiderP3Container');
+
+      if (!currentBox || !currentCycle) {
+        if (piq) piq.style.display = 'none';
+        if (val) val.style.display = 'none';
+        return;
+      }
+
+      const inWin = isInOptimalWindow();
+      const cycleTermine = isCycleTermine();
+      const phase = Number(currentBox.phase);
+      const statusCalc = String(currentBox.status_calc || '').toUpperCase();
+
+      // Remplir infos
+      const j = Number(currentBox.jour_actuel);
+      const s = Number(currentCycle.optimalStart);
+      const e = Number(currentCycle.optimalEnd);
+
+      const winTxt = (s === e) ? `J${s}` : `J${s} - J${e}`;
+
+      const piqJour = document.getElementById('PiquageJourActuel');
+      const piqFen = document.getElementById('PiquageFenetreOptimale');
+      if (piqJour) piqJour.textContent = `J${j}`;
+      if (piqFen) piqFen.textContent = winTxt;
+
+      const p3Jour = document.getElementById('P3JourActuel');
+      const p3Fen = document.getElementById('P3FenetreOptimale');
+      if (p3Jour) p3Jour.textContent = `J${j}`;
+      if (p3Fen) p3Fen.textContent = winTxt;
+
+      // Par défaut, cacher
+      if (piq) piq.style.display = 'none';
+      if (val) val.style.display = 'none';
+
+      // =========================
+      // P1 / P2 : piquage quand le journal indique mycélium piquable.
+      // =========================
+      if ((phase === 1 || phase === 2) && statusCalc === 'PRET_A_PIQUER') {
+        if (piq) {
+          piq.style.display = 'block';
+          const info = document.getElementById('infoApresPiquage');
+          if (info) info.style.display = 'none';
+
+          const btn = document.getElementById('btnPiquage');
+          if (btn) {
+            btn.disabled = false;
+            btn.style.background = '#3498db';
+            btn.style.cursor = 'pointer';
+            btn.textContent = '🧫 PIQUER (CRÉER LA BOÎTE SUIVANTE)';
+          }
+        }
+        return;
+      }
+
+      // =========================
+      // P3 : décision MANUELLE à la FIN du cycle (stock frigo)
+      // =========================
+      if (phase === 3 && cycleTermine) {
+        if (val) val.style.display = 'block';
+
+        const st = String(currentBox.status || '').toUpperCase();
+        const alreadyValidated = (st === 'VALIDE' || st === 'VALIDÉ' || st === 'VALIDÉ_P3');
+        const alreadyPerime = (st === 'PERIME' || st === 'PÉRIMÉ' || st === 'PERIMEE' || st === 'PERIMÉE');
+        const alreadyUsed = (st === 'UTILISE' || st === 'UTILISÉ');
+
+        if (alreadyValidated) {
+          setP3ValidatedUI();
+        } else if (alreadyPerime) {
+          setP3PerimeUI();
+        } else if (alreadyUsed) {
+          setP3UsedUI();
+        } else {
+          resetP3DecisionUI();
+        }
+        return;
+      }
+
+      // Hors règles : aucun bouton (on laisse le journal consultable)
+      return;
+    }
+
+
+
+    function setP3ValidatedUI() {
+      const badge = document.getElementById('statutP3Badge');
+      if (badge) {
+        badge.textContent = '✅ P3 VALIDÉ';
+        badge.style.display = 'inline-block';
+        badge.style.background = '#dcfce7';
+        badge.style.color = '#166534';
+      }
+
+      const btnVal = document.getElementById('btnValiderP3');
+      if (btnVal) {
+        btnVal.disabled = true;
+        btnVal.style.background = '#9ca3af';
+        btnVal.style.cursor = 'not-allowed';
+        btnVal.textContent = '✓ P3 DÉJÀ VALIDÉ';
+      }
+
+      const btnPer = document.getElementById('btnPerimerP3');
+      if (btnPer) {
+        btnPer.disabled = true;
+        btnPer.style.background = '#9ca3af';
+        btnPer.style.cursor = 'not-allowed';
+        btnPer.textContent = '⛔ DÉSACTIVÉ (P3 VALIDÉ)';
+      }
+
+      const infoVal = document.getElementById('infoApresValidation');
+      if (infoVal) infoVal.style.display = 'block';
+      const infoPer = document.getElementById('infoApresPerime');
+      if (infoPer) infoPer.style.display = 'none';
+    }
+
+    function setP3PerimeUI() {
+      const badge = document.getElementById('statutP3Badge');
+      if (badge) {
+        badge.textContent = '⛔ P3 PÉRIMÉ';
+        badge.style.display = 'inline-block';
+        badge.style.background = '#fee2e2';
+        badge.style.color = '#991b1b';
+      }
+
+      const btnVal = document.getElementById('btnValiderP3');
+      if (btnVal) {
+        btnVal.disabled = true;
+        btnVal.style.background = '#9ca3af';
+        btnVal.style.cursor = 'not-allowed';
+        btnVal.textContent = '✅ DÉSACTIVÉ (P3 PÉRIMÉ)';
+      }
+
+      const btnPer = document.getElementById('btnPerimerP3');
+      if (btnPer) {
+        btnPer.disabled = true;
+        btnPer.style.background = '#9ca3af';
+        btnPer.style.cursor = 'not-allowed';
+        btnPer.textContent = '⛔ P3 DÉJÀ PÉRIMÉ';
+      }
+
+      const infoVal = document.getElementById('infoApresValidation');
+      if (infoVal) infoVal.style.display = 'none';
+      const infoPer = document.getElementById('infoApresPerime');
+      if (infoPer) infoPer.style.display = 'block';
+    }
+
+    function setP3UsedUI() {
+      const badge = document.getElementById('statutP3Badge');
+      if (badge) {
+        badge.textContent = '⚙️ P3 UTILISÉ';
+        badge.style.display = 'inline-block';
+        badge.style.background = '#e5e7eb';
+        badge.style.color = '#374151';
+      }
+
+      const btnVal = document.getElementById('btnValiderP3');
+      if (btnVal) {
+        btnVal.disabled = true;
+        btnVal.style.background = '#9ca3af';
+        btnVal.style.cursor = 'not-allowed';
+        btnVal.textContent = '✅ DÉSACTIVÉ (UTILISÉ)';
+      }
+
+      const btnPer = document.getElementById('btnPerimerP3');
+      if (btnPer) {
+        btnPer.disabled = true;
+        btnPer.style.background = '#9ca3af';
+        btnPer.style.cursor = 'not-allowed';
+        btnPer.textContent = '⛔ DÉSACTIVÉ (UTILISÉ)';
+      }
+
+      const infoVal = document.getElementById('infoApresValidation');
+      if (infoVal) infoVal.style.display = 'none';
+      const infoPer = document.getElementById('infoApresPerime');
+      if (infoPer) infoPer.style.display = 'none';
+    }
+
+    function resetP3DecisionUI() {
+      const badge = document.getElementById('statutP3Badge');
+      if (badge) badge.style.display = 'none';
+
+      const btnVal = document.getElementById('btnValiderP3');
+      if (btnVal) {
+        btnVal.disabled = false;
+        btnVal.style.background = '#2fa35a';
+        btnVal.style.cursor = 'pointer';
+        btnVal.textContent = '✅ VALIDER CE P3';
+      }
+
+      const btnPer = document.getElementById('btnPerimerP3');
+      if (btnPer) {
+        btnPer.disabled = false;
+        btnPer.style.background = '#c0392b';
+        btnPer.style.cursor = 'pointer';
+        btnPer.textContent = '⛔ MARQUER P3 PÉRIMÉ';
+      }
+
+      const infoVal = document.getElementById('infoApresValidation');
+      if (infoVal) infoVal.style.display = 'none';
+      const infoPer = document.getElementById('infoApresPerime');
+      if (infoPer) infoPer.style.display = 'none';
+    }
+
+// =========================
+    // Modal confirm (Valider/Annuler)
+    // =========================
+    let _confirmCb = null;
+
+    function showActionConfirm({ title, html }) {
+      const modal = document.getElementById('actionConfirmModal');
+      if (!modal) {
+        // Fallback navigateur
+        const ok = confirm(title + "\n\n" + (html || '').replace(/<[^>]+>/g, ''));
+        if (ok && typeof _confirmCb === 'function') _confirmCb();
+        return;
+      }
+      document.getElementById('actionConfirmTitle').textContent = title || 'Confirmation';
+      document.getElementById('actionConfirmBody').innerHTML = html || '';
+      modal.style.display = 'flex';
+    }
+
+    function hideActionConfirm() {
+      const modal = document.getElementById('actionConfirmModal');
+      if (modal) modal.style.display = 'none';
+      _confirmCb = null;
+    }
+
+    function confirmActionConfirm() {
+      const cb = _confirmCb;
+      hideActionConfirm();
+      if (typeof cb === 'function') cb();
+    }
+
+    // =========================
+    // Impression étiquette (sans fichier externe)
+    // =========================
+    function printLabelAuto({ boxId, phase, action }) {
+      const operator = (document.getElementById('admin-username')?.textContent || 'Admin').trim();
+      const now = new Date();
+      const when = now.toLocaleString('fr-FR');
+
+      const w = window.open('', '_blank', 'width=420,height=520');
+      if (!w) {
+        alert("⚠️ Popup bloquée : autorise les popups pour imprimer l’étiquette.");
+        return;
+      }
+
+      const safe = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+      const html = `
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8">
+<title>Étiquette</title>
+<style>
+  body{font-family:Arial, sans-serif; margin:0; padding:0;}
+  .label{width:60mm; height:40mm; padding:6mm; box-sizing:border-box; border:1px dashed #999;}
+  .h{font-size:12px; font-weight:700; margin-bottom:4px;}
+  .code{font-size:16px; font-weight:900; margin:6px 0;}
+  .meta{font-size:10px; color:#333; line-height:1.3;}
+  .small{font-size:9px; color:#555;}
+</style>
+</head>
+<body>
+  <div class="label">
+    <div class="h">Biotech.Agro</div>
+    <div class="meta"><strong>Action :</strong> ${safe(action || '')}</div>
+    <div class="code">${safe(boxId)}</div>
+    <div class="meta"><strong>Phase :</strong> P${safe(phase)}</div>
+    <div class="meta"><strong>Opérateur :</strong> ${safe(operator)}</div>
+    <div class="meta"><strong>Date :</strong> ${safe(when)}</div>
+    <div class="small">Impression auto</div>
+  </div>
+<script>
+  window.onload = function(){ setTimeout(function(){ window.print(); }, 250); };
+<\/script>
+</body></html>`;
+      w.document.open();
+      w.document.write(html);
+      w.document.close();
+    }
+
+    // =========================
+    // PIQUAGE (création P2/P3)
+    // =========================
+    async function piquerBoite() {
+      if (!currentPetriId) {
+        alert('❌ Erreur: identifiant Petri manquant');
+        return;
+      }
+      const phase = Number(currentBox?.phase);
+      const nextPhase = (phase === 1) ? 2 : (phase === 2) ? 3 : null;
+      if (!nextPhase) {
+        alert('❌ Piquage non disponible pour cette phase.');
+        return;
+      }
+
+      _confirmCb = async () => {
+        const btn = document.getElementById('btnPiquage');
+        const original = btn?.textContent || '';
+        if (btn) {
+          btn.disabled = true;
+          btn.textContent = '⏳ Création en cours...';
+          btn.style.background = '#9ca3af';
+          btn.style.cursor = 'not-allowed';
+        }
+
+        try {
+          const response = await fetch(`${API_URL}/petris/${currentPetriId}/piquer`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ operateur: (document.getElementById('admin-username')?.textContent || 'Admin').trim() })
+          });
+
+          const result = await response.json().catch(() => ({}));
+          if (!response.ok || !result.success) {
+            throw new Error(result.error || `Erreur API (${response.status})`);
+          }
+
+          // Message + impression
+          alert(`✅ Boîte P${nextPhase} créée avec succès.
+🖨️ Étiquette imprimée automatiquement.`);
+          document.getElementById('infoApresPiquage').style.display = 'block';
+
+          const label = result.label || {};
+          const newBoxId = label.boxId || result.data?.boxId || result.boxId || result.data?.id_boite;
+          if (newBoxId) {
+            printLabelAuto({ boxId: newBoxId, phase: label.phase || nextPhase, action: label.action || `Création P${nextPhase}` });
+          }
+
+          // (optionnel) proposer d'ouvrir le journal de la nouvelle boîte
+          // window.location.href = `admin-isolement-journal.html?iso=${encodeURIComponent(currentIsoId)}&petri=${encodeURIComponent(result.data?.petriId || '')}`;
+
+        } catch (err) {
+          console.error('Erreur piquage:', err);
+          alert(`❌ Erreur: ${err.message}`);
+        } finally {
+          if (btn) {
+            btn.disabled = false;
+            btn.textContent = original || '🧫 PIQUER (CRÉER LA BOÎTE SUIVANTE)';
+            btn.style.background = '#3498db';
+            btn.style.cursor = 'pointer';
+          }
+        }
+      };
+
+      showActionConfirm({
+        title: `Création P${nextPhase}`,
+        html:
+          `<p>Vous êtes sur le point de créer la boîte <strong>P${nextPhase}</strong> à partir de cette boîte.</p>` +
+          `<p>🖨️ Une étiquette sera imprimée automatiquement.</p>` +
+          `<p style="margin-top:10px; font-size:12px; color:#666;">Boîte actuelle : <strong>${currentBox?.id_boite || ''}</strong></p>`
+      });
+    }
+
+    // =========================
+    // VALIDATION P3 (une seule fois)
+    // =========================
+    async function stockerFrigo() {
+      if (!currentPetriId) return alert('❌ Identifiant Petri manquant');
+      _confirmCb = async () => {
+        try {
+          const response = await fetch(`${API_URL}/petris/${currentPetriId}/stock-frigo`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ operateur: (document.getElementById('admin-username')?.textContent || 'Admin').trim() })
+          });
+          const result = await response.json().catch(() => ({}));
+          if (!response.ok || !result.success) throw new Error(result.error || 'Erreur stockage frigo');
+          alert('✅ Boîte stockée au frigo.');
+          printLabelAuto({ boxId: result.boxId || currentBox.id_boite, phase: Number(currentBox.phase), action: 'Stockage frigo' });
+          await loadJournalData(currentBox.id_boite);
+        } catch (err) {
+          console.error(err);
+          alert('❌ Erreur: ' + err.message);
+        }
+      };
+      showActionConfirm({
+        title: 'Confirmer stockage frigo',
+        html: '<p>Confirmer le stockage au frigo de cette boîte ?</p>'
+      });
+    }
+
+    async function validerP3() {
+      if (!currentPetriId) {
+        alert('❌ Erreur: identifiant Petri manquant');
+        return;
+      }
+      if (Number(currentBox?.phase) !== 3) {
+        alert('❌ Cette boîte n’est pas un P3.');
+        return;
+      }
+
+      // Si déjà validé, stop
+      const alreadyValidated = (String(currentBox.status || '').toUpperCase() === 'VALIDE' ||
+                               String(currentBox.status || '').toUpperCase() === 'VALIDÉ' ||
+                               String(currentBox.status || '').toUpperCase() === 'VALIDÉ_P3');
+      if (alreadyValidated) {
+        alert('ℹ️ Ce P3 est déjà validé.');
+        setP3ValidatedUI();
+        return;
+      }
+
+      _confirmCb = async () => {
+        const btn = document.getElementById('btnValiderP3');
+        const originalText = btn?.textContent || '';
+        if (btn) {
+          btn.disabled = true;
+          btn.textContent = '⏳ Validation en cours...';
+          btn.style.background = '#9ca3af';
+          btn.style.cursor = 'not-allowed';
+        }
+
+        try {
+          const response = await fetch(`${API_URL}/petris/${currentPetriId}/valider-p3`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ operateur: (document.getElementById('admin-username')?.textContent || 'Admin').trim() })
+          });
+
+          const result = await response.json().catch(() => ({}));
+          if (!response.ok || !result.success) {
+            throw new Error(result.error || `Erreur API (${response.status})`);
+          }
+
+          currentBox.status = 'VALIDE';
+          alert(`✅ P3 validé avec succès.
+🖨️ Étiquette imprimée automatiquement.`);
+
+          const boxId = result.data?.boxId || result.boxId || currentBox.id_boite;
+          printLabelAuto({ boxId, phase: 3, action: 'Validation P3' });
+
+          setP3ValidatedUI();
+
+        } catch (err) {
+          console.error('Erreur validation P3:', err);
+          alert(`❌ Erreur: ${err.message}`);
+          resetP3DecisionUI();
+        } finally {
+          if (btn && !btn.disabled) {
+            btn.textContent = originalText;
+          }
+        }
+      };
+
+      showActionConfirm({
+        title: 'Validation P3',
+        html:
+          `<p>Vous êtes sur le point de <strong>valider ce P3</strong>.</p>` +
+          `<p>🖨️ Une étiquette sera imprimée automatiquement.</p>` +
+          `<p style="margin-top:10px; font-size:12px; color:#666;">Boîte : <strong>${currentBox?.id_boite || ''}</strong></p>`
+      });
+    }
+
+    // =========================
+    // PÉRIMER P3 (manuel)
+    // =========================
+    async function perimerP3() {
+      if (!currentPetriId) {
+        alert('❌ Erreur: identifiant Petri manquant');
+        return;
+      }
+      if (Number(currentBox?.phase) !== 3) {
+        alert('❌ Cette boîte n’est pas un P3.');
+        return;
+      }
+
+      const st = String(currentBox.status || '').toUpperCase();
+
+      // Déjà décidé
+      if (st === 'VALIDE' || st === 'VALIDÉ' || st === 'VALIDÉ_P3') {
+        alert('ℹ️ Ce P3 est déjà validé.');
+        setP3ValidatedUI();
+        return;
+      }
+      if (st === 'PERIME' || st === 'PÉRIMÉ' || st === 'PERIMEE' || st === 'PERIMÉE') {
+        alert('ℹ️ Ce P3 est déjà marqué PÉRIMÉ.');
+        setP3PerimeUI();
+        return;
+      }
+      if (st === 'UTILISE' || st === 'UTILISÉ') {
+        alert('ℹ️ Ce P3 est déjà utilisé.');
+        setP3UsedUI();
+        return;
+      }
+
+      _confirmCb = async () => {
+        const btn = document.getElementById('btnPerimerP3');
+        const originalText = btn?.textContent || '';
+        if (btn) {
+          btn.disabled = true;
+          btn.textContent = '⏳ Mise à jour en cours...';
+          btn.style.background = '#9ca3af';
+          btn.style.cursor = 'not-allowed';
+        }
+
+        try {
+          const response = await fetch(`${API_URL}/petris/${currentPetriId}/perimer-p3`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ operateur: (document.getElementById('admin-username')?.textContent || 'Admin').trim() })
+          });
+
+          const result = await response.json().catch(() => ({}));
+          if (!response.ok || !result.success) {
+            throw new Error(result.error || `Erreur API (${response.status})`);
+          }
+
+          currentBox.status = 'PERIME';
+          alert(`⛔ P3 marqué PÉRIMÉ.
+🖨️ Étiquette imprimée automatiquement.`);
+
+          const boxId = result.data?.boxId || result.boxId || currentBox.id_boite;
+          printLabelAuto({ boxId, phase: 3, action: 'P3 PÉRIMÉ' });
+
+          setP3PerimeUI();
+
+        } catch (err) {
+          console.error('Erreur P3 périmé:', err);
+          alert(`❌ Erreur: ${err.message}`);
+          resetP3DecisionUI();
+        } finally {
+          // L'UI sera mise à jour par reset/set ci-dessus
+          if (btn && !btn.disabled) {
+            btn.textContent = originalText;
+          }
+        }
+      };
+
+      showActionConfirm({
+        title: 'Marquer P3 PÉRIMÉ',
+        html:
+          `<p>Vous êtes sur le point de <strong>marquer ce P3 comme PÉRIMÉ</strong>.</p>` +
+          `<p>⛔ Cette action indique que le P3 sera détruit plus tard (page dédiée).</p>` +
+          `<p>🖨️ Une étiquette sera imprimée automatiquement.</p>` +
+          `<p style="margin-top:10px; font-size:12px; color:#666;">Boîte : <strong>${currentBox?.id_boite || ''}</strong></p>`
+      });
+    }
+
+  </script>
+</body>
+</html>

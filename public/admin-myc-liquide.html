@@ -1,0 +1,2462 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Biotech Agro – LC depuis P3</title>
+  <link rel="icon" href="images/logo.png" type="image/png" />
+  <link rel="stylesheet" href="css/bootstrap.css" />
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    :root{--green:#2fa35a;--green-dark:#1f7a41;--brown:#6b4b2f;--orange:#d68a00;--red:#c0392b;--blue:#3498db;--purple:#6f42c1}
+    body{background-image:linear-gradient(rgba(255,255,255,.25),rgba(255,255,255,.45)),url("images/imagearriereplan.png");background-size:cover;background-position:center;background-attachment:fixed;color:#222}
+    .admin-big-logo{text-align:center;margin:10px 0}.admin-big-logo img{max-height:120px;background:#fff;padding:10px;border-radius:50%;border:4px solid var(--green);filter:drop-shadow(0 6px 10px rgba(0,0,0,.35))}
+    .admin-menu-bar{background:#fff;padding:15px 0;border-bottom:2px solid #e5e5e5;text-align:center;margin-bottom:30px}.admin-menu-bar a{margin:0 15px;font-weight:700;text-transform:uppercase;font-size:13px;text-decoration:none;color:#444}.admin-menu-bar a.active,.admin-menu-bar a:hover{color:var(--green)}
+    .wrapper{padding:30px 0 60px}.admin-card{background:#fff;padding:25px;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.07);margin-bottom:30px}.admin-card h4{margin-bottom:20px;font-weight:700}
+    .banniere-historique{background:linear-gradient(135deg,var(--green),var(--green-dark));color:#fff;padding:20px 25px;border-radius:12px;margin-bottom:25px;box-shadow:0 8px 20px rgba(47,163,90,.3)}.banniere-historique h3{margin:0 0 15px;font-weight:800;font-size:20px}
+    .banniere-historique-table{background:rgba(255,255,255,.15);border-radius:8px;padding:12px;max-height:260px;overflow:auto}.banniere-historique-table table{width:100%;color:#fff;font-size:13px}.banniere-historique-table th{font-weight:700;padding:8px;text-align:left;border-bottom:2px solid rgba(255,255,255,.3)}.banniere-historique-table td{padding:8px;border-bottom:1px solid rgba(255,255,255,.1);cursor:pointer}.banniere-historique-table tr:hover,.banniere-historique-table tr.selected{background:rgba(255,255,255,.22);font-weight:700}
+    .alert-selected{background:#d4edda;border:1px solid #c3e6cb;color:#155724;padding:12px 16px;border-radius:8px;margin-bottom:20px;font-weight:700;display:none}.alert-selected.show{display:block}.alert-required{background:#f8d7da;border:1px solid #f5c6cb;color:#721c24;padding:12px 16px;border-radius:8px;margin-bottom:20px;font-weight:700;display:none}.alert-required.show{display:block}
+    .action-buttons{display:flex;flex-direction:column;align-items:flex-start;gap:12px;margin-bottom:10px}.btn-action{width:100%;max-width:420px;padding:12px 20px;border-radius:10px;font-weight:700;font-size:13px;border:none;cursor:pointer;transition:.2s}.btn-action:disabled{opacity:.4;cursor:not-allowed}.btn-green{background:var(--green);color:#fff}.btn-green:hover:not(:disabled){background:var(--green-dark)}.btn-orange{background:var(--orange);color:#fff}.btn-brown{background:var(--brown);color:#fff}.btn-purple{background:var(--purple);color:#fff}.btn-grey{background:#6c757d;color:#fff}.btn-blue{background:var(--blue);color:#fff}
+    .form-label{font-weight:600;margin-bottom:5px;display:block;font-size:14px}.form-input,.form-select{width:100%;background:#fff!important;border:1px solid #ccc;min-height:46px;border-radius:6px;padding:8px 12px;margin-bottom:12px;font-size:14px}textarea.form-input{height:auto;resize:vertical}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}.button-primary{background:var(--green)!important;color:#fff!important;padding:12px 20px;border-radius:10px;font-weight:700;font-size:13px;border:none;cursor:pointer}.btn-prev{background:#e5e5e5;color:#333;padding:12px 20px;border-radius:10px;font-weight:700;font-size:13px;border:none;cursor:pointer}
+    .badge-pill{display:inline-block;border-radius:999px;padding:4px 9px;font-size:11px;font-weight:800}.ok{background:#d4edda;color:#155724}.warn{background:#fff3cd;color:#856404}.bad{background:#f8d7da;color:#721c24}.info{background:#e8f4ff;color:#21618c}
+    .lots-table{width:100%;border-collapse:collapse;font-size:13px}.lots-table th,.lots-table td{padding:9px 7px;border-bottom:1px solid #e5e5e5;vertical-align:middle}.lots-table th{text-transform:uppercase;font-size:11px;color:#777}
+    .protocole-box{background:#f8f9fa;border-left:5px solid var(--purple);border-radius:10px;padding:15px;font-size:13px;line-height:1.55}.section-panel{display:none}.section-panel.show{display:block}
+
+    /* Correctif labels: le template global peut placer les labels en absolute. Ici, on force un affichage propre comme la page isolement. */
+    .wrapper label, .wrapper .form-label{position:static!important;display:block!important;transform:none!important;top:auto!important;bottom:auto!important;left:auto!important;right:auto!important;margin:0 0 6px 0!important;padding:0!important;opacity:1!important;height:auto!important;line-height:1.25!important;pointer-events:auto!important;z-index:auto!important;}
+    .field-block{display:flex;flex-direction:column;margin-bottom:4px;}
+    .field-block small{margin-top:-6px;margin-bottom:10px;}
+    .btn-delete-lc{background:var(--red);color:#fff;border:0;border-radius:8px;padding:8px 12px;font-weight:800;font-size:12px;cursor:pointer;margin-top:6px;}
+    .btn-delete-lc:hover{background:#922b21;}
+  
+.qr-scan-visible{
+  background:#fff;
+  border:3px solid #3498db;
+  border-left:10px solid #3498db;
+  border-radius:14px;
+  padding:18px;
+  margin:18px auto 24px;
+  box-shadow:0 10px 28px rgba(0,0,0,.14);
+  max-width:980px;
+}
+.qr-scan-visible h3{
+  margin:0 0 10px;
+  color:#21618c;
+  font-weight:900;
+  font-size:20px;
+}
+.qr-scan-visible p{
+  margin:0 0 12px;
+  color:#333;
+  font-size:14px;
+}
+.qr-scan-row{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  align-items:center;
+}
+.qr-scan-row input[type=text]{
+  flex:1;
+  min-width:240px;
+  padding:12px;
+  border:1px solid #bbb;
+  border-radius:10px;
+}
+.qr-scan-big-btn{
+  background:#3498db;
+  color:white;
+  border:none;
+  border-radius:10px;
+  padding:13px 18px;
+  font-weight:900;
+  cursor:pointer;
+}
+.qr-scan-open-btn{
+  background:#2fa35a;
+  color:white;
+  border:none;
+  border-radius:10px;
+  padding:13px 18px;
+  font-weight:900;
+  cursor:pointer;
+}
+.qr-reader-modal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.72);
+  z-index:99999;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:18px;
+}
+.qr-reader-card{
+  width:100%;
+  max-width:460px;
+  background:#fff;
+  border-radius:16px;
+  padding:16px;
+}
+.qr-reader-card video{
+  width:100%;
+  border-radius:12px;
+  background:#000;
+}
+.qr-reader-actions{
+  display:flex;
+  gap:10px;
+  margin-top:12px;
+}
+.qr-help{
+  font-size:12px!important;
+  color:#666!important;
+  margin-top:10px!important;
+}
+@media(max-width:767px){
+  .qr-scan-visible{padding:14px;margin:14px 10px 20px}
+  .qr-scan-row{display:block}
+  .qr-scan-row button,.qr-scan-row input[type=text]{width:100%;margin-bottom:8px}
+}
+
+
+/* === SCANNER QR POT LC VISIBLE === */
+.qr-scan-visible{
+  background:#ffffff;
+  border:3px solid #3498db;
+  border-left:12px solid #3498db;
+  border-radius:16px;
+  padding:20px;
+  margin:20px auto 28px;
+  box-shadow:0 12px 32px rgba(0,0,0,.18);
+  max-width:980px;
+  color:#222;
+  position:relative;
+  z-index:10;
+}
+.qr-scan-visible h3{
+  margin:0 0 10px;
+  color:#21618c;
+  font-weight:900;
+  font-size:22px;
+}
+.qr-scan-visible p{
+  margin:0 0 12px;
+  color:#333;
+  font-size:14px;
+}
+.qr-scan-row{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  align-items:center;
+}
+.qr-scan-row input[type=text]{
+  flex:1;
+  min-width:260px;
+  padding:12px;
+  border:1px solid #bbb;
+  border-radius:10px;
+  background:#fff;
+}
+.qr-scan-big-btn{
+  background:#3498db;
+  color:white;
+  border:none;
+  border-radius:10px;
+  padding:13px 18px;
+  font-weight:900;
+  cursor:pointer;
+}
+.qr-scan-open-btn{
+  background:#2fa35a;
+  color:white;
+  border:none;
+  border-radius:10px;
+  padding:13px 18px;
+  font-weight:900;
+  cursor:pointer;
+}
+.qr-reader-modal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.72);
+  z-index:99999;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:18px;
+}
+.qr-reader-card{
+  width:100%;
+  max-width:460px;
+  background:#fff;
+  border-radius:16px;
+  padding:16px;
+}
+.qr-reader-card video{
+  width:100%;
+  border-radius:12px;
+  background:#000;
+}
+.qr-reader-actions{
+  display:flex;
+  gap:10px;
+  margin-top:12px;
+}
+.qr-help{
+  font-size:12px!important;
+  color:#666!important;
+  margin-top:10px!important;
+}
+@media(max-width:767px){
+  .qr-scan-visible{padding:14px;margin:14px 10px 20px}
+  .qr-scan-row{display:block}
+  .qr-scan-row button,.qr-scan-row input[type=text]{width:100%;margin-bottom:8px}
+}
+
+
+/* === SCAN LC STYLE ISOLEMENT === */
+.lc-scan-inline-card {
+  max-width: 980px;
+  margin: 22px auto;
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 22px;
+  box-shadow: 0 8px 24px rgba(0,0,0,.16);
+  border-left: 6px solid #27ae60;
+  position: relative;
+  z-index: 50;
+}
+.lc-scan-inline-card h2 {
+  margin: 0 0 12px 0;
+  color: #1f7a41;
+  font-size: 28px;
+  font-weight: 900;
+}
+.lc-scan-inline-card p {
+  color: #555;
+  font-size: 17px;
+  line-height: 1.45;
+  margin: 0 0 14px 0;
+}
+.lc-scan-inline-input {
+  width: 100%;
+  box-sizing: border-box;
+  border: 2px solid #d0d0d0;
+  border-radius: 14px;
+  padding: 14px 16px;
+  font-size: 18px;
+  margin: 8px 0 12px 0;
+  background: #fff;
+}
+.lc-scan-inline-actions {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  align-items: stretch;
+}
+.lc-scan-inline-btn {
+  width: 100%;
+  border: none;
+  border-radius: 14px;
+  padding: 14px 18px;
+  font-size: 18px;
+  font-weight: 900;
+  cursor: pointer;
+  color: white;
+  background: #27ae60;
+}
+.lc-scan-inline-btn.secondary {
+  background: #cfcfcf;
+  color: #333;
+}
+.lc-scan-inline-btn.blue {
+  background: #0d6efd;
+}
+.lc-scan-inline-actions button,
+.lc-scan-inline-actions label {
+  margin: 0 !important;
+  min-height: 50px;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  white-space: nowrap;
+}
+.lc-scan-inline-actions .lc-scan-inline-btn {
+  width: 100%;
+  font-size: 15px;
+  padding: 12px 10px;
+}
+
+.lc-scan-inline-msg {
+  margin-top: 12px;
+  font-weight: 800;
+  font-size: 16px;
+  color: #c0392b;
+  line-height: 1.35;
+}
+.lc-scan-inline-file { display: none; }
+@media (max-width: 520px) {
+  .lc-scan-inline-actions {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+
+/* === LC COMPACT CENTER FIX === */
+.wrapper .container{max-width:1050px!important}
+.section-panel .col-lg-10{max-width:760px!important;flex:0 0 760px!important}
+.section-panel .admin-card{padding:20px!important;border-radius:14px!important}
+.section-panel .grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:12px!important}
+.section-panel .form-input,.section-panel .form-select{height:42px!important;padding:8px 10px!important;font-size:13px!important;margin-bottom:8px!important}
+.section-panel textarea.form-input{height:auto!important;min-height:76px!important}
+.section-panel table.table td,.section-panel table.table th{padding:6px!important;font-size:12px!important}
+.section-panel .btn-action,.section-panel .button-primary,.section-panel .btn-prev{padding:9px 12px!important;font-size:12px!important}
+.compact-info{background:#eaf7ef;border:1px solid #bfe8cc;border-left:5px solid var(--green);color:#145c2f;border-radius:10px;padding:10px 12px;font-size:13px;font-weight:700;margin:8px 0 12px}
+@media(max-width:900px){.section-panel .col-lg-10{max-width:calc(100% - 24px)!important;flex:0 0 calc(100% - 24px)!important}.section-panel .grid{grid-template-columns:1fr!important}}
+
+
+/* === LC RECETTES REGROUPEES + CENTER FIX === */
+.section-panel{
+  max-width:780px !important;
+  margin-left:auto !important;
+  margin-right:auto !important;
+}
+.section-panel .col-lg-10,.section-panel .col-lg-8{
+  max-width:100% !important;
+  flex:0 0 100% !important;
+  margin-left:auto !important;
+  margin-right:auto !important;
+}
+.section-panel .admin-card{width:100% !important}
+.recette-row-main{font-weight:900;color:#222}
+.recette-row-sub{font-size:11px;color:#666;margin-top:3px}
+.recette-composants-list{font-size:12px;line-height:1.45}
+.recette-warning-zero{color:#856404;font-size:11px;font-weight:800}
+@media(max-width:900px){.section-panel{max-width:calc(100% - 20px)!important}}
+
+
+/* === POTS DANS COLONNE LOTS LC === */
+.lc-pots-cell{
+  min-width:260px;
+}
+.lc-pot-line{
+  background:#f8fff9;
+  border:1px solid #d9eadf;
+  border-left:4px solid #2fa35a;
+  border-radius:9px;
+  padding:7px;
+  margin:5px 0;
+  font-size:11px;
+  line-height:1.35;
+}
+.lc-pot-line strong{
+  color:#1f7a41;
+  font-weight:900;
+}
+.lc-pot-line-status-ok,
+.lc-pot-line-status-no{
+  display:inline-block;
+  padding:3px 7px;
+  border-radius:999px;
+  font-size:10px;
+  font-weight:900;
+  margin:4px 0;
+}
+.lc-pot-line-status-ok{
+  background:#dff5e8;
+  color:#116b35;
+  border:1px solid #bfe8cc;
+}
+.lc-pot-line-status-no{
+  background:#fff3cd;
+  color:#856404;
+  border:1px solid #ffeeba;
+}
+.lc-pot-line-actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:4px;
+  margin-top:4px;
+}
+.lc-pot-line-actions a,
+.lc-pot-line-actions button{
+  border:none;
+  border-radius:7px;
+  padding:5px 7px;
+  font-size:10px;
+  font-weight:900;
+  cursor:pointer;
+  text-decoration:none!important;
+  color:#fff!important;
+}
+.lc-pot-line-journal{background:#3498db}
+.lc-pot-line-resume{background:#6c757d}
+.lc-pot-line-delete{background:#c0392b}
+.lc-pot-empty{
+  color:#856404;
+  font-size:11px;
+  font-weight:900;
+}
+
+
+/* === LOT LC LIGNE + POTS EN LIGNES === */
+.lc-lot-row-main td{
+  background:#ffffff!important;
+  vertical-align:middle!important;
+  border-top:2px solid #e6e6e6!important;
+}
+.lc-pot-row-line td{
+  background:#f8fff9!important;
+  border-top:1px solid #d9eadf!important;
+  padding-top:8px!important;
+  padding-bottom:8px!important;
+  font-size:12px!important;
+}
+.lc-pot-indent{
+  padding-left:28px!important;
+  border-left:6px solid #2fa35a!important;
+}
+.lc-pot-line-code{
+  font-weight:900;
+  color:#1f7a41;
+}
+.lc-pot-line-small{
+  color:#666;
+  font-size:11px;
+}
+.lc-pot-line-ok,.lc-pot-line-no{
+  display:inline-block;
+  padding:5px 9px;
+  border-radius:999px;
+  font-size:11px;
+  font-weight:900;
+}
+.lc-pot-line-ok{
+  background:#dff5e8;
+  color:#116b35;
+  border:1px solid #bfe8cc;
+}
+.lc-pot-line-no{
+  background:#fff3cd;
+  color:#856404;
+  border:1px solid #ffeeba;
+}
+.lc-pot-row-actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+}
+.lc-pot-row-actions a,.lc-pot-row-actions button{
+  border:none;
+  border-radius:8px;
+  padding:7px 9px;
+  font-size:11px;
+  font-weight:900;
+  cursor:pointer;
+  text-decoration:none!important;
+  color:#fff!important;
+}
+.lc-pot-row-journal{background:#3498db}
+.lc-pot-row-storage{background:#21618c}
+.lc-pot-row-resume{background:#6c757d}
+.lc-pot-row-delete{background:#c0392b}
+.lc-lot-actions-line{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+}
+.lc-pot-no-row td{
+  background:#fff8df!important;
+  color:#856404!important;
+  font-weight:900!important;
+  padding-left:28px!important;
+}
+
+
+/* === STOCKAGE FRIGO DANS LIGNE POT === */
+.lc-pot-line-status{
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+  align-items:center;
+}
+.lc-pot-line-actions{
+  display:flex!important;
+  gap:6px!important;
+  flex-wrap:nowrap!important;
+  align-items:center!important;
+}
+.lc-pot-line-actions button{
+  height:32px!important;
+  min-height:32px!important;
+  padding:6px 9px!important;
+  font-size:12px!important;
+  border-radius:7px!important;
+  white-space:nowrap!important;
+}
+.lc-pot-frigo-btn{
+  background:#21618c!important;
+  color:#fff!important;
+  border:none!important;
+  font-weight:900!important;
+}
+.lc-pot-badge-valid{
+  display:inline-block;
+  padding:5px 9px;
+  border-radius:999px;
+  background:#dff5e8;
+  border:1px solid #bfe8cc;
+  color:#116b35;
+  font-size:11px;
+  font-weight:900;
+}
+.lc-pot-badge-warn{
+  display:inline-block;
+  padding:5px 9px;
+  border-radius:999px;
+  background:#fff3cd;
+  border:1px solid #ffeeba;
+  color:#856404;
+  font-size:11px;
+  font-weight:900;
+}
+.lc-pot-badge-muted{
+  display:inline-block;
+  padding:5px 9px;
+  border-radius:999px;
+  background:#f1f2f6;
+  border:1px solid #ddd;
+  color:#555;
+  font-size:11px;
+  font-weight:900;
+}
+
+
+/* === CORRECTION BOUTON STOCKAGE VISIBLE === */
+.lc-pot-line-actions{
+  display:flex!important;
+  align-items:center!important;
+  gap:6px!important;
+  flex-wrap:nowrap!important;
+}
+.lc-pot-line-actions button{
+  height:32px!important;
+  min-height:32px!important;
+  padding:6px 9px!important;
+  font-size:12px!important;
+  white-space:nowrap!important;
+}
+.lc-pot-badge-muted{display:none!important;}
+
+
+
+/* === RESUME POT LC INLINE (sans popup alert) === */
+.lc-pot-summary-row td{
+  background:#eef7ff!important;
+  border-top:0!important;
+  padding:0 8px 12px 28px!important;
+}
+.lc-pot-summary-box{
+  background:#ffffff;
+  border:1px solid #bcd9ff;
+  border-left:5px solid #3498db;
+  border-radius:10px;
+  padding:12px;
+  box-shadow:0 6px 16px rgba(0,0,0,.08);
+}
+.lc-pot-summary-title{
+  color:#21618c;
+  font-weight:900;
+  margin-bottom:10px;
+}
+.lc-pot-summary-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(170px,1fr));
+  gap:10px;
+}
+.lc-pot-summary-item{
+  background:#f8fbff;
+  border:1px solid #e4eefb;
+  border-radius:8px;
+  padding:8px;
+  font-size:12px;
+}
+.lc-pot-summary-label{
+  color:#666;
+  font-size:10px;
+  text-transform:uppercase;
+  font-weight:900;
+  margin-bottom:3px;
+}
+.lc-pot-summary-value{
+  color:#222;
+  font-weight:900;
+}
+.lc-pot-summary-close{
+  float:right;
+  border:none;
+  background:#6c757d;
+  color:#fff;
+  border-radius:7px;
+  padding:5px 8px;
+  font-size:11px;
+  font-weight:900;
+  cursor:pointer;
+}
+.lc-pot-row-storage{background:#21618c!important;}
+.lc-pot-row-storage:disabled{opacity:.45!important;cursor:not-allowed!important;}
+
+
+/* === RESUME POT LC - FENETRE AVEC ALBUM PHOTO === */
+.lc-summary-modal{
+  position:fixed;
+  inset:0;
+  z-index:999999;
+  background:rgba(0,0,0,.62);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:18px;
+}
+.lc-summary-dialog{
+  width:min(1120px,96vw);
+  max-height:92vh;
+  overflow:auto;
+  background:#fff;
+  border-radius:18px;
+  box-shadow:0 20px 60px rgba(0,0,0,.35);
+  border-top:8px solid #2fa35a;
+  position:relative;
+}
+.lc-summary-header{
+  position:sticky;
+  top:0;
+  z-index:2;
+  background:#fff;
+  padding:18px 22px 14px;
+  border-bottom:1px solid #e7e7e7;
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  align-items:flex-start;
+}
+.lc-summary-header h3{
+  margin:0;
+  color:#1f7a41;
+  font-weight:900;
+  font-size:22px;
+}
+.lc-summary-subtitle{
+  color:#666;
+  font-size:13px;
+  margin-top:4px;
+  font-weight:700;
+}
+.lc-summary-close-modal{
+  border:none;
+  background:#c0392b;
+  color:#fff;
+  border-radius:10px;
+  padding:9px 13px;
+  font-weight:900;
+  cursor:pointer;
+}
+.lc-summary-content{
+  padding:18px 22px 24px;
+}
+.lc-summary-section{
+  background:#f8fff9;
+  border:1px solid #d8eedf;
+  border-left:5px solid #2fa35a;
+  border-radius:14px;
+  padding:14px;
+  margin-bottom:16px;
+}
+.lc-summary-section h4{
+  margin:0 0 12px;
+  color:#1f7a41;
+  font-size:16px;
+  font-weight:900;
+}
+.lc-summary-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+  gap:10px;
+}
+.lc-summary-info-card{
+  background:#fff;
+  border:1px solid #e4efe7;
+  border-radius:10px;
+  padding:10px;
+  min-height:64px;
+}
+.lc-summary-info-label{
+  font-size:10px;
+  text-transform:uppercase;
+  color:#666;
+  font-weight:900;
+  margin-bottom:4px;
+}
+.lc-summary-info-value{
+  color:#222;
+  font-size:13px;
+  font-weight:900;
+  word-break:break-word;
+}
+.lc-summary-album-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(185px,1fr));
+  gap:12px;
+}
+.lc-summary-photo-card{
+  background:#fff;
+  border:1px solid #e0e0e0;
+  border-radius:12px;
+  padding:10px;
+  box-shadow:0 4px 12px rgba(0,0,0,.06);
+}
+.lc-summary-photo-card img{
+  width:100%;
+  height:150px;
+  object-fit:cover;
+  border-radius:9px;
+  border:1px solid #ddd;
+  background:#f4f4f4;
+  cursor:pointer;
+}
+.lc-summary-photo-title{
+  margin-top:7px;
+  color:#21618c;
+  font-size:12px;
+  font-weight:900;
+}
+.lc-summary-photo-note{
+  color:#666;
+  font-size:11px;
+  line-height:1.35;
+  margin-top:4px;
+}
+.lc-summary-empty{
+  background:#fff;
+  border:1px dashed #bbb;
+  border-radius:10px;
+  color:#666;
+  padding:14px;
+  font-size:13px;
+  font-weight:800;
+}
+.lc-summary-remarks-table{
+  width:100%;
+  border-collapse:collapse;
+  background:#fff;
+  border-radius:10px;
+  overflow:hidden;
+}
+.lc-summary-remarks-table th,
+.lc-summary-remarks-table td{
+  border-bottom:1px solid #e8e8e8;
+  padding:9px;
+  font-size:12px;
+  vertical-align:top;
+}
+.lc-summary-remarks-table th{
+  background:#eaf7ef;
+  color:#1f7a41;
+  font-size:11px;
+  text-transform:uppercase;
+  font-weight:900;
+}
+.lc-summary-loading{
+  padding:28px;
+  text-align:center;
+  color:#1f7a41;
+  font-weight:900;
+}
+@media(max-width:680px){
+  .lc-summary-header{display:block;padding-right:16px}
+  .lc-summary-close-modal{margin-top:10px;width:100%}
+  .lc-summary-content{padding:14px}
+  .lc-summary-photo-card img{height:125px}
+}
+
+</style>
+</head>
+<body>
+  <script src="js/admin-auth.js"></script>
+  <div class="admin-big-logo"><img src="images/logo.png" alt="BiotechAgro" /></div>
+  <div class="admin-menu-bar">
+    <a href="admin.html">Tableau de bord</a>
+    <a href="admin-taches.html">Tâches obligatoires</a>
+    <a href="admin-souches.html">Souches</a>
+    <a href="admin-isolement.html">Isolement tissulaire</a>
+    <a class="active" href="admin-myc-liquide.html">Mycélium liquide</a>
+    <a href="admin-myc-grain.html">Mycélium sur grain</a>
+  </div>
+
+  <section class="wrapper">
+    <div class="container">
+      <h3 class="text-center mb-4">Gestion du <span style="color:var(--green)">Mycélium liquide</span></h3>
+
+  <div class="lc-scan-inline-card" id="lc-scan-inline-card">
+    <h2>📷 Scanner un pot LC</h2>
+    <p>
+      Le QR de l’étiquette LC ouvre directement le journal du pot.
+      Scanne ici ou colle le lien du QR code.
+    </p>
+
+    <input
+      id="lc-scan-inline-code"
+      class="lc-scan-inline-input"
+      type="text"
+      placeholder="Scanner ou coller le lien QR du pot LC"
+      autocomplete="off"
+    />
+
+    <div class="lc-scan-inline-actions">
+      <button type="button" class="lc-scan-inline-btn secondary" onclick="startLcInlineQrCamera()">
+        Caméra
+      </button>
+      <label class="lc-scan-inline-btn blue" for="lc-scan-inline-file">
+        Importer image QR
+      </label>
+      <button type="button" class="lc-scan-inline-btn" onclick="openScannedLcPotInline()">
+        Ouvrir journal LC
+      </button>
+      <input id="lc-scan-inline-file" class="lc-scan-inline-file" type="file" accept="image/*" />
+      <input id="lc-scan-inline-camera-file" class="lc-scan-inline-file" type="file" accept="image/*" capture="environment" />
+    </div>
+
+    <div id="lc-scan-inline-msg" class="lc-scan-inline-msg"></div>
+  </div>
+
+
+
+      <div class="banniere-historique">
+        <h3>📦 Stock des P3 piquables</h3>
+        <div class="banniere-historique-table">
+          <table>
+            <thead><tr><th>P3</th><th>Isolation</th><th>Type champignon</th><th>Jour</th><th>Solutions nutritives disponibles</th><th>Statut</th></tr></thead>
+            <tbody id="p3-ready-body"><tr><td colspan="6" style="text-align:center;">Chargement...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="alert-selected" id="alert-selected">✅ P3 sélectionné : <strong id="selected-label">—</strong></div>
+      <div class="alert-required" id="alert-required">⚠️ Sélectionnez un P3 dans le stock avant de continuer.</div>
+
+      <div class="row justify-content-center">
+        <div class="col-lg-10">
+          <div class="admin-card">
+            <h4>Actions principales</h4>
+            <div class="action-buttons">
+              <button type="button" class="btn-action btn-green" id="btn-show-create-lc" disabled>➕ 💧 Créer LC depuis ce P3</button>
+              <button type="button" class="btn-action btn-orange" id="btn-show-solution" disabled>➕ / 📥 🧪 Solution nutritive</button>
+              <button type="button" class="btn-action btn-purple" id="btn-show-protocole" disabled>📊 Protocole solution nutritive / LC</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row justify-content-center section-panel" id="panel-create-lc">
+        <div class="col-lg-10">
+          <div class="admin-card">
+            <h4>➕ Créer un lot LC</h4>
+            <div class="grid">
+              <div>
+                <label class="form-label">P3 sélectionné</label>
+                <input class="form-input" id="lc-p3-readonly" readonly />
+              </div>
+              <div>
+                <label class="form-label">Solution nutritive existante ou créée *</label>
+                <select class="form-select" id="solution-select"><option value="">— Sélectionner —</option></select>
+                <small style="display:block;color:#666;margin-top:-8px;margin-bottom:12px;">ℹ️ Vous pouvez sélectionner une recette déjà utilisée/créée dans la partie Solution nutritive.</small>
+              </div>
+              </div>
+              <div>
+                <label class="form-label">Nombre de pots LC *</label>
+                <input class="form-input" id="nb-pots" type="number" min="1" value="4" />
+              </div>
+              <div>
+                <label class="form-label">Volume solution / pot (mL) *</label>
+                <input class="form-input" id="volume-pot" type="number" min="10" step="10" value="700" />
+              </div>
+              <div>
+                <label class="form-label">Date J0 LC *</label>
+                <input class="form-input" id="j0-date" type="date" />
+              </div>
+              <div>
+                <label class="form-label">Chambre / étagère</label>
+                <input class="form-input" id="shelf-location" type="text" placeholder="Ex : Chambre LC – B2" />
+              </div>
+            </div>
+            <label class="form-label">Remarques</label>
+            <textarea class="form-input" id="notes" rows="2" placeholder="Transfert sous hotte, aiguille stérile, contrôle J0..."></textarea>
+            <div id="create-msg"></div>
+            <div style="display:flex;gap:10px;margin-top:15px;">
+              <button type="button" class="btn-prev" onclick="hidePanels()">Annuler</button>
+              <button type="button" class="button-primary" id="btn-create-lc">Créer le lot LC</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row justify-content-center section-panel" id="panel-solution">
+        <div class="col-lg-10">
+          <div class="admin-card">
+            <h4>💧 Ajouter une recette de solution nutritive (sans mycélium)</h4>
+            <form id="form-solution" onsubmit="return false;">
+              <label class="form-label">Isolation sélectionnée</label>
+              <input class="form-input" id="solution-p3-readonly" readonly />
+
+              <label class="form-label">Recette existante à utiliser comme modèle</label>
+              <select class="form-select" id="solution-template-select">
+                <option value="">— Nouvelle recette —</option>
+              </select>
+              <div class="compact-info">
+                ℹ️ Tu peux sélectionner une recette déjà utilisée/créée, puis modifier le volume, la quantité disponible ou la date avant d’enregistrer.
+              </div>
+
+              <label class="form-label">Nom de la solution nutritive *</label>
+              <input class="form-input" id="solution-name" placeholder="Ex : SNPGL" />
+
+              <label class="form-label">Composition (g/L) *</label>
+              <div class="table-responsive">
+                <table class="table table-bordered table-sm">
+                  <thead><tr><th style="width:60%">Composant</th><th style="width:30%">g/L</th><th style="width:10%"></th></tr></thead>
+                  <tbody id="solution-compo-body"></tbody>
+                </table>
+              </div>
+              <button type="button" class="button-primary" id="btn-add-comp" style="margin-bottom:15px;">+ Ajouter un composant</button>
+
+              <div class="grid">
+                <div>
+                  <label class="form-label">Volume total préparé (L) *</label>
+                  <input class="form-input" id="solution-volume-total-l" type="number" step="0.1" min="0.1" value="2" />
+                </div>
+                <div>
+                  <label class="form-label">Quantité disponible (L) *</label>
+                  <input class="form-input" id="solution-volume-dispo-l" type="number" step="0.1" min="0" value="2" />
+                </div>
+                <div>
+                  <label class="form-label">Date de préparation *</label>
+                  <input class="form-input" id="solution-prepared-on" type="date" />
+                </div>
+                <div>
+                  <label class="form-label">Statut *</label>
+                  <select class="form-select" id="solution-status">
+                    <option value="pret" selected>Prête</option>
+                    <option value="en_sterilisation">En stérilisation</option>
+                    <option value="a_verifier">À vérifier</option>
+                    <option value="perimee">Périmée</option>
+                  </select>
+                </div>
+              </div>
+
+              <label class="form-label">Protocole de préparation</label>
+              <textarea class="form-input" id="solution-protocole" rows="5">1) Peser les composants selon le volume final.
+2) Dissoudre dans eau propre/distillée.
+3) Distribuer dans pots LC modifiés.
+4) Stériliser à l’autoclave.
+5) Laisser refroidir avant inoculation depuis P3.</textarea>
+
+              <div class="alert-required" style="display:block; background:#fff3cd; border-color:#ffc107; color:#856404;">
+                ⚙️ Recette (sans mycélium) : préparation, stérilisation et gestion de la quantité disponible.
+              </div>
+
+              <div id="solution-msg"></div>
+              <div style="display:flex;gap:10px;margin-top:15px;flex-wrap:wrap;">
+                <button type="button" class="btn-prev" onclick="hidePanels()">Annuler</button>
+                <button type="button" class="button-primary" id="btn-print-solution" style="background:#0d6efd!important;">Imprimer Recette</button>
+                <button type="button" class="button-primary" id="btn-save-solution">Enregistrer</button>
+              </div>
+            </form>
+          </div>
+
+          <div class="admin-card">
+            <h4>📥 Recettes nutritives déjà créées pour cette isolation</h4>
+            <p style="font-size:13px;color:#666;margin-top:-8px;">Les recettes identiques sont regroupées : même nom, mêmes composants et mêmes proportions = une seule recette affichée.</p>
+            <div class="table-responsive">
+              <table class="lots-table">
+                <thead><tr><th>Solution</th><th>Volume dispo</th><th>Statut</th><th>Composants</th><th>Actions</th></tr></thead>
+                <tbody id="existing-solutions-body"><tr><td colspan="5" style="text-align:center;">Sélectionnez un P3.</td></tr></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row justify-content-center section-panel" id="panel-protocole">
+        <div class="col-lg-10">
+          <div class="admin-card">
+            <h4>📊 Protocole LC</h4>
+            <div class="protocole-box">
+              <strong>Principe :</strong> un P3 piquable peut être transféré vers LC uniquement après sélection ou création d’une solution nutritive associée à la même isolation et au même type de champignon.<br><br>
+              <strong>Exemple Champignon de Paris :</strong> tu peux garder plusieurs recettes LC dans la même isolation : recette miel, recette malt, recette test laboratoire. Au moment de créer LC, tu choisis la recette utilisée pour la traçabilité du lot.<br><br>
+              <strong>Journal :</strong> chaque lot LC crée ses pots, puis le suivi se fait pot par pot : mélange magnétique, durée/compteur, observation, image du jour et comparaison avec image référence.
+            </div>
+            <button type="button" class="btn-prev" style="margin-top:15px;" onclick="hidePanels()">Fermer</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="admin-card">
+        <h4>📋 Lots LC créés</h4>
+        <table class="lots-table">
+          <thead><tr><th>Lot</th><th>Source P3</th><th>Solution</th><th>Pots</th><th>J0</th><th>Jour</th><th>Actions</th></tr></thead>
+          <tbody id="lc-lots-body"><tr><td colspan="7" style="text-align:center;">Chargement...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+
+  <div id="lc-pot-summary-modal" class="lc-summary-modal" onclick="if(event.target===this) closeLcPotSummaryModal()">
+    <div class="lc-summary-dialog" role="dialog" aria-modal="true" aria-labelledby="lc-summary-title">
+      <div class="lc-summary-header">
+        <div>
+          <h3 id="lc-summary-title">📋 Résumé du pot LC</h3>
+          <div class="lc-summary-subtitle" id="lc-summary-subtitle">Informations, album photo et remarques écrites</div>
+        </div>
+        <button type="button" class="lc-summary-close-modal" onclick="closeLcPotSummaryModal()">Fermer</button>
+      </div>
+      <div class="lc-summary-content" id="lc-pot-summary-modal-body">
+        <div class="lc-summary-loading">Chargement du résumé...</div>
+      </div>
+    </div>
+  </div>
+
+<script>
+let API_BASE=window.location.origin;
+let selectedP3=null,p3Rows=[],solutions=[];
+function todayYMD(){return new Date().toISOString().slice(0,10)}
+function esc(s){return String(s??'').replace(/[&<>\"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;'}[c]))}
+async function getJSON(path){let r=await fetch(API_BASE+path);let j=await r.json().catch(()=>({}));if(!r.ok)throw new Error(j.error||'Erreur API');return j}
+async function postJSON(path,payload){const r=await fetch(API_BASE+path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});const j=await r.json().catch(()=>({}));if(!r.ok)throw new Error(j.error||'Erreur API');return j}
+function hidePanels(){document.querySelectorAll('.section-panel').forEach(x=>x.classList.remove('show'))}
+function requireP3(){if(selectedP3)return true;document.getElementById('alert-required').classList.add('show');return false}
+function statusLabel(s){let x=String(s||'pret').toLowerCase();return ({pret:'Prête',en_sterilisation:'En stérilisation',a_verifier:'À vérifier',perimee:'Périmée'})[x]||s||'—'}
+function statusBadge(s){const x=String(s||'pret').toLowerCase();let cls=x==='pret'?'ok':(x==='perimee'?'bad':'warn');return `<span class="badge-pill ${cls}">${esc(statusLabel(x))}</span>`}
+function fillCompoDefault(){
+  let body=document.getElementById('solution-compo-body');
+  body.innerHTML='';
+  addComp('GLUCOSE','20');
+  addComp('LEVURE','1');
+  addComp('POMME DE TERRE','50');
+}
+function addComp(nom='',qte=''){
+  const body=document.getElementById('solution-compo-body');
+  let tr=document.createElement('tr');
+  tr.innerHTML=`<td><input class="form-input comp-name" value="${esc(nom)}" placeholder="Ex : Glucose" /></td>
+  <td><input class="form-input comp-qty" type="number" step="0.01" value="${esc(qte)}" placeholder="Ex : 20" /></td>
+  <td><button type="button" class="btn-action btn-grey" style="padding:6px 10px;" onclick="this.closest('tr').remove()">−</button></td>`;
+  body.appendChild(tr);
+}
+
+function renderSolutionsDisponibles(p){
+  let sols = Array.isArray(p.solutions_disponibles) ? p.solutions_disponibles : [];
+  if (!sols.length) return '<span class="badge-pill warn">à créer</span>';
+  return sols.map(s => `<div style="margin-bottom:4px;"><span class="badge-pill ok">${esc(s.nom || 'Solution')}</span> <span style="font-size:12px;">${Number(s.volume_final_ml || 0).toFixed(0)} mL dispo</span></div>`).join('');
+}
+
+function solutionComponentsText(s){
+  let comps=Array.isArray(s?.composants)?s.composants:[];
+  if(!comps.length)return '—';
+  return comps.map(c=>`${esc(c.ingredient||c.nom||'')} ${Number(c.quantite??c.g_par_l??0)} ${esc(c.unite||'g/L')}`).join('<br>');
+}
+
+
+
+function normalizeRecipeName(s){
+  return String(s?.nom || '').trim().toUpperCase();
+}
+function recipeComponentKey(s){
+  const comps = Array.isArray(s?.composants) ? s.composants : [];
+  return comps.map(c => {
+    let name = String(c.ingredient || c.nom || '').trim().toUpperCase();
+    let qty = Number(c.quantite ?? c.g_par_l ?? 0);
+    let unit = String(c.unite || 'g/L').trim().toUpperCase();
+    return `${name}:${qty}:${unit}`;
+  }).sort().join('|');
+}
+function recipeKey(s){
+  return normalizeRecipeName(s) + '::' + recipeComponentKey(s);
+}
+function getRecipeGroups(){
+  let map = new Map();
+  (solutions || []).forEach(s => {
+    let key = recipeKey(s);
+    if(!map.has(key)){
+      map.set(key, {
+        key,
+        nom: s.nom || 'Recette',
+        composants: Array.isArray(s.composants) ? s.composants : [],
+        type_champignon: s.type_champignon || selectedP3?.champignon || '',
+        total_ml: 0,
+        instances: [],
+        best: s
+      });
+    }
+    let g = map.get(key);
+    let dispo = Number(s.volume_final_ml || 0);
+    g.total_ml += Number.isFinite(dispo) ? dispo : 0;
+    g.instances.push(s);
+    let bestDispo = Number(g.best?.volume_final_ml || 0);
+    if(dispo > bestDispo) g.best = s;
+  });
+  return Array.from(map.values()).sort((a,b) => {
+    if((b.total_ml || 0) !== (a.total_ml || 0)) return (b.total_ml || 0) - (a.total_ml || 0);
+    return String(a.nom).localeCompare(String(b.nom));
+  });
+}
+function recipeGroupCompsHtml(g){
+  const comps = Array.isArray(g?.composants) ? g.composants : [];
+  if(!comps.length) return '—';
+  return comps.map(c => {
+    let nom = esc(c.ingredient || c.nom || '');
+    let qte = Number(c.quantite ?? c.g_par_l ?? 0);
+    let unite = esc(c.unite || 'g/L');
+    return `${nom} ${qte} ${unite}`;
+  }).join('<br>');
+}
+function fillSolutionTemplateSelect(){
+  let sel=document.getElementById('solution-template-select');
+  if(!sel)return;
+  let groups = getRecipeGroups();
+  sel.innerHTML='<option value="">— Nouvelle recette —</option>' + groups.map(g => {
+    let id = g.best?.id || '';
+    const dispo = Number(g.total_ml || 0).toFixed(0);
+    let count = g.instances.length;
+    return `<option value="${id}">${esc(g.nom)} — recette (${count} préparation${count>1?'s':''}) — ${dispo} mL dispo total</option>`;
+  }).join('');
+}
+function renderExistingRecipesTable(){
+  let existing=document.getElementById('existing-solutions-body');
+  if(!existing)return;
+  const groups = getRecipeGroups();
+  if(!groups.length){
+    existing.innerHTML='<tr><td colspan="5" style="text-align:center;">Aucune recette nutritive créée pour cette isolation.</td></tr>';
+    return;
+  }
+  existing.innerHTML = groups.map(g => {
+    let bestId = Number(g.best?.id || 0);
+    let total = Number(g.total_ml || 0);
+    let totalText = (total/1000).toFixed(2) + ' L';
+    let zeroWarn = total <= 0 ? '<div class="recette-warning-zero">0 mL disponible — recette modèle seulement</div>' : '';
+    return `<tr>
+      <td>
+        <div class="recette-row-main">${esc(g.nom)}</div>
+        <div class="recette-row-sub">${esc(g.type_champignon || '')}</div>
+        <div class="recette-row-sub">${g.instances.length} préparation${g.instances.length>1?'s':''} avec la même recette</div>
+      </td>
+      <td>${totalText}${zeroWarn}</td>
+      <td>${statusBadge(g.best?.status)}</td>
+      <td><div class="recette-composants-list">${recipeGroupCompsHtml(g)}</div></td>
+      <td>
+        <button class="btn-action btn-green" style="max-width:150px;padding:8px 10px;margin-bottom:5px;" onclick="useExistingSolution(${bestId})">Utiliser LC</button>
+        <button class="btn-action btn-blue" style="max-width:150px;padding:8px 10px;" onclick="importSolutionToForm(${bestId})">Importer recette</button>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+async function loadP3Ready(){
+  let tbody=document.getElementById('p3-ready-body');
+  try{
+    p3Rows=await getJSON('/api/lc-workflow/p3-ready');
+    if(!p3Rows.length){tbody.innerHTML='<tr><td colspan="6" style="text-align:center;">Aucun P3 piquable actif trouvé.</td></tr>';return}
+    tbody.innerHTML=p3Rows.map(p=>`<tr data-id="${p.petri_id}" class="${selectedP3&&selectedP3.petri_id===p.petri_id?'selected':''}">
+      <td><strong>P3-${p.petri_id}</strong></td><td>${esc(p.iso_code)}</td><td>${esc(p.champignon)}</td><td>J${p.last_day??'—'}</td>
+      <td>${renderSolutionsDisponibles(p)}</td>
+      <td>${p.already_transferred?'<span class="badge-pill info">déjà utilisé — transfert possible</span>':'<span class="badge-pill ok">piquable</span>'}</td>
+    </tr>`).join('');
+    tbody.querySelectorAll('tr[data-id]').forEach(tr=>tr.addEventListener('click',()=>selectP3(Number(tr.dataset.id))));
+  }catch(e){tbody.innerHTML=`<tr><td colspan="6" style="text-align:center;color:#721c24;">${esc(e.message)}</td></tr>`}
+}
+async function selectP3(id){
+  selectedP3=p3Rows.find(x=>Number(x.petri_id)===Number(id));
+  document.getElementById('alert-required').classList.remove('show');
+  document.getElementById('alert-selected').classList.add('show');
+  document.getElementById('selected-label').textContent=`P3-${selectedP3.petri_id} — ${selectedP3.iso_code} / ${selectedP3.champignon}`;
+  ['btn-show-create-lc','btn-show-solution','btn-show-protocole'].forEach(id=>document.getElementById(id).disabled=false);
+  document.getElementById('lc-p3-readonly').value=`P3-${selectedP3.petri_id} — ${selectedP3.iso_code}`;
+  document.getElementById('solution-p3-readonly').value=`${selectedP3.iso_code} · ${selectedP3.champignon}`;
+  await loadSolutions(selectedP3.isolement_id);
+  await loadP3Ready();
+}
+async function loadSolutions(isoId){
+  const sel=document.getElementById('solution-select');
+  const existing=document.getElementById('existing-solutions-body');
+  sel.innerHTML='<option value="">Chargement...</option>';
+  if(existing)existing.innerHTML='<tr><td colspan="5" style="text-align:center;">Chargement...</td></tr>';
+
+  solutions=await getJSON(`/api/lc-workflow/isolations/${isoId}/solutions`);
+
+  if(!solutions.length){
+    sel.innerHTML='<option value="">Aucune recette — créez une recette</option>';
+    fillSolutionTemplateSelect();
+    renderExistingRecipesTable();
+    return;
+  }
+
+  const groups = getRecipeGroups();
+  sel.innerHTML='<option value="">— Sélectionner une recette —</option>' + groups.map(g => {
+    const id = g.best?.id || '';
+    return `<option value="${id}">${esc(g.nom)} — ${Number(g.total_ml||0).toFixed(0)} mL dispo total</option>`;
+  }).join('');
+
+  fillSolutionTemplateSelect();
+  renderExistingRecipesTable();
+}
+
+function useExistingSolution(id){
+  document.getElementById('solution-select').value=String(id);
+ 
+  hidePanels();
+  document.getElementById('panel-create-lc').classList.add('show');
+  document.getElementById('create-msg').innerHTML='<div class="alert-selected show">✅ Solution sélectionnée. Vous pouvez créer le lot LC.</div>';
+}
+function importSolutionToForm(id){
+  let s=solutions.find(x=>Number(x.id)===Number(id));
+  if(!s)return;
+  document.getElementById('solution-name').value=s.nom||'';
+  document.getElementById('solution-volume-total-l').value=((Number(s.volume_initial_ml||s.volume_final_ml||0))/1000||0).toFixed(2);
+  document.getElementById('solution-volume-dispo-l').value=((Number(s.volume_final_ml||0))/1000||0).toFixed(2);
+  document.getElementById('solution-prepared-on').value=String(s.prepared_on||todayYMD()).slice(0,10);
+  document.getElementById('solution-status').value=s.status||'pret';
+  document.getElementById('solution-protocole').value=s.protocole||document.getElementById('solution-protocole').value;
+  const body=document.getElementById('solution-compo-body');body.innerHTML='';
+  (s.composants||[]).forEach(c=>addComp(c.ingredient||c.nom||'', c.quantite??c.g_par_l??''));
+  if(!body.children.length)fillCompoDefault();
+  document.getElementById('solution-msg').innerHTML='<div class="alert-selected show">📥 Recette importée dans le formulaire. Modifiez puis enregistrez si vous voulez créer une nouvelle version.</div>';
+}
+
+
+function resetSolutionFormForNewRecipe(){
+  let template=document.getElementById('solution-template-select');
+  if(template)template.value='';
+  document.getElementById('solution-name').value='';
+  document.getElementById('solution-volume-total-l').value='2';
+  document.getElementById('solution-volume-dispo-l').value='2';
+  document.getElementById('solution-prepared-on').value=todayYMD();
+  document.getElementById('solution-status').value='pret';
+  document.getElementById('solution-protocole').value=`1) Peser les composants selon le volume final.
+2) Dissoudre dans eau propre/distillée.
+3) Distribuer dans pots LC modifiés.
+4) Stériliser à l’autoclave.
+5) Laisser refroidir avant inoculation depuis P3.`;
+  fillCompoDefault();
+}
+async function createSolution(){
+  let msg=document.getElementById('solution-msg');msg.innerHTML='';
+  try{
+    if(!requireP3())return;
+    let composants=[...document.querySelectorAll('#solution-compo-body tr')].map(tr=>({
+      ingredient:tr.querySelector('.comp-name').value,
+      quantite:Number(tr.querySelector('.comp-qty').value),
+      unite:'g/L'
+    })).filter(c=>c.ingredient&&Number.isFinite(c.quantite));
+    let totalL=Number(document.getElementById('solution-volume-total-l').value);
+    let dispoL=Number(document.getElementById('solution-volume-dispo-l').value);
+    if(!Number.isFinite(totalL)||totalL<=0)throw new Error('Volume total préparé invalide.');
+    if(!Number.isFinite(dispoL)||dispoL<0)throw new Error('Quantité disponible invalide.');
+    let created=await postJSON(`/api/lc-workflow/isolations/${selectedP3.isolement_id}/solutions`,{
+      nom:document.getElementById('solution-name').value,
+      type_champignon:selectedP3.champignon||selectedP3.cycle_type||'',
+      volume_initial_ml:Math.round(totalL*1000),
+      volume_final_ml:Math.round(dispoL*1000),
+      prepared_on:document.getElementById('solution-prepared-on').value||todayYMD(),
+      status:document.getElementById('solution-status').value,
+      protocole:document.getElementById('solution-protocole').value,
+      composants
+    });
+    msg.innerHTML='<div class="alert-selected show">✅ Solution nutritive enregistrée. Elle est disponible depuis Isolement et depuis LC.</div>';
+    await loadSolutions(selectedP3.isolement_id);
+    document.getElementById('solution-select').value=created.solution.id;
+    document.getElementById('btn-show-create-lc').click();
+  }catch(e){msg.innerHTML=`<div class="alert-required show">❌ ${esc(e.message)}</div>`}
+}
+function printSolution(){
+  const comps=[...document.querySelectorAll('#solution-compo-body tr')].map(tr=>({nom:tr.querySelector('.comp-name').value,qte:tr.querySelector('.comp-qty').value})).filter(c=>c.nom);
+  let html=`<html><head><title>Recette LC</title><style>body{font-family:Arial;padding:24px}table{border-collapse:collapse;width:100%}td,th{border:1px solid #ddd;padding:8px}h2{color:#2fa35a}
+.qr-scan-visible{
+  background:#fff;
+  border:3px solid #3498db;
+  border-left:10px solid #3498db;
+  border-radius:14px;
+  padding:18px;
+  margin:18px auto 24px;
+  box-shadow:0 10px 28px rgba(0,0,0,.14);
+  max-width:980px;
+}
+.qr-scan-visible h3{
+  margin:0 0 10px;
+  color:#21618c;
+  font-weight:900;
+  font-size:20px;
+}
+.qr-scan-visible p{
+  margin:0 0 12px;
+  color:#333;
+  font-size:14px;
+}
+.qr-scan-row{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  align-items:center;
+}
+.qr-scan-row input[type=text]{
+  flex:1;
+  min-width:240px;
+  padding:12px;
+  border:1px solid #bbb;
+  border-radius:10px;
+}
+.qr-scan-big-btn{
+  background:#3498db;
+  color:white;
+  border:none;
+  border-radius:10px;
+  padding:13px 18px;
+  font-weight:900;
+  cursor:pointer;
+}
+.qr-scan-open-btn{
+  background:#2fa35a;
+  color:white;
+  border:none;
+  border-radius:10px;
+  padding:13px 18px;
+  font-weight:900;
+  cursor:pointer;
+}
+.qr-reader-modal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.72);
+  z-index:99999;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:18px;
+}
+.qr-reader-card{
+  width:100%;
+  max-width:460px;
+  background:#fff;
+  border-radius:16px;
+  padding:16px;
+}
+.qr-reader-card video{
+  width:100%;
+  border-radius:12px;
+  background:#000;
+}
+.qr-reader-actions{
+  display:flex;
+  gap:10px;
+  margin-top:12px;
+}
+.qr-help{
+  font-size:12px!important;
+  color:#666!important;
+  margin-top:10px!important;
+}
+@media(max-width:767px){
+  .qr-scan-visible{padding:14px;margin:14px 10px 20px}
+  .qr-scan-row{display:block}
+  .qr-scan-row button,.qr-scan-row input[type=text]{width:100%;margin-bottom:8px}
+}
+
+</style></head><body>
+  <h2>Recette solution nutritive LC</h2>
+
+
+
+
+
+
+<p><strong>Isolation :</strong> ${esc(document.getElementById('solution-p3-readonly').value)}</p><p><strong>Nom :</strong> ${esc(document.getElementById('solution-name').value)}</p>
+  <table><thead><tr><th>Composant</th><th>g/L</th></tr></thead><tbody>${comps.map(c=>`<tr><td>${esc(c.nom)}</td><td>${esc(c.qte)}</td></tr>`).join('')}</tbody></table>
+  <p><strong>Volume préparé :</strong> ${esc(document.getElementById('solution-volume-total-l').value)} L</p><p><strong>Disponible :</strong> ${esc(document.getElementById('solution-volume-dispo-l').value)} L</p>
+  <h3>Protocole</h3><pre>${esc(document.getElementById('solution-protocole').value)}</pre></body></html>`;
+  let w=window.open('', '_blank');w.document.write(html);w.document.close();w.focus();w.print();
+}
+
+
+function getLcPublicBaseUrl(){
+  let origin = window.location.origin;
+  let host = window.location.hostname;
+  let saved = localStorage.getItem("biotechagro_lc_public_base_url");
+
+  if (saved && /^https?:\/\//i.test(saved)) return saved.replace(/\/$/, "");
+
+  if (host === "localhost" || host === "127.0.0.1") {
+    let suggested = origin.replace("localhost", "192.168.1.26").replace("127.0.0.1", "192.168.1.26");
+    let value = prompt(
+      "Adresse du serveur à mettre dans les QR codes LC pour le téléphone.\n\n" +
+      "Exemple : http://192.168.1.26:3000\n\n" +
+      "Si tu imprimes depuis localhost, le téléphone ne peut pas ouvrir localhost.",
+      suggested
+    );
+    let clean = String(value || suggested).trim().replace(/\/$/, "");
+    localStorage.setItem("biotechagro_lc_public_base_url", clean);
+    return clean;
+  }
+
+  return origin.replace(/\/$/, "");
+}
+
+function normalizeLcJournalUrl(value){
+  let v = String(value || "").trim();
+  if (!v) return "";
+
+  // Si le QR contient localhost, on remplace par l'adresse ouverte actuellement
+  // ou par l'adresse serveur sauvegardée pour les QR.
+  if (/^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?/i.test(v)) {
+    let base = (localStorage.getItem("biotechagro_lc_public_base_url") || window.location.origin).replace(/\/$/, "");
+    v = v.replace(/^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?/i, base);
+  }
+
+  return v;
+}
+
+function resetLcPublicBaseUrl(){
+  localStorage.removeItem("biotechagro_lc_public_base_url");
+  alert("Adresse QR réinitialisée. À la prochaine impression depuis localhost, le système redemandera l'adresse du serveur.");
+}
+
+function qrUrl(data){return 'https://api.qrserver.com/v1/create-qr-code/?size=260x260&margin=10&data='+encodeURIComponent(data);}
+function printLcPotLabels(lot,pots){
+  if(!lot||!pots||!pots.length)return;
+
+  let safe=(v)=>esc(v);
+  let dateCreation = new Date(lot.j0_date || lot.created_at || Date.now()).toLocaleDateString('fr-FR');
+
+  const html=`<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Étiquettes LC</title>
+<style>
+  body{font-family:Arial,sans-serif;margin:0;padding:10px}
+  .sheet{display:flex;flex-wrap:wrap;gap:8px}
+  .label{width:60mm;height:40mm;border:1px dashed #777;border-radius:6px;padding:5mm;box-sizing:border-box;display:grid;grid-template-columns:1fr 24mm;gap:4mm;page-break-inside:avoid;align-items:center}
+  .brand{font-size:13px;font-weight:900;color:#1f7a41;margin-bottom:4mm}
+  .line{font-size:10px;line-height:1.35;margin-bottom:2mm;color:#222}
+  .value{font-weight:900}
+  .qr img{width:24mm;height:24mm}
+  .small{font-size:8px;color:#555;margin-top:2px;text-align:center}
+  @media print{body{padding:0}.label{margin:2mm}}
+
+.qr-scan-visible{
+  background:#fff;
+  border:3px solid #3498db;
+  border-left:10px solid #3498db;
+  border-radius:14px;
+  padding:18px;
+  margin:18px auto 24px;
+  box-shadow:0 10px 28px rgba(0,0,0,.14);
+  max-width:980px;
+}
+.qr-scan-visible h3{
+  margin:0 0 10px;
+  color:#21618c;
+  font-weight:900;
+  font-size:20px;
+}
+.qr-scan-visible p{
+  margin:0 0 12px;
+  color:#333;
+  font-size:14px;
+}
+.qr-scan-row{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  align-items:center;
+}
+.qr-scan-row input[type=text]{
+  flex:1;
+  min-width:240px;
+  padding:12px;
+  border:1px solid #bbb;
+  border-radius:10px;
+}
+.qr-scan-big-btn{
+  background:#3498db;
+  color:white;
+  border:none;
+  border-radius:10px;
+  padding:13px 18px;
+  font-weight:900;
+  cursor:pointer;
+}
+.qr-scan-open-btn{
+  background:#2fa35a;
+  color:white;
+  border:none;
+  border-radius:10px;
+  padding:13px 18px;
+  font-weight:900;
+  cursor:pointer;
+}
+.qr-reader-modal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.72);
+  z-index:99999;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:18px;
+}
+.qr-reader-card{
+  width:100%;
+  max-width:460px;
+  background:#fff;
+  border-radius:16px;
+  padding:16px;
+}
+.qr-reader-card video{
+  width:100%;
+  border-radius:12px;
+  background:#000;
+}
+.qr-reader-actions{
+  display:flex;
+  gap:10px;
+  margin-top:12px;
+}
+.qr-help{
+  font-size:12px!important;
+  color:#666!important;
+  margin-top:10px!important;
+}
+@media(max-width:767px){
+  .qr-scan-visible{padding:14px;margin:14px 10px 20px}
+  .qr-scan-row{display:block}
+  .qr-scan-row button,.qr-scan-row input[type=text]{width:100%;margin-bottom:8px}
+}
+
+</style>
+</head>
+<body>
+<div class="sheet">
+${pots.map(p=>{
+  let n=String(p.pot_number||'').padStart(2,'0');
+  let potRef=p.code || ('POT-'+n);
+  let qrTarget=`${getLcPublicBaseUrl()}/admin-lc-cycle.html?lc_id=${encodeURIComponent(lot.id)}&pot_id=${encodeURIComponent(p.id)}&from_qr=1`;
+  return `<div class="label">
+    <div class="info">
+      <div class="brand">BiotechAgro</div>
+      <div class="line">LC Ref : <span class="value">${safe(lot.code||'—')}</span></div>
+      <div class="line">ID P3 utilisé : <span class="value">P3-${safe(lot.source_petri_id||'—')}</span></div>
+      <div class="line">Pot : <span class="value">${safe(potRef)}</span></div>
+      <div class="line">Date création : <span class="value">${safe(dateCreation)}</span></div>
+    </div>
+    <div class="qr"><img src="${qrUrl(qrTarget)}" alt="QR Code"><div class="small">Scanner QR<br>Journal LC</div></div>
+  </div>`;
+}).join('')}
+</div>
+<script>window.onload=function(){setTimeout(function(){window.print();},300)};<\/script>
+</body>
+</html>`;
+
+  const w=window.open('','_blank','width=900,height=700');
+  if(!w){alert('Autorise les popups pour imprimer automatiquement les étiquettes.');return;}
+  w.document.open();
+  w.document.write(html);
+  w.document.close();
+}
+
+async function createLcLot(){
+  const msg=document.getElementById('create-msg');msg.innerHTML='';
+  try{
+    if(!requireP3())return;
+    let solutionId=Number(document.getElementById('solution-select').value);
+    if(!solutionId)throw new Error('Choisissez une solution nutritive existante ou créez une recette.');
+    const created=await postJSON('/api/lc-workflow/lots',{
+      source_petri_id:selectedP3.petri_id,
+      solution_id:solutionId,
+      nb_pots:Number(document.getElementById('nb-pots').value),
+      volume_ml_per_pot:Number(document.getElementById('volume-pot').value),
+      j0_date:document.getElementById('j0-date').value||todayYMD(),
+      shelf_location:document.getElementById('shelf-location').value,
+      notes:document.getElementById('notes').value
+    });
+    msg.innerHTML=`<div class="alert-selected show">✅ Lot ${esc(created.code)} créé. Impression des étiquettes...</div>`;
+    let createdPots=await getJSON(`/api/lc-workflow/lots/${created.id}/pots`);
+    printLcPotLabels(created, createdPots);
+    await loadLots();
+    setTimeout(()=>{window.location.href=`admin-lc-cycle.html?lc_id=${created.id}`;},600);
+  }catch(e){msg.innerHTML=`<div class="alert-required show">❌ ${esc(e.message)}</div>`}
+}
+
+async function getPotsForLotColumn(lotId){
+  lotId = Number(lotId);
+  if(!Number.isFinite(lotId) || !lotId) return [];
+  try{
+    return await getJSON(`/api/lc-workflow/lots/${lotId}/pots-status-today`);
+  }catch(e){
+    try{
+      let pots=await getJSON(`/api/lc-workflow/lots/${lotId}/pots`);
+      return Array.isArray(pots)?pots:[];
+    }catch(_){
+      return [];
+    }
+  }
+}
+
+function lcBool(v){
+  if(v === true || v === 1)return true;
+  if(v === false || v === 0 || v === null || v === undefined || v === '')return false;
+  const s = String(v).trim().toLowerCase();
+  return s === 'true' || s === '1' || s === 'yes' || s === 'oui';
+}
+
+function isLcPotStored(p){
+  if(!p)return false;
+  const status = String(p.status || p.statut || '').trim().toUpperCase();
+  return !!(
+    lcBool(p.treatment_finished) ||
+    lcBool(p.traitement_termine) ||
+    lcBool(p.fridge_stored) ||
+    p.fridge_stored_at ||
+    p.stock_at ||
+    status === 'STOCK' ||
+    status === 'FRIGO' ||
+    status === 'STOCK_FRIGO' ||
+    status === 'CONSERVATION' ||
+    status === 'CONSERVATION_FRIGORIFIQUE'
+  );
+}
+function lcTreatmentStatusBadge(p, longLabel=false){
+  if(isLcPotStored(p)){
+    return longLabel
+      ? '<span class="lc-pot-line-ok">✅ Traitement terminé</span>'
+      : '<span class="lc-pot-line-status-ok">✅ Traitement terminé</span>';
+  }
+  return isPotTreatedToday(p)
+    ? (longLabel ? '<span class="lc-pot-line-ok">✅ Traitement journalier réalisé</span>' : '<span class="lc-pot-line-status-ok">✅ Traité aujourd’hui</span>')
+    : (longLabel ? '<span class="lc-pot-line-no">⚠️ Non traité aujourd’hui</span>' : '<span class="lc-pot-line-status-no">⚠️ Non traité</span>');
+}
+function lcLocalTodayYMD(){
+  const d=new Date();
+  const m=String(d.getMonth()+1).padStart(2,'0');
+  const day=String(d.getDate()).padStart(2,'0');
+  return `${d.getFullYear()}-${m}-${day}`;
+}
+function lcValueYMD(v){
+  if(!v)return '';
+  if(v instanceof Date){
+    const m=String(v.getMonth()+1).padStart(2,'0');
+    const d=String(v.getDate()).padStart(2,'0');
+    return `${v.getFullYear()}-${m}-${d}`;
+  }
+  const s=String(v).trim();
+  const m=s.match(/^(\d{4}-\d{2}-\d{2})/);
+  if(m)return m[1];
+  const dt=new Date(s);
+  if(Number.isNaN(dt.getTime()))return '';
+  const mm=String(dt.getMonth()+1).padStart(2,'0');
+  const dd=String(dt.getDate()).padStart(2,'0');
+  return `${dt.getFullYear()}-${mm}-${dd}`;
+}
+function isPotTreatedToday(p){
+  if(!p || isLcPotStored(p))return false;
+  return lcBool(p.today_treated) || lcBool(p.treated_today) || lcBool(p.done_today) || lcBool(p.traitement_jour_fait);
+}
+function potCodeColumn(p){
+  return p.code || p.pot_code || `Pot ${p.pot_number || p.numero || p.id || ''}`;
+}
+function renderPotsInColumn(lot,pots){
+  if(!pots || !pots.length){
+    return `<div class="lc-pot-empty">Aucun pot trouvé</div>`;
+  }
+  return `<div class="lc-pots-cell">
+    ${pots.map(p=>{
+      let potId=p.id || p.pot_id || p.lc_pot_id || '';
+      let code=potCodeColumn(p);
+      let jour=p.jour_actuel ?? lot.jour_actuel ?? 0;
+      let status=p.status || p.statut || 'ACTIF';
+      let done=isPotTreatedToday(p);
+      return `<div class="lc-pot-line" id="lc-pot-line-${potId}">
+        <strong>${esc(code)}</strong><br>
+        J${esc(jour)} · ${esc(status)}<br>
+        ${lcTreatmentStatusBadge(p, false)}
+        <div class="lc-pot-line-actions">
+          <a class="lc-pot-line-journal" href="admin-lc-cycle.html?lc_id=${lot.id}&pot_id=${potId}&mode=journal">Journal</a>
+          <button type="button" class="lc-pot-line-resume" onclick="resumeLcPotColumn(${lot.id},${potId})">Résumé</button>
+          <button type="button" class="lc-pot-line-delete" onclick="deleteLcPotColumn(${lot.id},${potId})">Supprimer pot</button>
+        </div>
+      </div>`;
+    }).join('')}
+  </div>`;
+}
+function yesNoBadge(v){
+  return v ? '<span class="lc-pot-badge-valid">✅ Oui</span>' : '<span class="lc-pot-badge-muted" style="display:inline-block!important;">—</span>';
+}
+function lcFormatShortDate(v){
+  if(!v)return '—';
+  return esc(String(v).slice(0,16).replace('T',' '));
+}
+function lcSummaryValue(label,value){
+  return `<div class="lc-summary-info-card"><div class="lc-summary-info-label">${esc(label)}</div><div class="lc-summary-info-value">${value}</div></div>`;
+}
+function closeLcPotSummaryModal(){
+  const modal=document.getElementById('lc-pot-summary-modal');
+  if(modal)modal.style.display='none';
+}
+function openLcPotSummaryModal(title,subtitle,bodyHtml){
+  const modal=document.getElementById('lc-pot-summary-modal');
+  const body=document.getElementById('lc-pot-summary-modal-body');
+  const titleEl=document.getElementById('lc-summary-title');
+  const subEl=document.getElementById('lc-summary-subtitle');
+  if(titleEl)titleEl.textContent=title || '📋 Résumé du pot LC';
+  if(subEl)subEl.textContent=subtitle || 'Informations, album photo et remarques écrites';
+  if(body)body.innerHTML=bodyHtml || '<div class="lc-summary-loading">Chargement...</div>';
+  if(modal)modal.style.display='flex';
+}
+function lcSummaryImageUrl(url){
+  let u=String(url||'').trim();
+  if(!u)return '';
+  if(/^https?:\/\//i.test(u) || u.startsWith('data:'))return u;
+  if(u.startsWith('/'))return u;
+  return '/' + u.replace(/^\.\//,'');
+}
+function lcSummaryPhotoCard(photo){
+  const src=lcSummaryImageUrl(photo.url);
+  if(!src)return '';
+  return `<div class="lc-summary-photo-card">
+    <img src="${esc(src)}" alt="${esc(photo.title||'Photo LC')}" onclick="window.open(this.src,'_blank')">
+    <div class="lc-summary-photo-title">${esc(photo.title||'Photo LC')}</div>
+    <div class="lc-summary-photo-note">${esc(photo.note||'')}</div>
+    ${photo.journalId ? `<button type="button" class="btn-main btn-red" style="width:100%;margin-top:8px;" onclick="deleteLcSummaryPhoto(${Number(photo.lotId)},${Number(photo.potId)},${Number(photo.journalId)})">🗑️ Supprimer</button>` : ''}
+  </div>`;
+}
+window.deleteLcSummaryPhoto=async function(lotId,potId,journalId){
+  if(!confirm('Supprimer définitivement cette photo LC ?\n\nSa référence commune sera aussi retirée si nécessaire.'))return;
+  try{
+    const r=await fetch(API_BASE+`/api/lc-workflow/lots/${lotId}/journal/${journalId}/photo`,{method:'DELETE'});
+    const j=await r.json().catch(()=>({}));
+    if(!r.ok)throw new Error(j.error||'Suppression impossible');
+    await resumeLcPotColumn(lotId,potId);
+    if(j.pending)return alert('⏳ Demande envoyée à un administrateur. La photo reste visible jusqu’à son approbation.');
+    if(j.storage_warning)alert('Photo retirée, mais le fichier distant n’a pas pu être supprimé : '+j.storage_warning);
+  }catch(e){alert('❌ '+(e.message||e));}
+};
+function lcSummaryRemarksTable(rows){
+  if(!rows.length)return '<div class="lc-summary-empty">Aucune remarque écrite enregistrée pour ce pot.</div>';
+  return `<table class="lc-summary-remarks-table">
+    <thead><tr><th>Jour</th><th>Manipulation</th><th>Note</th><th>Remarque écrite</th></tr></thead>
+    <tbody>${rows.map(r=>`<tr>
+      <td>J${esc(r.day_index ?? '—')}</td>
+      <td>${esc(r.manipulation_type || '—')}</td>
+      <td>${r.note20!=null ? esc(r.note20)+'/20' : '—'}</td>
+      <td>${esc(r.observations || r.commentaire || r.notes || '—')}</td>
+    </tr>`).join('')}</tbody>
+  </table>`;
+}
+async function resumeLcPotColumn(lotId,potId){
+  openLcPotSummaryModal('📋 Résumé du pot LC','Chargement des informations, photos et remarques...', '<div class="lc-summary-loading">Chargement du résumé...</div>');
+
+  try{
+    const pots=await getPotsForLotColumn(lotId);
+    let p=pots.find(x=>Number(x.id||x.pot_id||x.lc_pot_id)===Number(potId));
+    if(!p)throw new Error('Pot introuvable.');
+
+    let lot={id:lotId};
+    try{ lot=await getJSON(`/api/lc-workflow/lots/${lotId}`); }catch(_){ lot={id:lotId}; }
+
+    let journal=[];
+    try{ journal=await getJSON(`/api/lc-workflow/lots/${lotId}/journal`); }catch(_){ journal=[]; }
+    const potJournal=(Array.isArray(journal)?journal:[])
+      .filter(j=>Number(j.lc_pot_id||j.pot_id)===Number(potId))
+      .sort((a,b)=>Number(a.day_index||0)-Number(b.day_index||0));
+
+    const last=potJournal.length ? potJournal[potJournal.length-1] : null;
+    const done=isPotTreatedToday(p);
+    const stored=isLcPotStored(p);
+    const treatmentSummary = stored
+      ? '<span class="lc-pot-badge-valid">✅ Traitement terminé</span>'
+      : (done ? '<span class="lc-pot-badge-valid">✅ Réalisé</span>' : '<span class="lc-pot-badge-warn">⚠️ Non traité</span>');
+    const volume=Number(p.volume_ml || lot.volume_ml_per_pot || lot.volume_par_pot_ml || 720);
+    const potCode=potCodeColumn(p);
+    const lotCode=lot.code || lot.lot_code || '';
+    const days=potJournal.map(j=>'J'+Number(j.day_index||0)).join(', ') || '—';
+
+    const photos=[];
+    const seen=new Set();
+    function addPhoto(url,title,note,journalId){
+      url=String(url||'').trim();
+      if(!url)return;
+      const key=url+'|'+title;
+      if(seen.has(key))return;
+      seen.add(key);
+      photos.push({url,title,note,journalId,lotId,potId});
+    }
+    potJournal.forEach(j=>{
+      const jLabel='J'+Number(j.day_index||0);
+      addPhoto(j.photo_url, `${jLabel} — Photo du pot`, j.photo_note || j.observations || 'Photo du jour', j.id);
+      addPhoto(j.reference_image_url || j.group_reference_url, `${jLabel} — Image de référence`, 'Référence comparative');
+    });
+
+    const remarksRows=potJournal.filter(j=>
+      String(j.observations||j.commentaire||j.notes||'').trim() ||
+      String(j.manipulation_type||'').trim() ||
+      j.note20!=null
+    );
+
+    const bodyHtml=`
+      <div class="lc-summary-section">
+        <h4>🧴 Informations du pot</h4>
+        <div class="lc-summary-grid">
+          ${lcSummaryValue('Lot LC',esc(lotCode || ('LC #'+lotId)))}
+          ${lcSummaryValue('Pot',esc(potCode))}
+          ${lcSummaryValue('Source P3',esc(lot.source_petri_id ? 'P3-'+lot.source_petri_id : '—'))}
+          ${lcSummaryValue('Solution',esc(lot.solution?.nom || lot.solution_lot_code || '—'))}
+          ${lcSummaryValue('Statut',esc(p.status || p.statut || 'ACTIF'))}
+          ${lcSummaryValue('Jour actuel','J'+esc(p.jour_actuel ?? lot.jour_actuel ?? '—'))}
+          ${lcSummaryValue('Traitement journalier',treatmentSummary)}
+          ${lcSummaryValue('Jours enregistrés',esc(days))}
+          ${lcSummaryValue('Test gélose',yesNoBadge(!!p.agar_test_validated))}
+          ${lcSummaryValue('LC validée',yesNoBadge(!!p.lc_validated))}
+          ${lcSummaryValue('Volume',esc(volume)+' mL')}
+          ${lcSummaryValue('Création LC',lcFormatShortDate(p.lc_created_date || lot.j0_date))}
+          ${lcSummaryValue('Dernière note',last && last.note20!=null ? esc(last.note20)+'/20' : '—')}
+          ${lcSummaryValue('Dernière manipulation',last ? 'J'+esc(last.day_index)+' — '+esc(last.manipulation_type||'—') : '—')}
+        </div>
+        ${p.validation_notes ? `<div style="margin-top:12px;font-size:13px;"><strong>Note validation :</strong> ${esc(p.validation_notes)}</div>` : ''}
+      </div>
+
+      <div class="lc-summary-section">
+        <h4>📷 Album photo du pot</h4>
+        ${photos.length ? `<div class="lc-summary-album-grid">${photos.map(lcSummaryPhotoCard).join('')}</div>` : '<div class="lc-summary-empty">Aucune photo enregistrée pour ce pot.</div>'}
+      </div>
+
+      <div class="lc-summary-section">
+        <h4>📝 Remarques écrites</h4>
+        ${lcSummaryRemarksTable(remarksRows)}
+      </div>
+    `;
+
+    openLcPotSummaryModal(`📋 Résumé du pot ${potCode}`, `${lotCode || 'Lot LC'} — album photo, informations et remarques écrites`, bodyHtml);
+  }catch(e){
+    openLcPotSummaryModal('❌ Résumé indisponible','Une erreur est survenue', `<div class="lc-summary-empty">${esc(e.message)}</div>`);
+  }
+}
+
+async function deleteLcPotColumn(lotId,potId){
+  if(!confirm('Supprimer ce pot LC ?'))return;
+  try{
+    const r=await fetch(API_BASE+`/api/lc-workflow/pots/${potId}`,{method:'DELETE'});
+    const j=await r.json().catch(()=>({}));
+    if(!r.ok)throw new Error(j.error||'Erreur suppression pot');
+    let el=document.getElementById(`lc-pot-line-${potId}`);
+    if(el)el.remove();
+  }catch(e){alert(e.message)}
+}
+
+
+
+function lcDaysUntilExpiry(dateStr){
+  if(!dateStr)return null;
+  let today=new Date(); today.setHours(0,0,0,0);
+  let d=new Date(String(dateStr).slice(0,10)+'T00:00:00');
+  if(Number.isNaN(d.getTime()))return null;
+  return Math.ceil((d-today)/86400000);
+}
+function lcFridgeAlertHtml(p){
+  if(!p || !p.fridge_stored || !p.fridge_expiry_date)return '';
+  let left=lcDaysUntilExpiry(p.fridge_expiry_date);
+  if(left===null)return '';
+  if(left<0)return '<br><span class="lc-pot-line-no">❄️ Limite conservation dépassée</span>';
+  if(left<=10)return `<br><span class="lc-pot-line-no">❄️ Alerte frigo : ${left} jour(s) restants</span>`;
+  return `<br><span class="lc-pot-line-ok">❄️ Frigo : ${left} jour(s) restants</span>`;
+}
+
+
+
+function lcPotDatesHtml(p){
+  let parts=[`Volume ${Number(p.volume_ml||720)} mL`];
+  if(p.lc_created_date) parts.push(`Création ${String(p.lc_created_date).slice(0,10)}`);
+  if(p.fridge_stored_at) parts.push(`Stock ${String(p.fridge_stored_at).slice(0,10)}`);
+  if(p.fridge_expiry_date) parts.push(`Exp. ${String(p.fridge_expiry_date).slice(0,10)}`);
+  return parts.length?`<br><span class="lc-pot-line-small">${parts.join(' · ')}</span>`:'';
+}
+
+function lcPotValidationStatusHtml(p){
+  const parts=[];
+  if(p.agar_test_validated){
+    parts.push('<span class="lc-pot-badge-valid">✅ Gélose validée</span>');
+  }
+  if(p.lc_validated){
+    parts.push('<span class="lc-pot-badge-valid">✅ LC validée</span>');
+  }
+  if(p.fridge_stored){
+    const left=lcDaysUntilExpiry(p.fridge_expiry_date);
+    if(left===null){
+      parts.push('<span class="lc-pot-badge-valid">❄️ Frigo</span>');
+    }else if(left<0){
+      parts.push('<span class="lc-pot-badge-warn">❄️ Limite dépassée</span>');
+    }else if(left<=10){
+      parts.push(`<span class="lc-pot-badge-warn">❄️ Alerte frigo ${left} j</span>`);
+    }else{
+      parts.push(`<span class="lc-pot-badge-valid">❄️ Frigo ${left} j</span>`);
+    }
+  }
+  return parts.join(' ');
+}
+
+function printLcFrigoLabelFromMain(label, lotId, potId){
+  const cleanLotId = Number(lotId || label.lot_id || label.lc_lot_id || label.lc_id || 0);
+  const cleanPotId = Number(potId || label.pot_id || label.id || 0);
+  const qrTarget = (cleanLotId && cleanPotId)
+    ? `${getLcPublicBaseUrl()}/admin-myc-liquide.html?resume_lc_id=${encodeURIComponent(cleanLotId)}&resume_pot_id=${encodeURIComponent(cleanPotId)}`
+    : `${getLcPublicBaseUrl()}/admin-myc-liquide.html`;
+
+  const html=`<!doctype html><html><head><meta charset="utf-8"><title>Étiquette LC Frigo</title>
+  <style>
+    body{font-family:Arial;margin:0;padding:18px;background:#fff}
+    .label{width:82mm;min-height:48mm;border:2px solid #1f7a41;border-radius:8px;padding:7px;box-sizing:border-box;display:grid;grid-template-columns:1fr 25mm;gap:6px;align-items:center;page-break-inside:avoid}
+    .brand{font-weight:900;font-size:15px;color:#1f7a41;text-align:center;margin-bottom:4px}
+    .type{font-weight:900;text-align:center;background:#eef7ff;border:1px solid #cde6fb;border-radius:6px;padding:4px;margin-bottom:5px}
+    .row{font-size:11px;margin:3px 0;line-height:1.25}
+    .big{font-size:13px;font-weight:900}
+    .warn{border-top:1px solid #ddd;margin-top:5px;padding-top:5px;font-size:10px;line-height:1.25}
+    .qr{text-align:center}
+    .qr img{width:25mm;height:25mm;border:1px solid #ddd;border-radius:4px;padding:2px;background:#fff;box-sizing:border-box}
+    .small{font-size:8px;color:#555;margin-top:2px;line-height:1.15}
+    @media print{body{padding:0}.label{page-break-inside:avoid}}
+  </style></head><body>
+    <div class="label">
+      <div class="info">
+        <div class="brand">BiotechAgro</div>
+        <div class="type">❄️ LC FRIGO</div>
+        <div class="row big">${esc(label.pot_code||'')}</div>
+        <div class="row">Lot : ${esc(label.lot_code||'')}</div>
+        <div class="row">Volume : ${esc(label.volume_ml||720)} mL</div>
+        <div class="row">Création LC : ${esc(String(label.lc_created_date||'').slice(0,10))}</div>
+        <div class="row">Mise en stock : ${esc(String(label.stored_at||'').slice(0,10))}</div>
+        <div class="row big">Expiration : ${esc(String(label.expiry_date||'').slice(0,10))}</div>
+        <div class="row">Conservation : ${esc(label.conservation_days||45)} jours</div>
+        <div class="warn">À utiliser avant la date limite. Vérifier aspect/contamination avant transfert.</div>
+      </div>
+      <div class="qr">
+        <img src="${qrUrl(qrTarget)}" alt="QR Résumé pot LC">
+        <div class="small">Scanner QR<br>Résumé pot</div>
+      </div>
+    </div>
+  </body></html>`;
+  const w=window.open('','_blank','width=520,height=560');
+  if(!w){alert('Autorise les popups pour imprimer automatiquement les étiquettes.');return;}
+  w.document.write(html); w.document.close(); w.focus();
+  setTimeout(()=>w.print(),300);
+}
+
+async function storeLcPotFridgeFromMain(lotId,potId){
+  try{
+    if(!confirm('Stocker cette LC au frigo et imprimer son étiquette ?'))return;
+    const r=await postJSON(`/api/lc-workflow/pots/${potId}/fridge-storage`,{
+      lc_lot_id:lotId,
+      storage_days:45
+    });
+    if(r.label)printLcFrigoLabelFromMain(r.label, lotId, potId);
+    alert('✅ LC stockée au frigo.');
+    if(typeof loadLots==='function') await loadLots();
+    else location.reload();
+  }catch(e){
+    const msg=String(e && e.message ? e.message : e || 'Erreur stockage');
+    if(msg.toLowerCase().includes('non valid')){
+      alert('⚠️ LC non validée. Ouvre le journal du pot, coche “LC validée”, clique “Enregistrer validation”, puis refais Stockage.');
+    }else{
+      alert('❌ '+msg);
+    }
+  }
+}
+
+function lcPotFrigoButtonHtml(p,lotId){
+  const potId = Number(p.id || p.pot_id || p.lc_pot_id || 0);
+  if(!potId){
+    return '<button type="button" class="lc-pot-row-storage" disabled title="Pot introuvable">❄️ Stockage</button>';
+  }
+  if(isLcPotStored(p)){
+    return `<button type="button" class="lc-pot-row-storage" onclick="storeLcPotFridgeFromMain(${Number(lotId)},${potId})">❄️ Réimprimer</button>`;
+  }
+  return `<button type="button" class="lc-pot-row-storage" onclick="storeLcPotFridgeFromMain(${Number(lotId)},${potId})" title="Stockage frigo après validation LC">❄️ Stockage</button>`;
+}
+
+function potCodeRow(p){
+  return p.code || p.pot_code || `Pot ${p.pot_number || p.numero || p.id || ''}`;
+}
+function renderPotRowsUnderLot(lot,pots){
+  if(!pots || !pots.length){
+    return `<tr class="lc-pot-no-row">
+      <td colspan="7">↳ Aucun pot trouvé pour ce lot.</td>
+    </tr>`;
+  }
+
+  return pots.map(p=>{
+    const potId=p.id || p.pot_id || p.lc_pot_id || '';
+    const code=potCodeRow(p);
+    const jour=p.jour_actuel ?? lot.jour_actuel ?? 0;
+    const status=p.status || p.statut || 'ACTIF';
+    const done=isPotTreatedToday(p);
+
+    return `<tr class="lc-pot-row-line" id="lc-pot-row-${potId}">
+      <td class="lc-pot-indent">
+        <span class="lc-pot-line-code">↳ ${esc(code)}</span><br>
+        <span class="lc-pot-line-small">Pot du lot ${esc(lot.code||'')}</span>
+      </td>
+      <td colspan="2">
+        <span class="lc-pot-line-small">Statut :</span> ${esc(status)}
+      </td>
+      <td>
+        <strong>J${esc(jour)}</strong>
+      </td>
+      <td colspan="2">
+        <div class="lc-pot-line-status">
+            ${lcTreatmentStatusBadge(p, true)}
+            ${lcPotValidationStatusHtml(p)}${lcPotDatesHtml(p)}
+          </div></td>
+      <td>
+        <div class="lc-pot-row-actions">
+          <a class="lc-pot-row-journal" href="admin-lc-cycle.html?lc_id=${lot.id}&pot_id=${potId}&mode=journal">Journal</a>
+          ${lcPotFrigoButtonHtml(p,lot.id)}
+          <button type="button" class="lc-pot-row-resume" onclick="resumeLcPotColumn(${lot.id},${potId})">Résumé</button>
+          <button type="button" class="lc-pot-row-delete" onclick="deleteLcPotColumn(${lot.id},${potId})">Supprimer pot</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+async function loadLots(){
+  const tbody=document.getElementById('lc-lots-body');
+  try{
+    let lots=await getJSON('/api/lc-workflow/lots');
+    if(!lots.length){
+      tbody.innerHTML='<tr><td colspan="7" style="text-align:center;">Aucun lot LC créé.</td></tr>';
+      return;
+    }
+
+    lots=await Promise.all(lots.map(async l=>{
+      const pots=Number.isFinite(Number(l.id)) ? await getPotsForLotColumn(l.id) : [];
+      return {...l,pots_colonne:pots};
+    }));
+
+    tbody.innerHTML=lots.map(l=>{
+      let nbPots = l.pots_colonne?.length || l.total_pots_crees || l.nb_pots || 0;
+      let doneCount = (l.pots_colonne||[]).filter(isPotTreatedToday).length;
+
+      return `<tr class="lc-lot-row-main">
+        <td><strong>${esc(l.code)}</strong><br><small>${esc(l.champignon)}</small></td>
+        <td>P3-${l.source_petri_id||'—'}<br><small>${esc(l.iso_code||'')}</small></td>
+        <td>${esc(l.solution?.nom||l.solution_lot_code||'—')}</td>
+        <td><strong>${nbPots}</strong><br><small>${doneCount}/${nbPots} traité(s)</small></td>
+        <td>${esc(String(l.j0_date||'').slice(0,10))}</td>
+        <td><span class="badge-pill warn">J${l.jour_actuel??0}</span></td>
+        <td>
+          <div class="lc-lot-actions-line">
+            <button class="btn-action btn-blue" style="max-width:160px;padding:8px 12px" onclick="window.location.href='admin-lc-cycle.html?lc_id=${l.id}'">Journal lot</button>
+            <button class="btn-delete-lc" onclick="deleteLcLot(${l.id}, '${esc(l.code).replace(/'/g, '&#39;')}')">Supprimer lot</button>
+          </div>
+        </td>
+      </tr>
+      ${renderPotRowsUnderLot(l,l.pots_colonne||[])}`;
+    }).join('');
+  }catch(e){
+    tbody.innerHTML=`<tr><td colspan="7" style="text-align:center;color:#721c24;">${esc(e.message)}</td></tr>`;
+  }
+}
+
+async function deleteLcLot(id, code){
+  if(!id)return;
+  let label = code || ('LC #' + id);
+  if(!confirm(`Supprimer le lot ${label} et ses pots LC ?`))return;
+  try{
+    await fetch(API_BASE + `/api/lc-workflow/lots/${id}`, { method:'DELETE' }).then(async r=>{
+      const j=await r.json().catch(()=>({}));
+      if(!r.ok)throw new Error(j.error||'Erreur suppression');
+      return j;
+    });
+    await loadLots();
+    await loadP3Ready();
+  }catch(e){
+    alert(e.message);
+  }
+}
+
+document.addEventListener('DOMContentLoaded',()=>{
+  document.getElementById('j0-date').value=todayYMD();
+  document.getElementById('solution-prepared-on').value=todayYMD();
+  fillCompoDefault();
+  document.getElementById('btn-add-comp').addEventListener('click',()=>addComp());
+  document.getElementById('btn-save-solution').addEventListener('click',createSolution);
+  document.getElementById('btn-print-solution').addEventListener('click',printSolution);
+  document.getElementById('btn-create-lc').addEventListener('click',createLcLot);
+  document.getElementById('btn-show-create-lc').addEventListener('click',async()=>{if(!requireP3())return;hidePanels();await loadSolutions(selectedP3.isolement_id);document.getElementById('panel-create-lc').classList.add('show')
+  
+});
+  document.getElementById('btn-show-solution').addEventListener('click',async()=>{if(!requireP3())return;hidePanels();await loadSolutions(selectedP3.isolement_id);document.getElementById('panel-solution').classList.add('show')});
+  document.getElementById('btn-show-protocole').addEventListener('click',()=>{if(!requireP3())return;hidePanels();document.getElementById('panel-protocole').classList.add('show')});
+  loadP3Ready();loadLots().then(()=>openLcSummaryFromUrlIfNeeded()).catch(()=>{});
+});
+
+
+let _qrVideoStream=null;
+let _qrScanTimer=null;
+
+function openScannedQrValueVisible(value){
+  value=String(value||'').trim();
+  if(!value)return alert('QR vide.');
+
+  if(value.includes('admin-lc-cycle.html') || value.includes('lc_id=')){
+    window.location.href=normalizeLcJournalUrl(value);
+    return;
+  }
+
+  try{
+    let obj=JSON.parse(value);
+    if(obj.url){window.location.href=normalizeLcJournalUrl(obj.url);return;}
+    if(obj.lc_id && obj.pot_id){
+      window.location.href=`${getLcPublicBaseUrl()}/admin-lc-cycle.html?lc_id=${encodeURIComponent(obj.lc_id)}&pot_id=${encodeURIComponent(obj.pot_id)}`;
+      return;
+    }
+  }catch(_){}
+
+  alert('QR reconnu, mais il ne contient pas un lien journal LC valide.');
+}
+
+function openManualQrUrlVisible(){
+  const el=document.getElementById('qr-manual-url-visible');
+  const value=String(el?.value||'').trim();
+  if(!value)return alert('Colle le lien QR du pot.');
+  openScannedQrValueVisible(value);
+}
+
+async function scanQrFromImageVisible(input){
+  let file=input.files&&input.files[0];
+  if(!file)return;
+  try{
+    if(!('BarcodeDetector' in window)){
+      alert("Ce navigateur ne lit pas le QR depuis l’image. Utilise l’appareil photo iPhone pour scanner l’étiquette ou colle le lien QR.");
+      input.value='';
+      return;
+    }
+    let detector=new BarcodeDetector({formats:['qr_code']});
+    let bitmap=await createImageBitmap(file);
+    let codes=await detector.detect(bitmap);
+    if(!codes||!codes.length){
+      alert('Aucun QR détecté. Reprends une photo plus nette.');
+      input.value='';
+      return;
+    }
+    openScannedQrValueVisible(codes[0].rawValue);
+  }catch(e){
+    alert('Erreur lecture QR : '+e.message);
+  }finally{
+    input.value='';
+  }
+}
+
+async function startVisibleQrScanner(){
+  try{
+    if(!('BarcodeDetector' in window)){
+      alert("Scanner caméra non supporté ici. Utilise “Scanner par photo” ou l’appareil photo iPhone.");
+      return;
+    }
+    let modal=document.getElementById('qr-reader-modal');
+    let video=document.getElementById('qr-reader-video');
+    if(!modal||!video)return alert('Lecteur QR introuvable.');
+    _qrVideoStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}});
+    video.srcObject=_qrVideoStream;
+    await video.play();
+    modal.style.display='flex';
+
+    const detector=new BarcodeDetector({formats:['qr_code']});
+    _qrScanTimer=setInterval(async()=>{
+      try{
+        const codes=await detector.detect(video);
+        if(codes&&codes.length){
+          let raw=codes[0].rawValue;
+          stopVisibleQrScanner();
+          openScannedQrValueVisible(raw);
+        }
+      }catch(_){}
+    },600);
+  }catch(e){
+    alert('Impossible d’ouvrir la caméra : '+e.message);
+  }
+}
+
+function stopVisibleQrScanner(){
+  const modal=document.getElementById('qr-reader-modal');
+  if(modal)modal.style.display='none';
+  if(_qrScanTimer){clearInterval(_qrScanTimer);_qrScanTimer=null;}
+  if(_qrVideoStream){
+    _qrVideoStream.getTracks().forEach(t=>t.stop());
+    _qrVideoStream=null;
+  }
+}
+
+
+
+// === SCANNER LC INLINE - style isolement ===
+function setLcScanInlineMsg(text, isError = true) {
+  const el = document.getElementById("lc-scan-inline-msg");
+  if (!el) return;
+  el.style.color = isError ? "#c0392b" : "#1f7a41";
+  el.textContent = text || "";
+}
+
+function normalizeLcScanValue(value) {
+  return String(value || "").trim();
+}
+
+
+function extractLcIdsFromQrValue(value){
+  let code = String(value || '').trim();
+  if(!code)return null;
+  try{
+    let obj = JSON.parse(code);
+    if(obj.url)return extractLcIdsFromQrValue(obj.url);
+    if(obj.lc_id && obj.pot_id){
+      return { lotId:Number(obj.lc_id), potId:Number(obj.pot_id), url:`${getLcPublicBaseUrl()}/admin-lc-cycle.html?lc_id=${encodeURIComponent(obj.lc_id)}&pot_id=${encodeURIComponent(obj.pot_id)}&from_qr=1` };
+    }
+  }catch(_){ }
+  try{
+    let u = new URL(normalizeLcJournalUrl(code), window.location.origin);
+    let lotId = Number(u.searchParams.get('lc_id'));
+    let potId = Number(u.searchParams.get('pot_id'));
+    if(lotId && potId)return { lotId, potId, url:u.toString() };
+  }catch(_){ }
+  return null;
+}
+
+async function openLcQrDestination(value){
+  const parsed = extractLcIdsFromQrValue(value);
+  if(!parsed)return false;
+
+  try{
+    const pots = await getPotsForLotColumn(parsed.lotId);
+    const p = (Array.isArray(pots)?pots:[]).find(x=>Number(x.id||x.pot_id||x.lc_pot_id)===Number(parsed.potId));
+    const stored = isLcPotStored(p);
+    if(stored){
+      await resumeLcPotColumn(parsed.lotId, parsed.potId);
+      return true;
+    }
+  }catch(e){
+    console.warn('Contrôle stockage QR impossible, ouverture journal:', e);
+  }
+
+  window.location.href = parsed.url;
+  return true;
+}
+
+async function openLcSummaryFromUrlIfNeeded(){
+  const qs = new URLSearchParams(window.location.search);
+  const lotId = Number(qs.get('resume_lc_id') || '0');
+  const potId = Number(qs.get('resume_pot_id') || '0');
+  if(!lotId || !potId)return;
+  await resumeLcPotColumn(lotId,potId);
+}
+
+async function openScannedLcValue(value) {
+  const code = normalizeLcScanValue(value);
+  if (!code) {
+    setLcScanInlineMsg("⚠️ Scanne ou colle le QR du pot LC.");
+    return;
+  }
+
+  // QR LC normal : si le pot est stocké, afficher le résumé. Sinon ouvrir le journal.
+  if (code.includes("admin-lc-cycle.html") || code.includes("lc_id=") || extractLcIdsFromQrValue(code)) {
+    const handled = await openLcQrDestination(code);
+    if(handled)return;
+  }
+
+  setLcScanInlineMsg("❌ QR LC non reconnu. Il doit contenir lc_id et pot_id.");
+}
+
+function openScannedLcPotInline() {
+  let input = document.getElementById("lc-scan-inline-code");
+  openScannedLcValue(input ? input.value : "");
+}
+
+function startLcInlineQrCamera() {
+  let cameraInput = document.getElementById("lc-scan-inline-camera-file");
+  if (!cameraInput) {
+    setLcScanInlineMsg("Champ caméra introuvable. Recharge la page.");
+    return;
+  }
+  setLcScanInlineMsg("Ouverture appareil photo... Prends le QR en photo.", false);
+  cameraInput.click();
+}
+
+function waitForLcQrLibraries(timeoutMs = 3500) {
+  let started = Date.now();
+  return new Promise((resolve) => {
+    (function check() {
+      if (window.Html5Qrcode || window.jsQR || window.BarcodeDetector || Date.now() - started > timeoutMs) {
+        resolve();
+        return;
+      }
+      setTimeout(check, 80);
+    })();
+  });
+}
+
+function loadLcImageFromFile(file) {
+  return new Promise((resolve, reject) => {
+    let img = new Image();
+    img.onload = () => resolve(img);
+    img.onerror = () => reject(new Error("Image illisible"));
+    img.src = URL.createObjectURL(file);
+  });
+}
+
+function drawLcQrVariant(img, options) {
+  let scale = options.scale || 1;
+  let rotate = options.rotate || 0;
+  let maxSide = 2200;
+  let w = img.naturalWidth || img.width;
+  let h = img.naturalHeight || img.height;
+  let ratio = Math.min(maxSide / Math.max(w, h), 1) * scale;
+  w = Math.max(1, Math.round(w * ratio));
+  h = Math.max(1, Math.round(h * ratio));
+
+  let canvas = document.createElement("canvas");
+  let ctx = canvas.getContext("2d", { willReadFrequently: true });
+  let rotated = rotate === 90 || rotate === 270;
+  canvas.width = rotated ? h : w;
+  canvas.height = rotated ? w : h;
+
+  ctx.save();
+  if (rotate === 90) { ctx.translate(canvas.width, 0); ctx.rotate(Math.PI / 2); }
+  if (rotate === 180) { ctx.translate(canvas.width, canvas.height); ctx.rotate(Math.PI); }
+  if (rotate === 270) { ctx.translate(0, canvas.height); ctx.rotate(-Math.PI / 2); }
+  ctx.drawImage(img, 0, 0, w, h);
+  ctx.restore();
+
+  return { canvas, ctx };
+}
+
+async function decodeLcQrFromFile(file) {
+  await waitForLcQrLibraries();
+
+  // Méthode 1 : html5-qrcode, comme la logique de scan isolement.
+  if (window.Html5Qrcode) {
+    try {
+      let temp = document.getElementById("lc-scan-inline-reader-temp");
+      if (!temp) {
+        temp = document.createElement("div");
+        temp.id = "lc-scan-inline-reader-temp";
+        temp.style.display = "none";
+        document.body.appendChild(temp);
+      }
+      let scanner = new Html5Qrcode("lc-scan-inline-reader-temp");
+      let decoded = await scanner.scanFile(file, true);
+      try { await scanner.clear(); } catch (_) {}
+      if (decoded) return decoded;
+    } catch (_) {}
+  }
+
+  // Méthode 2 : BarcodeDetector natif.
+  if ("BarcodeDetector" in window) {
+    try {
+      const detector = new BarcodeDetector({ formats: ["qr_code"] });
+      const bitmap = await createImageBitmap(file);
+      const codes = await detector.detect(bitmap);
+      if (codes && codes.length && codes[0].rawValue) return codes[0].rawValue;
+    } catch (_) {}
+  }
+
+  // Méthode 3 : jsQR avec plusieurs variantes.
+  if (window.jsQR) {
+    const img = await loadLcImageFromFile(file);
+    try {
+      let variants = [
+        { scale: 1, rotate: 0 },
+        { scale: 1.4, rotate: 0 },
+        { scale: 2, rotate: 0 },
+        { scale: 1, rotate: 90 },
+        { scale: 1, rotate: 180 },
+        { scale: 1, rotate: 270 }
+      ];
+
+      for (const opt of variants) {
+        const { canvas, ctx } = drawLcQrVariant(img, opt);
+        let data = ctx.getImageData(0, 0, canvas.width, canvas.height);
+
+        let qr = jsQR(data.data, canvas.width, canvas.height, { inversionAttempts: "attemptBoth" });
+        if (qr && qr.data) return qr.data;
+
+        // Variante noir/blanc contrastée
+        const d = data.data;
+        for (let i = 0; i < d.length; i += 4) {
+          let gray = (d[i] * 0.299 + d[i+1] * 0.587 + d[i+2] * 0.114) | 0;
+          let v = gray > 150 ? 255 : 0;
+          d[i] = d[i+1] = d[i+2] = v;
+        }
+        qr = jsQR(data.data, canvas.width, canvas.height, { inversionAttempts: "attemptBoth" });
+        if (qr && qr.data) return qr.data;
+      }
+    } finally {
+      try { URL.revokeObjectURL(img.src); } catch (_) {}
+    }
+  }
+
+  throw new Error("Aucun QR détecté. Reprends une photo plus nette, bien cadrée, ou colle le lien du QR.");
+}
+
+async function handleLcQrFileInput(input) {
+  const file = input.files && input.files[0];
+  if (!file) return;
+  setLcScanInlineMsg("Lecture du QR...", false);
+  try {
+    const value = await decodeLcQrFromFile(file);
+    let box = document.getElementById("lc-scan-inline-code");
+    if (box) box.value = value;
+    openScannedLcValue(value);
+  } catch (e) {
+    setLcScanInlineMsg("❌ " + e.message + ". Tu peux coller le lien QR dans le champ.");
+  } finally {
+    input.value = "";
+  }
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+  let fileInput = document.getElementById("lc-scan-inline-file");
+  const cameraInput = document.getElementById("lc-scan-inline-camera-file");
+  let codeInput = document.getElementById("lc-scan-inline-code");
+
+  if (fileInput) fileInput.addEventListener("change", function() { handleLcQrFileInput(this); });
+  if (cameraInput) cameraInput.addEventListener("change", function() { handleLcQrFileInput(this); });
+  if (codeInput) {
+    codeInput.addEventListener("keydown", function(e) {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        openScannedLcPotInline();
+      }
+    });
+  }
+});
+
+</script>
+<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded',function(){
+  document.getElementById('solution-template-select')?.addEventListener('change',function(){
+    const id=Number(this.value||0);
+    if(id) importSolutionToForm(id);
+    else resetSolutionFormForNewRecipe();
+  });
+});
+</script>
+</body>
+</html>

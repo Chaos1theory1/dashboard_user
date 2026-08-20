@@ -1,0 +1,2087 @@
+<!DOCTYPE html>
+<html class="wide wow-animation" lang="fr">
+<head>
+  <title>Biotech Agro – Admin – Gestion des souches</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <link rel="icon" href="images/logo.png" type="image/png" />
+
+  <!-- Fonts & CSS du template -->
+  <link rel="stylesheet" type="text/css"
+        href="//fonts.googleapis.com/css?family=Montserrat:300,400,700%7CPoppins:300,400,500,700,900" />
+  <link rel="stylesheet" href="css/bootstrap.css" />
+  <link rel="stylesheet" href="css/fonts.css" />
+  <link rel="stylesheet" href="css/style.css" />
+
+  <!-- Styles spécifiques Admin -->
+<style>
+    :root {
+      --baslyagro-green: #2fa35a;
+      --baslyagro-green-dark: #1f7a41;
+      --baslyagro-brown: #6b4b2f;
+      --baslyagro-cream: #f7f3ec;
+      --baslyagro-orange: #e67e22;
+      --baslyagro-red: #c0392b;
+      --baslyagro-blue: #3498db;
+    }
+
+    /* Fond général */
+    body {
+      background-image:
+        linear-gradient(rgba(255,255,255,0.25), rgba(255,255,255,0.45)),
+        url("images/imagearriereplan.png");
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      color: #222222;
+    }
+
+    /* HEADER / BANNIÈRE 100% TRANSPARENTE */
+    .rd-navbar,
+    .rd-navbar-main-outer,
+    .rd-navbar-main,
+    .rd-navbar-panel,
+    .rd-navbar-nav-wrap {
+      background: transparent !important;
+      box-shadow: none !important;
+    }
+    .rd-navbar::before,
+    .rd-navbar-main-outer::before {
+      background: transparent !important;
+      opacity: 0 !important;
+    }
+    .rd-navbar-main-outer {
+      backdrop-filter: none !important;
+      -webkit-backdrop-filter: none !important;
+    }
+
+    .rd-navbar { transition: transform 0.3s ease; }
+    .rd-navbar.nav-hidden { transform: translateY(-100%); }
+
+    .rd-navbar-brand .brand-placeholder {
+      display: inline-block;
+      width: 46px;
+      height: 46px;
+    }
+
+    
+.selected-row {
+  background: rgba(47,163,90,0.08) !important;
+  outline: 2px solid rgba(47,163,90,0.4);
+}
+
+    /* Bloc utilisateur */
+    .admin-userbar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-left: 18px;
+      white-space: nowrap;
+    }
+    
+    .admin-label {
+      font-weight: 700;
+      margin-bottom: 4px;
+      display: block;
+      font-size: 13px;
+      color: #555;
+    }
+
+    .admin-user-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.88);
+      border: 1px solid rgba(0,0,0,0.08);
+      font-size: 12px;
+      font-weight: 600;
+      color: #1f1f1f;
+    }
+    
+    .admin-user-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--baslyagro-green);
+      box-shadow: 0 0 0 3px rgba(47,163,90,0.15);
+    }
+    
+    .admin-logout-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(0,0,0,0.12);
+      background: rgba(255,255,255,0.88);
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    
+    .admin-logout-btn:hover {
+      border-color: var(--baslyagro-red);
+      color: var(--baslyagro-red);
+    }
+
+    /* GRAND LOGO CENTRÉ */
+    .admin-big-logo {
+      text-align: center;
+      margin-top: 10px;
+      margin-bottom: 10px;
+    }
+    
+    .admin-big-logo img {
+      max-height: 120px;
+      width: auto;
+      filter: drop-shadow(0px 6px 10px rgba(0,0,0,0.45));
+      background: #ffffff;
+      padding: 10px;
+      border-radius: 50%;
+      border: 4px solid var(--baslyagro-green);
+    }
+
+    .admin-wrapper {
+      padding-top: 30px;
+      padding-bottom: 60px;
+    }
+
+    .admin-menu-bar {
+      background: #ffffff;
+      padding: 15px 0;
+      border-bottom: 2px solid #e5e5e5;
+      text-align: center;
+      margin-bottom: 30px;
+      position: relative;
+      z-index: 20;
+    }
+    
+    .admin-menu-bar a {
+      margin: 0 15px;
+      font-weight: 600;
+      color: #444444;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-size: 13px;
+      text-decoration: none;
+    }
+    
+    .admin-menu-bar a:hover,
+    .admin-menu-bar a.active {
+      color: var(--baslyagro-green);
+    }
+
+    .admin-card {
+      background: #ffffff;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.07);
+      margin-bottom: 30px;
+    }
+    
+    .admin-card h3,
+    .admin-card h4 {
+      margin-bottom: 12px;
+      color: #1a1a1a;
+    }
+    
+    .admin-card-subtitle {
+      font-size: 13px;
+      color: #777;
+      margin-bottom: 10px;
+    }
+
+    /* ============================================
+       NOUVELLES SECTIONS - PLANNING & RÉSUMÉ
+       ============================================ */
+    
+    /* Planning Header - Carte en dégradé vert */
+    .planning-header {
+      background: linear-gradient(135deg, var(--baslyagro-green) 0%, var(--baslyagro-green-dark) 100%);
+      color: white;
+      padding: 20px 25px;
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+      margin-bottom: 20px;
+    }
+
+    .planning-header h4 {
+      color: white;
+      margin: 0 0 5px 0;
+      font-size: 18px;
+    }
+
+    .planning-header p {
+      margin: 0;
+      opacity: 0.95;
+      font-size: 14px;
+    }
+
+    .planning-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin-top: 15px;
+    }
+
+    .planning-metric {
+      background: rgba(255,255,255,0.15);
+      padding: 15px;
+      border-radius: 8px;
+      backdrop-filter: blur(10px);
+    }
+
+    .planning-metric-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      opacity: 0.9;
+      margin-bottom: 5px;
+    }
+
+    .planning-metric-value {
+      font-size: 24px;
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .planning-metric-sub {
+      font-size: 11px;
+      opacity: 0.85;
+      margin-top: 3px;
+    }
+
+    .progress-bar-mini {
+      height: 6px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 999px;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+
+    .progress-fill-mini {
+      height: 100%;
+      background: rgba(255,255,255,0.9);
+      border-radius: 999px;
+      transition: width 0.3s ease;
+    }
+
+    /* Résumé - Carte avec icônes */
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 15px;
+    }
+
+    .summary-item {
+      background: #f8f9fa;
+      padding: 18px;
+      border-radius: 10px;
+      border-left: 4px solid var(--baslyagro-green);
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .summary-icon {
+      font-size: 32px;
+      line-height: 1;
+    }
+
+    .summary-content h5 {
+      margin: 0 0 3px 0;
+      font-size: 13px;
+      color: #666;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .summary-content .big-number {
+      font-size: 28px;
+      font-weight: 900;
+      color: #1a1a1a;
+      line-height: 1;
+    }
+
+    .summary-content small {
+      font-size: 11px;
+      color: #777;
+    }
+
+    /* Instructions - Liste d'alertes */
+    .instructions-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .instruction-item {
+      padding: 15px;
+      border-radius: 8px;
+      border-left: 4px solid;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .instruction-item.priority-high {
+      background: #fff3e0;
+      border-color: var(--baslyagro-orange);
+    }
+
+    .instruction-item.priority-medium {
+      background: #e3f2fd;
+      border-color: var(--baslyagro-blue);
+    }
+
+    .instruction-item.priority-low {
+      background: #e8f5e9;
+      border-color: var(--baslyagro-green);
+    }
+
+    .instruction-icon {
+      font-size: 20px;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+
+    .instruction-content strong {
+      display: block;
+      margin-bottom: 3px;
+      font-size: 13px;
+    }
+
+    .instruction-content p {
+      margin: 0;
+      font-size: 12px;
+      color: #555;
+    }
+
+    /* Tabs */
+    .tabs-container {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 16px;
+      border-bottom: 2px solid #e5e5e5;
+      flex-wrap: wrap;
+    }
+    
+    .tab-button {
+      padding: 10px 14px;
+      border: 1px solid transparent;
+      background: transparent;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border-bottom: 3px solid transparent;
+      border-radius: 10px 10px 0 0;
+      font-size: 13px;
+    }
+    
+    .tab-button:hover { background: #f7f7f7; }
+    
+    .tab-button.active {
+      border-bottom-color: var(--baslyagro-green);
+      color: var(--baslyagro-green);
+      background: rgba(47,163,90,0.06);
+    }
+    
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    /* Formulaires */
+    .form-label {
+      font-weight: 700;
+      margin-bottom: 4px;
+      display: block;
+      font-size: 13px;
+      color: #555;
+    }
+    
+    .form-input, .form-select, .form-textarea {
+      width: 100%;
+      background: #ffffff !important;
+      border: 1px solid #cccccc;
+      height: 40px;
+      border-radius: 8px;
+      padding: 6px 10px;
+      margin-bottom: 12px;
+      font-size: 14px;
+      box-shadow: none;
+    }
+    
+    .form-textarea {
+      height: 80px;
+      resize: vertical;
+    }
+
+    /* Buttons */
+    .btn-action {
+      display: inline-block;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 13px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    
+    .btn-green {
+      background: var(--baslyagro-green);
+      color: white;
+    }
+    
+    .btn-green:hover {
+      background: var(--baslyagro-green-dark);
+    }
+    
+    .btn-brown {
+      background: var(--baslyagro-brown);
+      color: white;
+    }
+    
+    .btn-brown:hover {
+      background: #5a3d25;
+    }
+    
+    .btn-orange {
+      background: var(--baslyagro-orange);
+      color: white;
+    }
+    
+    .btn-orange:hover {
+      background: #d35400;
+    }
+
+    .btn-grey {
+      background: #95a5a6;
+      color: white;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    /* Tables */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+    
+    table thead {
+      background: #f8f9fa;
+    }
+    
+    table th {
+      padding: 12px;
+      text-align: left;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #666;
+      border-bottom: 2px solid #e0e0e0;
+    }
+    
+    table td {
+      padding: 12px;
+      border-bottom: 1px solid #f0f0f0;
+      font-size: 13px;
+    }
+    
+    table tbody tr:hover {
+      background: #f8f9fa;
+    }
+
+    /* Éviter que les boutons d'actions partent à la ligne */
+    table td:last-child {
+      white-space: nowrap;
+    }
+
+    .table-responsive {
+      overflow-x: auto;
+    }
+
+    /* Loading */
+    .loading {
+      text-align: center;
+      padding: 20px;
+      color: #999;
+      font-size: 13px;
+    }
+
+    .skeleton {
+      animation: skeleton-loading 1s linear infinite alternate;
+    }
+
+    @keyframes skeleton-loading {
+      0% { opacity: 0.4; }
+      100% { opacity: 1; }
+    }
+    
+
+  
+
+      /* Session visible dans l'onglet du haut */
+      .rd-navbar-nav {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+      .admin-session-navitem {
+        display: inline-flex !important;
+        align-items: center;
+        gap: 10px;
+        margin-left: 18px;
+        list-style: none;
+        vertical-align: middle;
+      }
+      .admin-session-navitem::before,
+      .admin-session-navitem::after {
+        display: none !important;
+        content: none !important;
+      }
+      .admin-session-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 10px;
+        border-radius: 999px;
+        background: rgba(255,255,255,0.92);
+        border: 1px solid rgba(0,0,0,0.08);
+        color: #1a1a1a;
+        font-size: 12px;
+        font-weight: 700;
+        white-space: nowrap;
+        line-height: 1;
+      }
+      .admin-session-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--baslyagro-green, #2fa35a);
+        box-shadow: 0 0 0 3px rgba(47,163,90,0.15);
+        flex: 0 0 auto;
+      }
+      .admin-session-logout {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 6px 10px;
+        border-radius: 999px;
+        border: 1px solid rgba(0,0,0,0.12);
+        background: rgba(255,255,255,0.92);
+        color: #1a1a1a;
+        font-size: 12px;
+        font-weight: 700;
+        cursor: pointer;
+        white-space: nowrap;
+        line-height: 1;
+      }
+      .admin-session-logout:hover {
+        border-color: var(--baslyagro-red, #c0392b);
+        color: var(--baslyagro-red, #c0392b);
+      }
+      @media (max-width: 991.98px) {
+        .admin-session-navitem {
+          width: 100%;
+          justify-content: center;
+          margin: 10px 0 0 0;
+        }
+      }
+
+    </style>
+</head>
+
+<body>
+<script src="js/admin-auth.js"></script>
+  <script>
+    (function () {
+      function resolveAuth() {
+        if (typeof requireAdminAuth === "function") {
+          const auth = requireAdminAuth();
+          if (auth) return { username: auth.username || "Admin" };
+          return null;
+        }
+
+        const isLogged = sessionStorage.getItem("isAdminLoggedIn") === "true";
+        if (!isLogged) {
+          sessionStorage.setItem("adminRedirectAfterLogin", "admin-souches.html");
+          window.location.href = "login-admin.html";
+          return null;
+        }
+        return { username: sessionStorage.getItem("adminUsername") || "Admin" };
+      }
+
+      document.addEventListener("DOMContentLoaded", function () {
+        const auth = resolveAuth();
+        if (!auth) return;
+
+        var nameEl = document.getElementById("adminUserName");
+        if (nameEl) nameEl.textContent = auth.username;
+
+        var btnLogout = document.getElementById("btnLogout");
+        if (btnLogout) {
+          btnLogout.addEventListener("click", function () {
+            if (typeof logoutAdmin === "function") {
+              logoutAdmin();
+              return;
+            }
+            sessionStorage.removeItem("isAdminLoggedIn");
+            sessionStorage.removeItem("adminUsername");
+            sessionStorage.removeItem("adminLoginAt");
+            sessionStorage.removeItem("adminRedirectAfterLogin");
+            window.location.href = "login-admin.html";
+          });
+        }
+
+        var navbar = document.querySelector(".rd-navbar");
+        if (navbar) {
+          var lastScroll = 0;
+          window.addEventListener("scroll", function () {
+            var current = window.pageYOffset || document.documentElement.scrollTop;
+            if (current > lastScroll && current > 80) navbar.classList.add("nav-hidden");
+            else navbar.classList.remove("nav-hidden");
+            lastScroll = current;
+          });
+        }
+      });
+    })();
+  </script>
+
+  <!-- GRAND LOGO CENTRÉ -->
+  <div class="admin-big-logo">
+    <img src="images/logo.png" alt="BaslyAgro.Biotech">
+  </div>
+
+  <!-- MENU ADMIN INTERNE -->
+  <div class="admin-menu-bar">
+    <a href="admin.html">Tableau de bord</a>
+    <a href="admin-taches.html">Tâches obligatoires</a>
+    <a href="admin-souches.html" class="active">Souches</a>
+    <a href="admin-isolement.html">Isolement tissulaire</a>
+    <a href="admin-myc-liquide.html">Mycélium liquide</a>
+    <a href="admin-myc-grain.html">Mycélium sur grain</a>
+  </div>
+
+  <!-- CONTENU ADMIN -->
+  <section class="section section-md admin-wrapper">
+    <div class="container">
+      <h3 class="text-capitalize mb-4 text-center">
+        Gestion des <span class="text-primary">Souches</span>
+      </h3>
+
+      <div class="row">
+        <div class="col-12">
+
+          <!-- ============================================
+               SECTION 1 : PLANNING PRODUCTION
+               ============================================ -->
+          <div id="planning-section" class="planning-header">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+              <div>
+                <h4 id="planning-title">📊 Planning de Production</h4>
+                <p id="planning-subtitle">Chargement...</p>
+              </div>
+              <div style="background: rgba(255,255,255,0.2); padding: 10px 20px; border-radius: 8px; text-align: center;">
+                <div style="font-size: 28px; font-weight: 900; line-height: 1;" id="planning-day">--</div>
+                <div style="font-size: 10px; opacity: 0.9;">Jour actuel</div>
+              </div>
+            </div>
+
+            <div class="planning-grid">
+              <div class="planning-metric">
+                <div class="planning-metric-label">Production grains</div>
+                <div class="planning-metric-value" id="metric-grain">--/1000 kg</div>
+                <div class="progress-bar-mini">
+                  <div class="progress-fill-mini" id="progress-grain" style="width: 0%"></div>
+                </div>
+                <div class="planning-metric-sub" id="metric-grain-sub">--</div>
+              </div>
+
+              <div class="planning-metric">
+                <div class="planning-metric-label">Lots LC créés</div>
+                <div class="planning-metric-value" id="metric-lc">--/20</div>
+                <div class="progress-bar-mini">
+                  <div class="progress-fill-mini" id="progress-lc" style="width: 0%"></div>
+                </div>
+                <div class="planning-metric-sub" id="metric-lc-sub">--</div>
+              </div>
+
+              <div class="planning-metric">
+                <div class="planning-metric-label">Jours production</div>
+                <div class="planning-metric-value" id="metric-days">-- jours</div>
+                <div class="planning-metric-sub" id="metric-days-sub">Jusqu'au J75</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ============================================
+               SECTION 2 : RÉSUMÉ DE L'EXISTANT
+               ============================================ -->
+          <div class="admin-card">
+            <h4>📋 Résumé des souches</h4>
+            <div class="summary-grid" id="summary-grid">
+              <!-- Rempli dynamiquement -->
+              <div class="summary-item skeleton">
+                <div class="summary-icon">🧫</div>
+                <div class="summary-content">
+                  <h5>Souches certifiées</h5>
+                  <div class="big-number">--</div>
+                  <small>Prêtes pour production</small>
+                </div>
+              </div>
+              <div class="summary-item skeleton">
+                <div class="summary-icon">⏳</div>
+                <div class="summary-content">
+                  <h5>En attente</h5>
+                  <div class="big-number">--</div>
+                  <small>Certification en cours</small>
+                </div>
+              </div>
+              <div class="summary-item skeleton">
+                <div class="summary-icon">💧</div>
+                <div class="summary-content">
+                  <h5>Lots LC actifs</h5>
+                  <div class="big-number">--</div>
+                  <small>En production</small>
+                </div>
+              </div>
+              <div class="summary-item skeleton">
+                <div class="summary-icon">🟢</div>
+                <div class="summary-content">
+                  <h5>Fenêtre optimale</h5>
+                  <div class="big-number">--</div>
+                  <small>LC à utiliser (J8-J14)</small>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ============================================
+               SECTION 3 : INSTRUCTIONS / ACTIONS PRIORITAIRES
+               ============================================ -->
+          <div class="admin-card">
+            <h4>⚠️ Actions prioritaires</h4>
+            <div class="instructions-list" id="instructions-list">
+              <!-- Rempli dynamiquement -->
+              <div class="loading">Chargement des instructions...</div>
+            </div>
+          </div>
+
+          <!-- ============================================
+               ONGLETS (EXISTANTS)
+               ============================================ -->
+          <div class="tabs-container">
+            <button class="tab-button active" data-tab="tab-inventory">📦 Inventaire</button>
+            <button class="tab-button" data-tab="tab-external">➕ Souche externe</button>
+            <button class="tab-button" data-tab="tab-internal">🧪 Souche interne (P3)</button>
+          </div>
+
+          <!-- TAB 1: INVENTAIRE -->
+          <div id="tab-inventory" class="tab-content active">
+            <div class="admin-card">
+              <h4>📦 Inventaire des souches</h4>
+              <p class="admin-card-subtitle">Liste de toutes les souches enregistrées.</p>
+
+              <div class="table-responsive">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Code</th>
+                      <th>Nom</th>
+                      <th>Espèce</th>
+                      <th>Type</th>
+                      <th>Quantité</th>
+                      <th>Production</th>
+                      <th>Créée le</th>
+                      <th>Expire le</th>
+                      <th>Certificat</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="strains-tbody">
+                    <tr><td colspan="10" style="text-align:center;">Chargement...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <hr style="margin:18px 0;">
+
+<div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+  <strong>Souche sélectionnée :</strong>
+  <span id="selectedStrainLabel" style="color:#2fa35a;">Aucune</span>
+</div>
+
+<div id="lcInlinePanel" class="admin-card" style="margin-top:15px; display:none;">
+  <h4>💧 Créer LC</h4>
+  <p class="admin-card-subtitle">Petit formulaire (entiers). Stock solution : avant / après.</p>
+
+  <div id="lcInlineHint" style="margin-bottom:10px; color:#555;"></div>
+
+  <form id="formCreateLCInline">
+    <label class="form-label">Solution nutritive *</label>
+    <select class="form-select" id="lcSolutionSelect" required><option value="">Chargement...</option></select>
+
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 10px;">
+      <div>
+        <label class="form-label">Nombre de pots *</label>
+        <input type="number" class="form-input" id="lcTotalPots" min="1" step="1" value="6" required />
+      </div>
+      <div>
+        <label class="form-label">Volume / pot (ml) *</label>
+        <input type="number" class="form-input" id="lcVolumePerPot" min="1" step="1" value="700" required />
+      </div>
+    </div>
+
+    <div style="margin-top:12px; padding:12px; border:1px solid #eee; border-radius:10px; background:#f7f3ec;">
+      <div>Disponible (avant): <strong id="lcBeforeMl">—</strong> ml</div>
+      <div>Utilisé (LC): <strong id="lcUsedMl">—</strong> ml</div>
+      <div>Restant (après): <strong id="lcAfterMl">—</strong> ml</div>
+    </div>
+
+    <div class="action-buttons" style="margin-top:12px;">
+      <button id="btnSubmitLCInline" type="submit" class="btn-action btn-green">✅ Créer LC</button>
+    </div>
+  </form>
+
+  <div id="lcInlineMsg" style="margin-top:10px;"></div>
+</div>
+
+            </div>
+          </div>
+
+          <!-- TAB 2: SOUCHE EXTERNE -->
+          <div id="tab-external" class="tab-content">
+            <div class="admin-card">
+              <h4>➕ Ajouter une souche externe (fournisseur)</h4>
+              <p class="admin-card-subtitle">Enregistrer une souche reçue d'un fournisseur.</p>
+
+              <form id="form-new-external">
+                <label class="form-label">Code souche *</label>
+                <input type="text" class="form-input" id="external-code" required placeholder="Ex: EXT-2026-001" />
+
+                <label class="form-label">Nom *</label>
+                <input type="text" class="form-input" id="external-name" required placeholder="Ex: Pleurotus Premium" />
+
+                <label class="form-label">Espèce *</label>
+                <input type="text" class="form-input" id="external-species" required placeholder="Ex: Pleurotus ostreatus" />
+
+                <label class="form-label">Fournisseur</label>
+                <input type="text" class="form-input" id="external-supplier" placeholder="Ex: LaboBio France" />
+
+                <label class="form-label">Quantité</label>
+                <input type="number" step="0.01" class="form-input" id="external-quantity" placeholder="5" />
+
+                <label class="form-label">Unité</label>
+                <select class="form-select" id="external-unit">
+                  <option value="mL">mL</option>
+                  <option value="L">L</option>
+                  <option value="g">g</option>
+                  <option value="kg">kg</option>
+                  <option value="unit">unité</option>
+                </select>
+
+                <label class="form-label">Référence certificat (optionnel)</label>
+                <input type="text" class="form-input" id="external-certificate" placeholder="Ex: CERT-2026-001" />
+
+                <label class="form-label">Notes</label>
+                <textarea class="form-textarea" id="external-notes" placeholder="Informations complémentaires..."></textarea>
+
+                <div class="action-buttons">
+                  <button type="submit" class="btn-action btn-green">✅ Enregistrer la souche</button>
+                  <button type="button" class="btn-action btn-grey" onclick="document.getElementById('form-new-external').reset()">Réinitialiser</button>
+                </div>
+              </form>
+            </div>
+          </div>
+
+          <!-- TAB 3: SOUCHE INTERNE -->
+          <div id="tab-internal" class="tab-content">
+            <!-- Liste P3 validés -->
+            <div id="p3-list-container" class="admin-card">
+              <h4>🧪 Créer une souche interne depuis un P3 validé</h4>
+              <p class="admin-card-subtitle">Sélectionnez une boîte P3 validée pour créer une souche interne.</p>
+
+              <small style="display:block;margin-bottom:8px;color:#777;font-size:12px;">
+                💡 Astuce : faites glisser horizontalement la table pour voir toutes les colonnes ▶️
+              </small>
+
+              <table>
+                <thead>
+                  <tr>
+                    <th>ID P3</th>
+                    <th>Espèce</th>
+                    <th>Gélose</th>
+                    <th>Isolement</th>
+                    <th>Date J0</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="p3-tbody">
+                  <tr><td colspan="6" style="text-align:center;">Chargement...</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Formulaire création (caché au départ) -->
+            <div id="internal-form-container" class="admin-card" style="display:none;">
+              <h4>✅ P3 sélectionné - Créer la souche</h4>
+
+              <form id="form-new-internal">
+                <input type="hidden" id="internal-petri-id" />
+
+                <label class="form-label">Code souche (auto-généré)</label>
+                <input type="text" class="form-input" id="internal-code" readonly />
+
+                <label class="form-label">Espèce</label>
+                <input type="text" class="form-input" id="internal-species" readonly />
+
+                <label class="form-label">Parent (P3)</label>
+                <input type="text" class="form-input" id="internal-parent" readonly />
+
+                <label class="form-label">Nom de la souche *</label>
+                <input type="text" class="form-input" id="internal-name" required />
+
+                <label class="form-label">Quantité</label>
+                <input type="number" step="0.01" class="form-input" id="internal-quantity" value="1" />
+
+                <label class="form-label">Unité</label>
+                <select class="form-select" id="internal-unit">
+                  <option value="unit" selected>unité</option>
+                  <option value="mL">mL</option>
+                  <option value="L">L</option>
+                </select>
+
+                <label class="form-label">Notes</label>
+                <textarea class="form-textarea" id="internal-notes" placeholder="Informations..."></textarea>
+
+                <div class="action-buttons">
+                  <button type="submit" class="btn-action btn-green">✅ Créer la souche</button>
+                  <button type="button" class="btn-action btn-green" onclick="transfererVersLC()">
+                    💧 Transférer vers solution nutritive
+                  </button>
+                  <button type="button" class="btn-action btn-brown" id="btn-cycle-biologique">
+                    🔄 Voir cycle biologique
+                  </button>
+                  <button type="button" class="btn-action btn-grey" id="btn-cancel-internal">Annuler</button>
+                </div>
+              </form>
+            </div>
+
+            <!-- LC en cours de certification -->
+            <div class="admin-card">
+              <h4>💧 LC en cours de certification</h4>
+              <p class="admin-card-subtitle">Lots de mycélium liquide actifs</p>
+
+              <small style="display:block;margin-bottom:8px;color:#777;font-size:12px;">
+                💡 Astuce : faites glisser horizontalement la table pour voir toutes les colonnes ▶️
+              </small>
+
+              <div class="table-responsive">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Code LC</th>
+                      <th>Source</th>
+                      <th>Espèce</th>
+                      <th>Pots</th>
+                      <th>Date J0</th>
+                      <th>Cycle</th>
+                      <th>Statut</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="lc-tbody">
+                    <tr><td colspan="8" style="text-align:center;">Chargement...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    const API_BASE = window.location.origin;
+
+    function fetchWithTimeout(url, options = {}, timeoutMs = 8000) {
+      const controller = new AbortController();
+      const id = setTimeout(() => controller.abort(), timeoutMs);
+      return fetch(url, {
+        cache: 'no-store',
+        ...options,
+        signal: controller.signal
+      }).finally(() => clearTimeout(id));
+    }
+
+    
+
+    // Sélection de souche (pour création LC)
+    let selectedStrain = null;
+let currentCycle = null;
+    let cycleStats = null;
+
+    // ============================================
+    // CHARGEMENT AU DÉMARRAGE
+    // ============================================
+    document.addEventListener('DOMContentLoaded', async () => {
+      // Charger les données du planning
+      await loadPlanningData();
+
+      // Charger le résumé des souches
+      await loadSummary();
+
+      // Charger les instructions
+      await loadInstructions();
+
+      // Charger l'inventaire
+      await loadStrains();
+
+      // Charger les P3 validés
+      await loadP3Valides();
+
+      // Charger les LC en cours
+      await loadLCEnCours();
+
+
+      // Gérer les onglets
+      setupTabs();
+
+      // Formulaire LC inline
+      const lcForm = document.getElementById('formCreateLCInline');
+      if (lcForm) lcForm.addEventListener('submit', submitLcInline);
+
+      // Logout
+      document.getElementById('btnLogout').addEventListener('click', logout);
+    });
+
+    // ============================================
+    // SECTION 1 : PLANNING
+    // ============================================
+    async function loadPlanningData() {
+      try {
+        // Récupérer le cycle actif
+        const cycleRes = await fetch(`${API_BASE}/api/cycles/current`).catch(() => null);
+        if (!cycleRes || !cycleRes.ok) {
+          document.getElementById('planning-subtitle').textContent = 'Aucun cycle actif';
+          return;
+        }
+
+        currentCycle = await cycleRes.json();
+
+        // Récupérer les statistiques
+        const statsRes = await fetchWithTimeout(`${API_BASE}/api/cycles/${currentCycle.id}/stats`, {}, 8000);
+        if (!statsRes.ok) throw new Error(`HTTP ${statsRes.status}`);
+        cycleStats = await statsRes.json();
+
+        // Afficher
+        displayPlanning();
+
+      } catch (error) {
+        console.error('Erreur chargement planning:', error);
+        document.getElementById('planning-subtitle').textContent = 'Erreur de chargement';
+      }
+    }
+
+    function displayPlanning() {
+      if (!currentCycle || !cycleStats) return;
+
+      const quarterNames = { 1: 'Q1', 2: 'Q2', 3: 'Q3', 4: 'Q4' };
+
+      // Titre
+      document.getElementById('planning-title').textContent = 
+        `📊 Cycle ${quarterNames[currentCycle.quarter]} ${currentCycle.year}`;
+      
+      document.getElementById('planning-subtitle').textContent = 
+        `Du ${new Date(currentCycle.start_date).toLocaleDateString('fr-FR')} au ${new Date(currentCycle.end_date).toLocaleDateString('fr-FR')}`;
+
+      // Jour actuel
+      document.getElementById('planning-day').textContent = `J${currentCycle.current_day}`;
+
+      // Grains
+      const grainActual = cycleStats.total_grain_kg || 0;
+      const grainPercent = Math.round((grainActual / 1000) * 100);
+      document.getElementById('metric-grain').textContent = `${grainActual}/1000 kg`;
+      document.getElementById('progress-grain').style.width = `${grainPercent}%`;
+      document.getElementById('metric-grain-sub').textContent = `${grainPercent}% - ${1000 - grainActual} kg restants`;
+
+      // LC
+      const lcActual = cycleStats.total_lc_batches || 0;
+      const lcPercent = Math.round((lcActual / 20) * 100);
+      document.getElementById('metric-lc').textContent = `${lcActual}/20`;
+      document.getElementById('progress-lc').style.width = `${lcPercent}%`;
+      document.getElementById('metric-lc-sub').textContent = `${lcPercent}% - ${20 - lcActual} lots restants`;
+
+      // Jours
+      const daysRemaining = cycleStats.days_remaining_production || 0;
+      document.getElementById('metric-days').textContent = `${daysRemaining} jours`;
+      document.getElementById('metric-days-sub').textContent = 
+        `Jusqu'au J75 (${new Date(currentCycle.production_end_date).toLocaleDateString('fr-FR')})`;
+    }
+
+    // ============================================
+    // SECTION 2 : RÉSUMÉ
+    // ============================================
+    async function loadSummary() {
+      try {
+        const strainsRes = await fetch(`${API_BASE}/api/strains`);
+        const strains = await strainsRes.json();
+
+        const certified = strains.filter(s => s.certification_status === 'CERTIFIED' && s.production_allowed).length;
+        const pending = strains.filter(s => s.certification_status !== 'CERTIFIED').length;
+
+        // Si on a un cycle actif, charger les lots LC
+        let activeLc = 0;
+        let optimalLc = 0;
+
+        if (currentCycle) {
+          const batchesRes = await fetch(`${API_BASE}/api/cycles/${currentCycle.id}/batches?batch_type=LC1&status=IN_PROGRESS`);
+          const batches = await batchesRes.json();
+          
+          activeLc = batches.length;
+          optimalLc = batches.filter(b => b.lc_current_day >= 8 && b.lc_current_day <= 14).length;
+        }
+
+        // Afficher
+        document.getElementById('summary-grid').innerHTML = `
+          <div class="summary-item">
+            <div class="summary-icon">🧫</div>
+            <div class="summary-content">
+              <h5>Souches certifiées</h5>
+              <div class="big-number">${certified}</div>
+              <small>Prêtes pour production</small>
+            </div>
+          </div>
+          <div class="summary-item">
+            <div class="summary-icon">⏳</div>
+            <div class="summary-content">
+              <h5>En attente</h5>
+              <div class="big-number">${pending}</div>
+              <small>Certification en cours</small>
+            </div>
+          </div>
+          <div class="summary-item">
+            <div class="summary-icon">💧</div>
+            <div class="summary-content">
+              <h5>Lots LC actifs</h5>
+              <div class="big-number">${activeLc}</div>
+              <small>En production</small>
+            </div>
+          </div>
+          <div class="summary-item">
+            <div class="summary-icon">🟢</div>
+            <div class="summary-content">
+              <h5>Fenêtre optimale</h5>
+              <div class="big-number">${optimalLc}</div>
+              <small>LC à utiliser (J8-J14)</small>
+            </div>
+          </div>
+        `;
+
+      } catch (error) {
+        console.error('Erreur chargement résumé:', error);
+      }
+    }
+
+    // ============================================
+    // SECTION 3 : INSTRUCTIONS
+    // ============================================
+    async function loadInstructions() {
+      const instructions = [];
+
+      try {
+        // Charger les alertes du cycle si disponible
+        if (currentCycle) {
+          const alertsRes = await fetch(`${API_BASE}/api/cycles/${currentCycle.id}/alerts`);
+          const alerts = await alertsRes.json();
+
+          alerts.forEach(alert => {
+            let priority = 'low';
+            if (alert.type === 'WARNING') priority = 'high';
+            if (alert.type === 'CRITICAL') priority = 'high';
+            if (alert.priority === 'HIGH' || alert.priority === 'URGENT') priority = 'high';
+            if (alert.priority === 'MEDIUM') priority = 'medium';
+
+            instructions.push({
+              icon: alert.type === 'SUCCESS' ? '🟢' : (alert.type === 'WARNING' ? '⚠️' : (alert.type === 'CRITICAL' ? '🔴' : 'ℹ️')),
+              priority,
+              title: alert.message.split(' - ')[0] || alert.message,
+              description: alert.message
+            });
+          });
+        }
+
+        // Instructions par défaut si aucune alerte
+        if (instructions.length === 0) {
+          instructions.push({
+            icon: '✅',
+            priority: 'low',
+            title: 'Tout est en ordre',
+            description: 'Aucune action prioritaire pour le moment.'
+          });
+        }
+
+        // Afficher
+        const container = document.getElementById('instructions-list');
+        container.innerHTML = instructions.map(inst => `
+          <div class="instruction-item priority-${inst.priority}">
+            <div class="instruction-icon">${inst.icon}</div>
+            <div class="instruction-content">
+              <strong>${inst.title}</strong>
+              <p>${inst.description}</p>
+            </div>
+          </div>
+        `).join('');
+
+      } catch (error) {
+        console.error('Erreur chargement instructions:', error);
+        document.getElementById('instructions-list').innerHTML = `
+          <div class="instruction-item priority-low">
+            <div class="instruction-icon">ℹ️</div>
+            <div class="instruction-content">
+              <strong>Informations non disponibles</strong>
+              <p>Impossible de charger les instructions du moment.</p>
+            </div>
+          </div>
+        `;
+      }
+    }
+
+    // ============================================
+    // ONGLETS
+    // ============================================
+    function setupTabs() {
+      document.querySelectorAll('.tab-button').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const targetTab = btn.dataset.tab;
+          
+          // Retirer active de tous
+          document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
+          document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+          
+          // Activer le bon
+          btn.classList.add('active');
+          document.getElementById(targetTab).classList.add('active');
+        });
+      });
+    }
+
+    // ============================================
+    // INVENTAIRE (TAB 1)
+    // ============================================
+    async function loadStrains() {
+      try {
+        const res = await fetch(`${API_BASE}/api/strains`);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const strains = await res.json();
+
+        const tbody = document.getElementById('strains-tbody');
+
+        if (!Array.isArray(strains) || strains.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="10" style="text-align:center;">Aucune souche enregistrée</td></tr>';
+          return;
+        }
+
+    selectedStrain = null;
+
+tbody.innerHTML = strains.map(s => `
+  <tr data-strain-id="${s.id}" style="cursor:pointer;">
+    <td><strong>${s.code}</strong></td>
+    <td>${s.name || '—'}</td>
+    <td>${s.species || '—'}</td>
+    <td>${s.strain_type === 'INTERNAL' ? '🧪 Interne' : '📦 Externe'}</td>
+    <td>${s.quantity ? s.quantity + ' ' + (s.unit || '') : '—'}</td>
+    <td>${s.production_allowed ? '✅ Autorisée' : '⏳ Non autorisée'}</td>
+    <td>${s.created_on ? new Date(s.created_on).toLocaleDateString('fr-FR') : '—'}</td>
+    <td>${s.expiry_on ? new Date(s.expiry_on).toLocaleDateString('fr-FR') : '—'}</td>
+    <td>
+      ${s.certification_status === 'CERTIFIED' 
+        ? '✅ Certifiée' 
+        : (s.certification_status === 'PENDING_REVIEW' ? '⏳ En cours' : '❌ Non certifiée')
+      }
+    </td>
+    <td>
+      ${s.certification_status !== 'CERTIFIED' 
+        ? `<button class="btn-action btn-orange" style="padding:6px 10px;font-size:11px;"
+             onclick="event.stopPropagation(); openCertifyModal('${s.id}', '${String(s.code||'').replace(/'/g,"\\'")}', '${String(s.name||'').replace(/'/g,"\\'")}')">
+             📄 Certifier
+           </button>`
+        : '—'
+      }
+    </td>
+  </tr>
+`).join('');
+
+// 🔹 rendre les lignes sélectionnables
+document.querySelectorAll('#strains-tbody tr[data-strain-id]').forEach(tr => {
+  tr.addEventListener('click', () => {
+    const id = tr.getAttribute('data-strain-id');
+    const strain = strains.find(x => String(x.id) === String(id));
+    if (!strain) return;
+
+    selectedStrain = strain;
+    document.getElementById('selectedStrainLabel').textContent =
+      `${strain.code} (${strain.species || '—'})`;
+    // Initialiser le petit formulaire LC
+    initLcInlineForStrain(strain);
+
+    // surlignage visuel
+    document.querySelectorAll('#strains-tbody tr').forEach(r => r.classList.remove('selected-row'));
+    tr.classList.add('selected-row');
+  });
+});
+
+      } catch (err) {
+        console.error('Erreur chargement souches:', err);
+        document.getElementById('strains-tbody').innerHTML =
+          '<tr><td colspan="10" style="text-align:center; color: #c0392b;">Erreur de chargement</td></tr>';
+      }
+    }
+
+    // ============================================
+    // PETIT FORMULAIRE LC (INLINE)
+    // ============================================
+
+    let lcSolutionsCache = []; // solutions de la souche sélectionnée
+
+    async function initLcInlineForStrain(strain) {
+      const panel = document.getElementById('lcInlinePanel');
+      const hint = document.getElementById('lcInlineHint');
+      const sel = document.getElementById('lcSolutionSelect');
+      const msg = document.getElementById('lcInlineMsg');
+      const btn = document.getElementById('btnSubmitLCInline');
+
+      if (!panel || !hint || !sel || !msg || !btn) return;
+
+      msg.innerHTML = '';
+      panel.style.display = 'block';
+
+      // Bloquer les souches externes
+      if ((strain.strain_type || '').toUpperCase() !== 'INTERNAL') {
+        hint.innerHTML = '<span style="color:#c0392b;">LC : uniquement pour souches internes (issues d\'un P3).</span>';
+        sel.innerHTML = '<option value="">—</option>';
+        btn.disabled = true;
+        setLcCalc(null);
+        return;
+      }
+
+      hint.textContent = 'Chargement des solutions nutritives…';
+      btn.disabled = true;
+      sel.innerHTML = '<option value="">Chargement…</option>';
+      setLcCalc(null);
+
+      try {
+        const res = await fetchWithTimeout(`${API_BASE}/api/lc/strains/${strain.id}/solutions`, {}, 10000);
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) throw new Error(data?.error || `HTTP ${res.status}`);
+
+        lcSolutionsCache = Array.isArray(data?.solutions) ? data.solutions : [];
+
+        if (lcSolutionsCache.length === 0) {
+          hint.innerHTML = '<span style="color:#c0392b;">Aucune solution nutritive trouvée. Créez d\'abord une solution pour l\'isolement, puis revenez ici.</span>';
+          sel.innerHTML = '<option value="">Aucune solution</option>';
+          btn.disabled = true;
+          setLcCalc(null);
+          return;
+        }
+
+        const optionsHtml = lcSolutionsCache.map((s, i) => {
+          const id = s.id;
+          const nom = s.nom || `Solution ${i + 1}`;
+          const vol = Number.isFinite(Number(s.volume_final_ml)) ? Number(s.volume_final_ml) : '—';
+          return `<option value="${id}" data-volume-ml="${vol}">${nom} (dispo: ${vol} ml)</option>`;
+        }).join('');
+
+        sel.innerHTML = optionsHtml;
+        sel.selectedIndex = 0;
+
+        hint.innerHTML = `<span style="color:#2fa35a;">✅ ${lcSolutionsCache.length} solution(s) disponible(s). Saisis les paramètres LC.</span>`;
+        btn.disabled = false;
+
+        sel.onchange = updateLcCalc;
+        document.getElementById('lcTotalPots').oninput = updateLcCalc;
+        document.getElementById('lcVolumePerPot').oninput = updateLcCalc;
+
+        updateLcCalc();
+      } catch (e) {
+        console.error(e);
+        hint.innerHTML = `<span style="color:#c0392b;">Erreur chargement solution: ${e.message || e}</span>`;
+        sel.innerHTML = '<option value="">Erreur</option>';
+        btn.disabled = true;
+        setLcCalc(null);
+      }
+    }
+
+    function setLcCalc(values = null) {
+      const beforeEl = document.getElementById('lcBeforeMl');
+      const usedEl = document.getElementById('lcUsedMl');
+      const afterEl = document.getElementById('lcAfterMl');
+      if (!beforeEl || !usedEl || !afterEl) return;
+
+      const beforeMl = values && values.beforeMl !== undefined ? values.beforeMl : null;
+      const usedMl = values && values.usedMl !== undefined ? values.usedMl : null;
+      const afterMl = values && values.afterMl !== undefined ? values.afterMl : null;
+
+      if (beforeMl === null) {
+        beforeEl.textContent = '—';
+        usedEl.textContent = '—';
+        afterEl.textContent = '—';
+        afterEl.style.color = '';
+        return;
+      }
+
+      beforeEl.textContent = String(beforeMl);
+      usedEl.textContent = String(usedMl ?? '—');
+      afterEl.textContent = String(afterMl ?? '—');
+      afterEl.style.color = (typeof afterMl === 'number' && afterMl < 0) ? '#c0392b' : '#2fa35a';
+    }
+
+    function updateLcCalc() {
+      const sel = document.getElementById('lcSolutionSelect');
+      const btn = document.getElementById('btnSubmitLCInline');
+      const potsEl = document.getElementById('lcTotalPots');
+      const volEl = document.getElementById('lcVolumePerPot');
+
+      if (!sel || !btn || !potsEl || !volEl) return;
+
+      const opt = sel.options[sel.selectedIndex] || null;
+      const beforeMl = parseInt(opt?.getAttribute('data-volume-ml') || '0', 10);
+      const pots = parseInt(potsEl.value || '0', 10);
+      const mlPot = parseInt(volEl.value || '0', 10);
+
+      const usedMl = (Number.isFinite(pots) ? pots : 0) * (Number.isFinite(mlPot) ? mlPot : 0);
+      const afterMl = beforeMl - usedMl;
+
+      setLcCalc({ beforeMl, usedMl, afterMl });
+
+      // Bloquer si volumes invalides
+      btn.disabled = !(Number.isFinite(pots) && pots > 0 && Number.isFinite(mlPot) && mlPot > 0 && beforeMl > 0 && afterMl >= 0);
+    }
+
+    async function submitLcInline(e) {
+      e.preventDefault();
+      if (!selectedStrain) return;
+
+      const msg = document.getElementById('lcInlineMsg');
+      const btn = document.getElementById('btnSubmitLCInline');
+      const sel = document.getElementById('lcSolutionSelect');
+      const potsEl = document.getElementById('lcTotalPots');
+      const volEl = document.getElementById('lcVolumePerPot');
+
+      if (!msg || !btn || !sel || !potsEl || !volEl) return;
+
+      const solutionId = sel.value;
+      const totalPots = parseInt(potsEl.value, 10);
+      const mlPot = parseInt(volEl.value, 10);
+
+      if (!solutionId) {
+        msg.innerHTML = '<span style="color:#c0392b;">Choisissez une solution nutritive.</span>';
+        return;
+      }
+
+      msg.textContent = 'Création LC…';
+      btn.disabled = true;
+
+      try {
+        const res = await fetch(`${API_BASE}/api/lc/create-from-strain`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            strain_id: selectedStrain.id,
+            total_pots: totalPots,
+            volume_par_pot_ml: mlPot,
+            solution_id: parseInt(solutionId, 10)
+          })
+        });
+
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) throw new Error(data?.error || `HTTP ${res.status}`);
+
+        const before = data?.stock?.before_ml;
+        const used = data?.stock?.used_ml;
+        const after = data?.stock?.after_ml;
+
+        msg.innerHTML = `<span style="color:#2fa35a; font-weight:700;">✅ LC créé: ${data?.lc_lot?.code || ''}</span>
+          <div style="margin-top:6px;">Avant: <strong>${before}</strong> ml · Utilisé: <strong>${used}</strong> ml · Après: <strong>${after}</strong> ml</div>`;
+
+        // Mettre à jour le volume affiché dans l'option sélectionnée
+        const opt = sel.options[sel.selectedIndex];
+        if (opt) {
+          opt.setAttribute('data-volume-ml', String(after));
+          opt.textContent = opt.textContent.replace(/dispo:\s*\d+\s*ml\)?/, `dispo: ${after} ml)`);
+        }
+
+        updateLcCalc();
+
+        // Rafraîchir les sections LC si elles existent
+        if (typeof loadLCEnCours === 'function') {
+          try { await loadLCEnCours(); } catch (_) {}
+        }
+
+      } catch (err) {
+        console.error(err);
+        msg.innerHTML = `<span style="color:#c0392b;">❌ ${err.message || err}</span>`;
+      } finally {
+        // Recalcule réactive le bouton si possible
+        updateLcCalc();
+      }
+    }
+
+    // ============================================
+    // LC depuis une souche (inventaire)
+    // ============================================
+
+    async function fetchSolutionsForStrain(strainId) {
+      try {
+        const res = await fetch(`${API_BASE}/api/lc/strains/${strainId}/solutions`);
+        if (!res.ok) return { solutions: [] };
+        return await res.json();
+      } catch (e) {
+        console.warn('Impossible de récupérer les solutions pour la souche:', e);
+        return { solutions: [] };
+      }
+    }
+
+    function promptSolutionChoice(solutions) {
+      if (!solutions || solutions.length === 0) return null;
+      if (solutions.length === 1) return solutions[0];
+
+      const optionsText = solutions.map((s, idx) => {
+        const nom = s?.nom || `Solution ${idx + 1}`;
+        const vol = (s?.volume_l !== undefined && s?.volume_l !== null) ? ` - ${s.volume_l} L` : '';
+        return `${idx + 1}) ${nom}${vol}`;
+      }).join('\n');
+
+      const choix = prompt(`Plusieurs solutions sont associées à cette souche.
+Choisissez :
+
+${optionsText}
+
+Entrez le numéro :`, '1');
+      if (!choix) return null;
+      const i = parseInt(choix, 10) - 1;
+      if (Number.isNaN(i) || i < 0 || i >= solutions.length) {
+        alert('Choix invalide.');
+        return null;
+      }
+      return solutions[i];
+    }
+
+    function promptSolutionManual() {
+      const nom = prompt('Nom de la solution nutritive (obligatoire) :', 'Solution LC');
+      if (!nom) return null;
+
+      const volumeLStr = prompt('Volume total (L) (optionnel) :', '');
+      const volumeL = parseFloat(volumeLStr);
+
+      const compsStr = prompt('Composants (séparés par ; ) (optionnel) :', '');
+      const composants = compsStr
+        ? compsStr.split(';').map(s => s.trim()).filter(Boolean)
+        : [];
+
+      const sol = {
+        nom,
+        volume_l: Number.isFinite(volumeL) ? volumeL : null,
+        composants
+      };
+
+      return sol;
+    }
+
+    async function createLCFromSelectedStrain() {
+      if (!selectedStrain) {
+        alert("Sélectionnez une souche dans l'inventaire.");
+        return;
+      }
+
+      const nbPots = prompt('Nombre de pots à créer :', '6');
+      if (!nbPots) return;
+      const nb = parseInt(nbPots, 10);
+      if (!Number.isFinite(nb) || nb <= 0) {
+        alert('Nombre de pots invalide.');
+        return;
+      }
+
+      const volumePot = prompt('Volume par pot (ml) :', '700');
+      if (!volumePot) return;
+      const vol = parseFloat(volumePot);
+      if (!Number.isFinite(vol) || vol <= 0) {
+        alert('Volume par pot invalide.');
+        return;
+      }
+
+      // Solution nutritive :
+      // - Interne : récupérée depuis l’isolement (si connue)
+      // - Externe : obligatoire => on demande à l’utilisateur
+      const solData = await fetchSolutionsForStrain(selectedStrain.id);
+      const solutions = solData?.solutions || [];
+
+      let solution = null;
+      if (solutions.length === 1) {
+        solution = solutions[0];
+      } else if (solutions.length > 1) {
+        solution = promptSolutionChoice(solutions);
+      }
+
+      if (!solution) {
+        // Pas de solution auto => saisie manuelle
+        solution = promptSolutionManual();
+      }
+
+      if (!solution) {
+        alert('Création annulée (solution nutritive requise).');
+        return;
+      }
+
+      try {
+        const btnCreate = document.getElementById('btnCreateLCFromStrain');
+        if (btnCreate) btnCreate.disabled = true;
+
+        const res = await fetch(`${API_BASE}/api/lc/create-from-strain`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            strain_id: selectedStrain.id,
+            total_pots: nb,
+            volume_par_pot_ml: vol,
+            solution_id: solution.id
+          })
+        });
+
+        const data = await res.json();
+        if (!res.ok) {
+          throw new Error(data?.error || 'Erreur création LC depuis souche');
+        }
+
+        alert(`✅ Lot LC créé : ${data.lc_lot.code}`);
+
+        await loadLCInventory();
+        await loadLCEnCours();
+
+        // Ouvrir le cycle
+        if (data?.lc_lot?.id) {
+          window.location.href = `admin-lc-cycle.html?lc_id=${data.lc_lot.id}`;
+        }
+      } catch (e) {
+        console.error(e);
+        alert(`❌ ${e.message || e}`);
+      } finally {
+        const btnCreate = document.getElementById('btnCreateLCFromStrain');
+        if (btnCreate) btnCreate.disabled = !selectedStrain;
+      }
+    }
+
+    async function loadLCInventory() {
+      const tbody = document.getElementById('lc-inventory-tbody');
+      if (!tbody) return;
+
+      try {
+        const res = await fetch(`${API_BASE}/api/lc/en-cours`);
+        if (!res.ok) throw new Error('Erreur chargement inventaire LC');
+        const lots = await res.json();
+
+        tbody.innerHTML = (lots || []).map(lc => {
+          const pots = lc.pots_disponibles !== undefined
+            ? `${lc.pots_disponibles}/${lc.total_pots_crees || lc.total_pots || '—'}`
+            : (lc.total_pots_crees || lc.total_pots || '—');
+
+          const statut = lc.certification_status || 'NON_CERTIFIE';
+
+          return `
+            <tr>
+              <td><strong>${lc.code || '—'}</strong></td>
+              <td>${lc.source_code || '—'}</td>
+              <td>${lc.champignon || '—'}</td>
+              <td>${pots}</td>
+              <td>${lc.j0_date ? new Date(lc.j0_date).toLocaleDateString() : '—'}</td>
+              <td>${lc.jour_actuel ?? '—'}</td>
+              <td><span class="badge">${statut}</span></td>
+              <td>
+                <button class="btn-action btn-blue" onclick="openLCCycle(${lc.id})">🔎 Voir cycle</button>
+              </td>
+            </tr>
+          `;
+        }).join('');
+
+        if (!lots || lots.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:#777;">Aucun lot LC en cours</td></tr>';
+        }
+      } catch (e) {
+        console.error(e);
+        tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:#c00;">Erreur chargement inventaire LC</td></tr>';
+      }
+    }
+
+// ============================================
+    // P3 VALIDÉS (TAB 3)
+    // ============================================
+    async function loadP3Valides() {
+      try {
+        const res = await fetch(`${API_BASE}/api/petris/p3-valides`);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const p3s = await res.json();
+        const tbody = document.getElementById('p3-tbody');
+
+        if (!Array.isArray(p3s) || p3s.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">Aucun P3 validé disponible</td></tr>';
+          return;
+        }
+
+        tbody.innerHTML = p3s.map(p => `
+          <tr>
+            <td><strong>${p.id}</strong></td>
+            <td>${p.espece || '—'}</td>
+            <td>${p.gelose_nom || '—'}</td>
+            <td>${p.isolement_code || '—'}</td>
+            <td>${p.j0 ? new Date(p.j0).toLocaleDateString('fr-FR') : '—'}</td>
+            <td>
+              <button class="btn-action btn-green" style="padding: 6px 10px; font-size: 11px; margin-right: 5px;"
+                onclick="createLCDirectly(${p.id})">
+                💧 Créer LC
+              </button>
+              <button class="btn-action btn-brown" style="padding: 6px 10px; font-size: 11px;"
+                onclick="selectP3(${p.id}, '${(p.espece || '').replace(/'/g, "\\'")}', '${(p.isolement_code || '').replace(/'/g, "\\'")}')">
+                📝 Souche
+              </button>
+            </td>
+          </tr>
+        `).join('');
+      } catch (err) {
+        console.error('Erreur chargement P3:', err);
+        document.getElementById('p3-tbody').innerHTML =
+          '<tr><td colspan="6" style="text-align:center; color: #c0392b;">Erreur de chargement</td></tr>';
+      }
+    }
+
+    function selectP3(petriId, species, parentCode) {
+      document.getElementById('p3-list-container').style.display = 'none';
+      document.getElementById('internal-form-container').style.display = 'block';
+
+      document.getElementById('internal-petri-id').value = petriId;
+      document.getElementById('internal-code').value = `INT-P3-${petriId}-${Date.now()}`;
+      document.getElementById('internal-species').value = species;
+      document.getElementById('internal-parent').value = parentCode;
+      document.getElementById('internal-name').value = `${species} - P3-${petriId}`;
+    }
+
+    document.getElementById('btn-cancel-internal').addEventListener('click', () => {
+      document.getElementById('p3-list-container').style.display = 'block';
+      document.getElementById('internal-form-container').style.display = 'none';
+      document.getElementById('form-new-internal').reset();
+    });
+
+    document.getElementById('btn-cycle-biologique').addEventListener('click', () => {
+      const petriId = document.getElementById('internal-petri-id').value;
+      if (petriId) window.location.href = `admin-souche-journal.html?petri_id=${petriId}`;
+      else alert('⚠️ Erreur: Aucun P3 sélectionné');
+    });
+
+    // ============================================
+    // SOUMETTRE SOUCHE EXTERNE
+    // ============================================
+    document.getElementById('form-new-external').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const certRef = document.getElementById('external-certificate').value;
+      const data = {
+        code: document.getElementById('external-code').value,
+        name: document.getElementById('external-name').value,
+        species: document.getElementById('external-species').value,
+        strain_type: 'EXTERNAL',
+        source_name: document.getElementById('external-supplier').value,
+        quantity: parseFloat(document.getElementById('external-quantity').value),
+        unit: document.getElementById('external-unit').value,
+        notes: document.getElementById('external-notes').value,
+        received_on: new Date().toISOString().split('T')[0],
+        certificate_available: certRef ? true : false,
+        certification_status: certRef ? 'CERTIFIED' : 'NOT_CERTIFIED',
+        production_allowed: certRef ? true : false
+      };
+
+      try {
+        const res = await fetch(`${API_BASE}/api/strains`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+
+        if (res.ok) {
+          alert('✅ Souche externe enregistrée avec succès !');
+          document.getElementById('form-new-external').reset();
+          loadStrains();
+          loadSummary();
+          document.querySelector('[data-tab="tab-inventory"]').click();
+        } else {
+          const error = await res.json().catch(() => ({}));
+          alert('❌ Erreur : ' + (error.error || 'Erreur inconnue'));
+        }
+      } catch (err) {
+        console.error('Erreur création souche externe:', err);
+        alert('❌ Erreur de connexion au serveur');
+      }
+    });
+
+    // ============================================
+    // SOUMETTRE SOUCHE INTERNE
+    // ============================================
+    document.getElementById('form-new-internal').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const petriId = document.getElementById('internal-petri-id').value;
+
+      const data = {
+        code: document.getElementById('internal-code').value,
+        name: document.getElementById('internal-name').value,
+        species: document.getElementById('internal-species').value,
+        strain_type: 'INTERNAL',
+        source_ref: petriId,
+        source_name: `P3-${petriId}`,
+        quantity: parseFloat(document.getElementById('internal-quantity').value),
+        unit: document.getElementById('internal-unit').value,
+        notes: document.getElementById('internal-notes').value,
+        created_on: new Date().toISOString().split('T')[0],
+        certificate_available: false,
+        certification_status: 'NOT_CERTIFIED',
+        production_allowed: false
+      };
+
+      try {
+        const res = await fetch(`${API_BASE}/api/strains`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+
+        if (res.ok) {
+          // Marquer le P3 comme utilisé
+          await fetch(`${API_BASE}/api/petris/${petriId}/use-for-strain`, { method: 'POST' });
+
+          alert('✅ Souche interne créée avec succès !');
+          document.getElementById('btn-cancel-internal').click();
+          loadStrains();
+          loadP3Valides();
+          loadSummary();
+          document.querySelector('[data-tab="tab-inventory"]').click();
+        } else {
+          const error = await res.json().catch(() => ({}));
+          alert('❌ Erreur : ' + (error.error || 'Erreur inconnue'));
+        }
+      } catch (err) {
+        console.error('Erreur création souche interne:', err);
+        alert('❌ Erreur de connexion au serveur');
+      }
+    });
+
+    // ============================================
+    // FONCTIONS MODALES (à implémenter)
+    // ============================================
+    function openCertifyModal(strainId, code, name) {
+      alert(`Fonction de certification à implémenter pour ${code}`);
+      // TODO: Ouvrir modal certification
+    }
+
+    function logout() {
+      localStorage.removeItem('admin_session');
+      window.location.href = 'login-admin.html';
+    }
+
+// ============================================
+// LC EN COURS
+// ============================================
+async function loadLCEnCours() {
+  try {
+    const tbody = document.getElementById('lc-tbody');
+    if (!tbody) {
+      console.warn('Élément lc-tbody non trouvé');
+      return;
+    }
+    
+    const res = await fetch(`${API_BASE}/api/lc/en-cours`);
+    const lcs = await res.json();
+    
+    if (!Array.isArray(lcs) || lcs.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;">Aucun LC en cours</td></tr>';
+      return;
+    }
+    
+    tbody.innerHTML = lcs.map(lc => {
+      const day = lc.jour_actuel || 0;
+      let dayBadge = `J${day}`;
+      if (day >= 14) dayBadge = '<span style="background:#e8f5e9;color:#2e7d32;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:700;">J14 ✅</span>';
+      else if (day >= 8) dayBadge = `<span style="background:#e3f2fd;color:#1565c0;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:700;">J${day} optimal</span>`;
+      
+      // Condition tolérante pour certification
+      const status = (lc.certification_status || '').toUpperCase();
+      const nonCertifie = ['NON_CERTIFIE', 'NOT_CERTIFIED', 'NON_CERTIFIEE', 'NON CERTIFIE', ''].includes(status);
+      
+      return `
+        <tr>
+          <td><strong>${lc.code}</strong></td>
+          <td>${lc.source_code || '—'}</td>
+          <td>${lc.champignon || '—'}</td>
+          <td>${lc.pots_disponibles || 0}/${lc.total_pots_crees || 6}</td>
+          <td>${lc.j0_date ? new Date(lc.j0_date).toLocaleDateString('fr-FR') : '—'}</td>
+          <td>${dayBadge}</td>
+          <td>
+            ${lc.certification_status === 'CERTIFIE' ? '<span style="background:#e8f5e9;color:#2e7d32;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:700;">Certifié</span>' : 
+              lc.certification_status === 'EN_ATTENTE' ? '<span style="background:#fff3e0;color:#e65100;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:700;">En attente</span>' :
+              '<span style="background:#e3f2fd;color:#1565c0;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:700;">En cours</span>'}
+          </td>
+          <td>
+            <button class="btn-action btn-brown" style="padding:6px 12px;font-size:12px;" onclick="openLCCycle(${lc.id})">🔄 Voir cycle</button>
+            ${day >= 8 && nonCertifie ? 
+              `<button class="btn-action btn-orange" style="padding:6px 12px;font-size:12px;" onclick="certifyLC(${lc.id})">📄 Certifier</button>` : ''}
+          </td>
+        </tr>
+      `;
+    }).join('');
+  } catch (error) {
+    console.error('Erreur LC:', error);
+  }
+}
+
+async function transfererVersLC() {
+  const petriId = document.getElementById('internal-petri-id').value;
+  if (!petriId) {
+    alert('⚠️ Veuillez d\'abord sélectionner un P3');
+    return;
+  }
+  
+  // Demander le nombre de pots
+  const nbPots = prompt('Nombre de pots à créer :', '6');
+  if (!nbPots || nbPots < 1) {
+    alert('❌ Nombre de pots invalide');
+    return;
+  }
+  
+  // Demander le volume par pot
+  const volumePot = prompt('Volume par pot (en ml) :', '700');
+  if (!volumePot || volumePot < 1) {
+    alert('❌ Volume invalide');
+    return;
+  }
+  
+  if (!confirm(`Créer ${nbPots} pots de ${volumePot}ml LC depuis ce P3 ?`)) return;
+  
+  try {
+    const res = await fetch(`${API_BASE}/api/lc/create-from-p3`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ 
+        petri_id: petriId,
+        total_pots: parseInt(nbPots),
+        volume_par_pot: parseFloat(volumePot)
+      })
+    });
+    
+    const data = await res.json();
+    
+    if (res.ok) {
+      alert(`✅ ${data.message}`);
+      loadP3Valides();
+      loadLCEnCours();
+      window.location.href = `admin-lc-cycle.html?lc_id=${data.lc_lot.id}`;
+    } else {
+      alert('❌ ' + data.error);
+    }
+  } catch (error) {
+    console.error('Erreur:', error);
+    alert('❌ Erreur connexion');
+  }
+}
+
+async function createLCDirectly(petriId) {
+  // Demander le nombre de pots
+  const nbPots = prompt('Nombre de pots à créer :', '6');
+  if (!nbPots || nbPots < 1) {
+    alert('❌ Nombre de pots invalide');
+    return;
+  }
+  
+  // Demander le volume par pot
+  const volumePot = prompt('Volume par pot (en ml) :', '700');
+  if (!volumePot || volumePot < 1) {
+    alert('❌ Volume invalide');
+    return;
+  }
+  
+  if (!confirm(`Créer ${nbPots} pots de ${volumePot}ml LC depuis ce P3 ?`)) return;
+  
+  try {
+    const res = await fetch(`${API_BASE}/api/lc/create-from-p3`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ 
+        petri_id: petriId,
+        total_pots: parseInt(nbPots),
+        volume_par_pot: parseFloat(volumePot)
+      })
+    });
+    
+    const data = await res.json();
+    
+    if (res.ok) {
+      alert(`✅ ${data.message}`);
+      loadP3Valides();
+      loadLCEnCours();
+      window.location.href = `admin-lc-cycle.html?lc_id=${data.lc_lot.id}`;
+    } else {
+      alert('❌ ' + data.error);
+    }
+  } catch (error) {
+    console.error('Erreur:', error);
+    alert('❌ Erreur connexion');
+  }
+}
+
+function openLCCycle(lcId) {
+  window.location.href = `admin-lc-cycle.html?lc_id=${lcId}`;
+}
+
+function certifyLC(lcId) {
+  const labo = prompt('Nom du laboratoire tunisien homologué :');
+  if (!labo) return;
+  
+  const ref = prompt('Référence du certificat (optionnel) :');
+  
+  fetch(`${API_BASE}/api/certifications/lc`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      lc_lot_id: lcId,
+      laboratoire: labo,
+      reference_certificat: ref
+    })
+  })
+  .then(res => res.json())
+  .then(data => {
+    alert('✅ Demande de certification envoyée !');
+    loadLCEnCours();
+  })
+  .catch(error => {
+    console.error('Erreur:', error);
+    alert('❌ Erreur connexion');
+  });
+}
+
+  
+// --- expose submitLcInline for external handlers (fix ReferenceError) ---
+try {
+  if (typeof submitLcInline === 'function') window.submitLcInline = submitLcInline;
+} catch(e) {}
+</script>
+
+
+  <!-- JS du template -->
+</body>
+</html>

@@ -1,0 +1,7 @@
+node_modules
+uploads
+.git
+*.log
+.env
+.env.*
+!.env.example

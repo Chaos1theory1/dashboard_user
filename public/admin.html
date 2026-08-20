@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html class="wide wow-animation" lang="fr">
+  <head>
+    <title>Biotech Agro – Admin</title>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, height=device-height, initial-scale=1.0"
+    />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <link rel="icon" href="images/logo.png" type="image/png" />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="//fonts.googleapis.com/css?family=Montserrat:300,400,700%7CPoppins:300,400,500,700,900"
+    />
+    <link rel="stylesheet" href="css/bootstrap.css" />
+    <link rel="stylesheet" href="css/fonts.css" />
+    <link rel="stylesheet" href="css/style.css" />
+
+    <style>
+      :root {
+        --baslyagro-green: #2fa35a;
+        --baslyagro-green-dark: #1f7a41;
+        --baslyagro-dark: #111712;
+      }
+
+      body {
+        background: #0e1410;
+        color: #fff;
+        min-height: 100vh;
+      }
+
+      /* Header admin */
+      .admin-topbar {
+        background: rgba(0, 0, 0, 0.65);
+        backdrop-filter: blur(10px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        padding: 14px 0;
+      }
+
+      .admin-brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .admin-brand img {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        object-fit: cover;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.45);
+      }
+
+      .admin-brand-title {
+        line-height: 1.1;
+      }
+
+      .admin-brand-title .name {
+        font-weight: 700;
+        font-size: 15px;
+      }
+
+      .admin-brand-title .sub {
+        font-size: 12px;
+        color: rgba(255, 255, 255, 0.7);
+      }
+
+      /* Session bar */
+      .admin-session-bar {
+        display: none;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 10px 14px;
+        border-radius: 12px;
+        background: rgba(0, 0, 0, 0.55);
+        backdrop-filter: blur(8px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35);
+        margin: 16px 0 18px 0;
+      }
+
+      .admin-session-left {
+        font-size: 13px;
+        color: #fff;
+      }
+
+      .button-primary {
+        background-color: var(--baslyagro-green) !important;
+        border-color: var(--baslyagro-green) !important;
+        color: #fff !important;
+        height: 38px;
+        font-weight: 600;
+        border-radius: 10px;
+        padding: 0 14px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .button-primary:hover {
+        background-color: var(--baslyagro-green-dark) !important;
+        border-color: var(--baslyagro-green-dark) !important;
+      }
+
+      /* Layout */
+      .admin-main {
+        padding: 26px 0 40px 0;
+      }
+
+      .admin-card {
+        background: rgba(0, 0, 0, 0.55);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 16px;
+        padding: 18px;
+        box-shadow: 0 18px 45px rgba(0, 0, 0, 0.35);
+      }
+
+      .admin-card h2 {
+        font-size: 18px;
+        margin: 0 0 8px 0;
+        font-weight: 700;
+      }
+
+      .admin-card p {
+        font-size: 13px;
+        color: rgba(255, 255, 255, 0.75);
+        margin: 0 0 14px 0;
+      }
+
+      .admin-links a {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        padding: 12px 14px;
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(255, 255, 255, 0.07);
+        color: #fff;
+        text-decoration: none;
+        margin-bottom: 10px;
+        transition: transform 0.12s ease;
+      }
+
+      .admin-links a:hover {
+        transform: translateY(-1px);
+        border-color: rgba(47, 163, 90, 0.5);
+      }
+
+      .admin-links .muted {
+        font-size: 12px;
+        color: rgba(255, 255, 255, 0.65);
+      }
+
+      /* Footer */
+      .footer-classic {
+        background: rgba(0, 0, 0, 0.75);
+        padding: 12px 0;
+        color: rgba(255, 255, 255, 0.75);
+        text-align: center;
+        font-size: 12px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- ===== HEADER ===== -->
+    <header class="admin-topbar">
+      <div class="container">
+        <div class="d-flex align-items-center justify-content-between">
+          <div class="admin-brand">
+            <img src="images/logo.png" alt="BaslyAgro Logo" />
+            <div class="admin-brand-title">
+              <div class="name">Biotech Agro – Admin</div>
+              <div class="sub">Espace interne • Traçabilité & Production</div>
+            </div>
+          </div>
+
+          <a class="button-primary" href="admin.html">Tableau de bord</a>
+        </div>
+      </div>
+    </header>
+
+    <!-- ===== MAIN ===== -->
+    <main class="admin-main">
+      <div class="container">
+        <!-- Session bar (connecté + déconnexion) -->
+        <div class="admin-session-bar" id="admin-session-bar">
+          <div class="admin-session-left">
+            Connecté en tant que <strong id="admin-username"></strong>
+            <span class="muted" id="admin-login-time"></span>
+          </div>
+          <button type="button" class="button-primary" id="admin-logout-btn">
+            Déconnexion
+          </button>
+        </div>
+
+        <div class="row g-4">
+          <div class="col-lg-7">
+            <div class="admin-card">
+              <h2>Tableau de bord Admin</h2>
+              <p>
+                Accès aux modules internes (lots, souches, incubation,
+                stérilisation, QC, traçabilité).
+              </p>
+
+              <div class="admin-links">
+                <a href="admin-taches.html">
+                  <div>
+                    <div><strong>Tâches obligatoires</strong></div>
+                    <div class="muted">Checklist quotidienne • Hygiène • QC</div>
+                  </div>
+                  <div class="muted">→</div>
+                </a>
+
+                <a href="admin-myc-liquide.html">
+                  <div>
+                    <div><strong>Mycélium liquide</strong></div>
+                    <div class="muted">Création lots LC • Incubation • Logs</div>
+                  </div>
+                  <div class="muted">→</div>
+                </a>
+
+                <a href="admin-souches.html">
+                  <div>
+                    <div><strong>Souches</strong></div>
+                    <div class="muted">Ajouter • Suprimé • Cycle de vie</div>
+                  </div>
+                  <div class="muted">→</div>
+                </a>
+
+                <a href="admin-myc-grain.html">
+                  <div>
+                    <div><strong>Mycélium sur grain</strong></div>
+                    <div class="muted">Stérilisation • Inoculation • Incubation</div>
+                  </div>
+                  <div class="muted">→</div>
+                </a>
+
+                <a href="admin-isolement.html">
+                  <div>
+                    <div><strong>Isolation tissulaire</strong></div>
+                    <div class="muted">Suivie • Alert • Isolement tissulaire</div>
+                  </div>
+                  <div class="muted">→</div>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-5">
+            <div class="admin-card">
+              <h2>Règles d’accès</h2>
+              <p>
+                Si vous n’êtes pas connecté, l’accès à l’interface Admin est
+                bloqué et vous serez redirigé vers la page de connexion.
+              </p>
+
+              <div class="admin-links">
+                <a href="login-admin.html">
+                  <div>
+                    <div><strong>Aller à la connexion</strong></div>
+                    <div class="muted">login-admin.html</div>
+                  </div>
+                  <div class="muted">→</div>
+                </a>
+              </div>
+
+              <p class="muted" style="margin-top: 10px;">
+                Note : pour protéger la base de données, il faudra aussi une
+                vérification côté serveur (token/middleware).
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- ===== securité  ===== -->
+    <script src="js/admin-auth.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        // Utilise le système localStorage (admin-auth.js)
+        renderAdminSessionUI({
+          usernameTargetId: "admin-username",
+          logoutBtnId: "admin-logout-btn"
+        });
+
+        // Affiche la barre session une fois connecté
+        const bar = document.getElementById("admin-session-bar");
+        if (bar) bar.style.display = "flex";
+      });
+    </script>
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="footer-classic">
+      © Biotech Agro – Interface Admin
+    </footer>
+
+    <!-- ===== 1) GUARD : (DÉSACTIVÉ) ===== -->
+    <script>
+      // Désactivé : sessionStorage provoquait une boucle (clignotement).
+      // On utilise uniquement localStorage via admin-auth.js
+      (function requireAdminSession() {
+        return;
+      })();
+    </script>
+
+    <!-- ===== 2) UI SESSION : (DÉSACTIVÉ) ===== -->
+    <script>
+      // Désactivé : cette fonction entrait en conflit avec renderAdminSessionUI() de admin-auth.js
+      (function renderAdminSessionUI() {
+        return;
+      })();
+    </script>
+  </body>
+</html>

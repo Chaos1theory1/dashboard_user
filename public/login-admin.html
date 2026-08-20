@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html class="wide wow-animation" lang="fr">
+  <head>
+    <title>Biotech Agro – Connexion</title>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, height=device-height, initial-scale=1.0"
+    />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <link rel="icon" href="images/logo.png" type="image/png" />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="//fonts.googleapis.com/css?family=Montserrat:300,400,700%7CPoppins:300,400,500,700,900"
+    />
+    <link rel="stylesheet" href="css/bootstrap.css" />
+    <link rel="stylesheet" href="css/fonts.css" />
+    <link rel="stylesheet" href="css/style.css" />
+
+    <style>
+      :root {
+        --baslyagro-green: #2fa35a;
+        --baslyagro-green-light: #38c46c;
+        --baslyagro-green-dark: #1f7a41;
+        --baslyagro-dark: #111712;
+      }
+
+      /* ======= Arrière-plan ======= */
+      body {
+        background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.6)),
+          url("images/imagearriereplan.png");
+        background-repeat: no-repeat;
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+        color: #fff;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      /* ======= Header minimal ======= */
+      .page-header-min {
+        padding: 5px 0;
+        min-height: 5px;
+      }
+
+      /* ======= Carte de connexion ======= */
+      .login-wrapper {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 30px 15px;
+      }
+
+      .login-card {
+        background: rgba(0, 0, 0, 0.72);
+        border-radius: 18px;
+        box-shadow: 0 18px 45px rgba(0, 0, 0, 0.6);
+        max-width: 420px;
+        width: 100%;
+        padding: 30px 26px;
+        backdrop-filter: blur(10px);
+      }
+
+      /* ======= Logo ======= */
+      .login-logo-wrapper {
+        text-align: center;
+        margin-bottom: 18px;
+      }
+
+      .login-logo-wrapper img {
+        max-height: 90px;
+        width: auto;
+        object-fit: contain;
+        padding: 0;
+        border-radius: 50%;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6);
+      }
+
+      /* ======= Textes ======= */
+      .login-title {
+        font-size: 22px;
+        font-weight: 700;
+        color: #fff;
+        margin-bottom: 6px;
+      }
+
+      .login-subtitle {
+        font-size: 13px;
+        color: #ccc;
+        margin-bottom: 18px;
+      }
+
+      .badge-admin {
+        display: inline-block;
+        padding: 5px 12px;
+        border-radius: 999px;
+        background: #ffe5d1;
+        color: #8b4400;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        font-weight: 600;
+        margin-bottom: 12px;
+      }
+
+      label {
+        font-size: 13px;
+        font-weight: 600;
+        color: #fff;
+      }
+
+      .form-control {
+        border-radius: 8px;
+        height: 42px;
+      }
+
+      .form-control:focus {
+        border-color: var(--baslyagro-green);
+        box-shadow: 0 0 8px rgba(47, 163, 90, 0.45);
+      }
+
+      /* ======= Bouton ======= */
+      .button-primary {
+        background-color: var(--baslyagro-green) !important;
+        border-color: var(--baslyagro-green) !important;
+        color: #fff !important;
+        width: 100%;
+        height: 42px;
+        font-weight: 600;
+      }
+
+      .button-primary:hover {
+        background-color: var(--baslyagro-green-dark) !important;
+      }
+
+      .login-footer-text {
+        font-size: 11px;
+        color: #ccc;
+        margin-top: 12px;
+      }
+
+      .login-separator {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin: 22px 0 16px;
+        color: #bfc9c1;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: .08em;
+      }
+      .login-separator::before,
+      .login-separator::after {
+        content: "";
+        height: 1px;
+        flex: 1;
+        background: rgba(255,255,255,.18);
+      }
+      .visitor-demo-box {
+        padding: 15px;
+        border-radius: 12px;
+        border: 1px solid rgba(255, 220, 140, .42);
+        background: rgba(117, 81, 13, .28);
+      }
+      .visitor-demo-title {
+        font-size: 14px;
+        font-weight: 800;
+        color: #ffe1a0;
+        margin-bottom: 5px;
+      }
+      .visitor-demo-text {
+        font-size: 11.5px;
+        line-height: 1.5;
+        color: #e4e4e4;
+        margin-bottom: 12px;
+      }
+      .button-visitor {
+        width: 100%;
+        height: 42px;
+        border-radius: 8px;
+        border: 1px solid #e0b757;
+        background: #8b650f;
+        color: #fff;
+        font-weight: 700;
+        cursor: pointer;
+      }
+      .button-visitor:hover { background: #725109; }
+      .button-visitor:disabled { opacity: .55; cursor: wait; }
+      .visitor-note {
+        margin: 10px 0 0;
+        font-size: 10.5px;
+        line-height: 1.45;
+        color: #d5d5d5;
+      }
+
+      .login-error {
+        display: none;
+        font-size: 12px;
+        color: #ff8a8a;
+        margin-top: 6px;
+      }
+
+      /* ======= Footer ======= */
+      .footer-classic {
+        background-color: rgba(0, 0, 0, 0.75);
+        color: #ddd;
+        padding: 10px 0;
+      }
+
+      .footer-classic p {
+        margin: 0;
+        font-size: 12px;
+        text-align: center;
+      }
+    </style>
+  </head>
+
+  <body>
+    <header class="section page-header page-header-min"></header>
+
+    <!-- ======= FORMULAIRE ======= -->
+    <main class="login-wrapper">
+      <div class="login-card">
+        <div class="login-logo-wrapper">
+          <img src="images/logo.png" alt="BaslyAgro Logo" />
+        </div>
+
+        <span class="badge-admin">Accès privé</span>
+
+        <h1 class="login-title">Connexion Biotech Agro</h1>
+        <p class="login-subtitle">
+          Accès administrateur ou démonstration visiteur pour Smart Capital.
+        </p>
+
+        <form id="login-form" onsubmit="handleLogin(event)">
+          <div class="form-group mb-3">
+            <label for="username">Nom d’utilisateur</label>
+            <input type="text" id="username" class="form-control" required />
+          </div>
+
+          <div class="form-group mb-2">
+            <label for="password">Mot de passe</label>
+            <input type="password" id="password" class="form-control" required />
+          </div>
+
+          <div id="login-error" class="login-error">
+            Identifiants incorrects. Merci de réessayer.
+          </div>
+
+          <button type="submit" class="button button-primary">
+            Se connecter
+          </button>
+
+          <p class="login-footer-text">
+            Après connexion, ouverture du <strong>tableau de bord admin</strong>.
+          </p>
+        </form>
+
+        <div class="login-separator">ou</div>
+
+        <div class="visitor-demo-box">
+          <div class="visitor-demo-title">👁 Mode visiteur — Démonstration Smart Capital</div>
+          <p class="visitor-demo-text">
+            Accès fonctionnel à l'application pour tester les souches, l'isolation tissulaire,
+            le mycélium liquide, le mycélium sur grain et leurs journaux. Les modifications
+            de cette session sont temporaires et ne sont jamais validées définitivement dans la base.
+          </p>
+          <div class="form-group mb-2">
+            <label for="visitor-code">Code de démonstration</label>
+            <input type="password" id="visitor-code" class="form-control" autocomplete="off" />
+          </div>
+          <div id="visitor-error" class="login-error">Code de démonstration incorrect.</div>
+          <button type="button" id="visitor-login-btn" class="button-visitor" onclick="handleVisitorLogin()">
+            Ouvrir la démonstration
+          </button>
+          <p class="visitor-note">
+            Un bandeau explicatif accompagne chaque module en mode visiteur afin de présenter son rôle et ce qu'il permet de tester.
+          </p>
+        </div>
+      </div>
+    </main>
+
+    <!-- ======= FOOTER ======= -->
+    <footer class="footer-classic">
+      <p>© Biotech Agro – Authentification</p>
+    </footer>
+    <!-- ======= AUTHENTIFICATION DE SESSION ======= -->
+    <script src="js/admin-auth.js"></script>
+    <script>
+      redirectIfLoggedIn("admin.html");
+
+      async function handleLogin(event) {
+        event.preventDefault();
+        const user = document.getElementById("username").value.trim();
+        const pass = document.getElementById("password").value;
+        const error = document.getElementById("login-error");
+        const submit = event.submitter || document.querySelector('#login-form button[type="submit"]');
+        if (submit) submit.disabled = true;
+        error.style.display = "none";
+
+        try {
+          const response = await fetch("/api/auth/login", {
+            method: "POST",
+            credentials: "same-origin",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ username: user, password: pass })
+          });
+          const data = await response.json().catch(() => ({}));
+          if (!response.ok || !data.authenticated) throw new Error(data.error || "Identifiants incorrects");
+          startAdminSession(data.user || { username: user, role: "admin" });
+          const params = new URLSearchParams(location.search || "");
+          location.replace(params.get("next") || "admin.html");
+        } catch (e) {
+          error.textContent = e.message || "Connexion impossible";
+          error.style.display = "block";
+          if (submit) submit.disabled = false;
+        }
+      }
+
+      async function handleVisitorLogin() {
+        const accessCode = document.getElementById("visitor-code").value;
+        const error = document.getElementById("visitor-error");
+        const btn = document.getElementById("visitor-login-btn");
+        error.style.display = "none";
+        btn.disabled = true;
+        try {
+          const response = await fetch("/api/auth/visitor", {
+            method: "POST",
+            credentials: "same-origin",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ access_code: accessCode })
+          });
+          const data = await response.json().catch(() => ({}));
+          if (!response.ok || !data.authenticated) throw new Error(data.error || "Accès visiteur impossible");
+          startAdminSession(data.user || { username: "Visiteur Smart Capital", role: "visitor" });
+          const params = new URLSearchParams(location.search || "");
+          location.replace(params.get("next") || "admin.html");
+        } catch (e) {
+          error.textContent = e.message || "Accès visiteur impossible";
+          error.style.display = "block";
+          btn.disabled = false;
+        }
+      }
+
+      document.getElementById("visitor-code").addEventListener("keydown", function (event) {
+        if (event.key === "Enter") {
+          event.preventDefault();
+          handleVisitorLogin();
+        }
+      });
+    </script>
+  </body>
+</html>

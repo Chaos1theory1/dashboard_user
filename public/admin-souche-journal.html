@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html class="wide wow-animation" lang="fr">
+<head>
+  <title>Biotech Agro – Admin – Journal Souche</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0" />
+  <link rel="icon" href="images/logo.png" type="image/png" />
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Montserrat:300,400,700%7CPoppins:300,400,500,700,900" />
+  <link rel="stylesheet" href="css/bootstrap.css" />
+  <link rel="stylesheet" href="css/fonts.css" />
+  <link rel="stylesheet" href="css/style.css" />
+
+  <style>
+    :root {
+      --baslyagro-green: #2fa35a;
+      --baslyagro-green-dark: #1f7a41;
+      --baslyagro-brown: #6b4b2f;
+      --baslyagro-red: #c0392b;
+      --baslyagro-orange: #d68a00;
+      --baslyagro-blue: #3498db;
+    }
+    body {
+      background-image: linear-gradient(rgba(255,255,255,0.25),rgba(255,255,255,0.45)), url("images/imagearriereplan.png");
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      color: #222;
+    }
+    .admin-wrapper { padding: 30px 0 60px; }
+
+    /* Badge connexion */
+    .admin-connected-badge {
+      position: fixed; top: 14px; right: 14px; z-index: 9999;
+      display: none; align-items: center; gap: 8px;
+      padding: 8px 12px; border-radius: 999px;
+      background: rgba(255,255,255,0.92);
+      border: 1px solid rgba(0,0,0,0.08);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+      font-size: 12px; cursor: pointer;
+    }
+    .admin-connected-dot {
+      width: 10px; height: 10px; border-radius: 50%;
+      background: var(--baslyagro-green);
+      box-shadow: 0 0 0 3px rgba(47,163,90,0.18);
+    }
+    .admin-connected-badge:hover { background: #fff; }
+
+    /* Modal logout */
+    .admin-logout-modal {
+      position: fixed; inset: 0; z-index: 10000;
+      display: none; align-items: center; justify-content: center;
+      padding: 18px; background: rgba(0,0,0,0.45);
+    }
+    .admin-logout-card {
+      width: 100%; max-width: 420px; background: #fff;
+      border-radius: 14px; box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+    }
+    .admin-logout-card-header {
+      padding: 16px 18px; border-bottom: 1px solid #eee;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .admin-logout-close {
+      border: 0; background: transparent;
+      font-size: 20px; cursor: pointer;
+    }
+    .admin-logout-card-body { padding: 16px 18px; font-size: 13px; }
+    .admin-logout-card-actions {
+      padding: 14px 18px 18px; display: flex;
+      gap: 10px; justify-content: flex-end;
+    }
+    .admin-btn {
+      padding: 10px 14px; border-radius: 10px;
+      font-weight: 700; font-size: 12px;
+      border: 1px solid transparent; cursor: pointer;
+    }
+    .admin-btn-cancel { background: #fff; border-color: #ddd; color: #333; }
+    .admin-btn-danger { background: var(--baslyagro-red); color: #fff; }
+
+    /* Logo */
+    .admin-big-logo { text-align: center; margin: 10px 0; }
+    .admin-big-logo img {
+      max-height: 100px;
+      filter: drop-shadow(0 6px 10px rgba(0,0,0,0.45));
+      background: #fff; padding: 10px; border-radius: 50%;
+      border: 4px solid var(--baslyagro-green);
+    }
+
+    /* Menu admin */
+    .admin-menu-bar {
+      background: #fff; padding: 15px 0;
+      border-bottom: 2px solid #e5e5e5;
+      text-align: center; margin-bottom: 30px;
+    }
+    .admin-menu-bar a {
+      margin: 0 15px; font-weight: 600;
+      text-transform: uppercase; font-size: 13px;
+      text-decoration: none; color: #444;
+    }
+    .admin-menu-bar a:hover { color: var(--baslyagro-green-dark); }
+    .admin-menu-bar a.active { color: var(--baslyagro-green); }
+
+    /* Card admin */
+    .admin-card {
+      background: #fff; padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      margin-bottom: 25px;
+    }
+    .admin-card h3, .admin-card h4 {
+      color: #222; margin-bottom: 15px;
+    }
+
+    /* Info box - Stockage frigorifique */
+    .info-box {
+      background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+      border-left: 4px solid var(--baslyagro-blue);
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+    .info-box-title {
+      font-weight: 700;
+      color: var(--baslyagro-blue);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .info-box-content {
+      font-size: 14px;
+      color: #555;
+    }
+
+    /* Timeline */
+    .timeline {
+      position: relative;
+      padding-left: 40px;
+      margin: 30px 0;
+    }
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 15px;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: #e5e5e5;
+    }
+    .timeline-item {
+      position: relative;
+      margin-bottom: 30px;
+    }
+    .timeline-dot {
+      position: absolute;
+      left: -29px;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: var(--baslyagro-green);
+      border: 3px solid #fff;
+      box-shadow: 0 0 0 2px var(--baslyagro-green);
+    }
+    .timeline-content {
+      background: #f9f9f9;
+      padding: 15px;
+      border-radius: 8px;
+      border-left: 3px solid var(--baslyagro-green);
+    }
+    .timeline-date {
+      font-weight: 700;
+      color: var(--baslyagro-green);
+      margin-bottom: 5px;
+    }
+
+    /* Formulaires */
+    .form-label {
+      display: block; font-weight: 600;
+      margin-bottom: 6px; font-size: 13px;
+    }
+    .form-input, .form-select, .form-textarea {
+      width: 100%; padding: 10px;
+      border: 1px solid #ddd; border-radius: 8px;
+      font-size: 14px; margin-bottom: 15px;
+    }
+    .form-input:focus, .form-select:focus, .form-textarea:focus {
+      outline: none; border-color: var(--baslyagro-green);
+    }
+    .form-textarea { min-height: 80px; resize: vertical; }
+
+    /* Boutons */
+    .btn-action {
+      padding: 12px 20px; border: none; border-radius: 10px;
+      font-weight: 600; cursor: pointer; transition: all 0.3s;
+      color: #fff; margin-right: 10px; margin-bottom: 10px;
+    }
+    .btn-green { background: var(--baslyagro-green); }
+    .btn-green:hover { background: var(--baslyagro-green-dark); }
+    .btn-brown { background: var(--baslyagro-brown); }
+    .btn-brown:hover { opacity: 0.9; }
+    .btn-grey { background: #999; }
+    .btn-grey:hover { opacity: 0.9; }
+
+    /* Photo upload */
+    .photo-upload-zone {
+      border: 2px dashed #ddd;
+      border-radius: 8px;
+      padding: 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s;
+      margin-bottom: 15px;
+    }
+    .photo-upload-zone:hover {
+      border-color: var(--baslyagro-green);
+      background: #f9f9f9;
+    }
+    .photo-preview {
+      max-width: 100%;
+      max-height: 300px;
+      margin-top: 10px;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Badge connexion -->
+  <div id="admin-connected-badge" class="admin-connected-badge">
+    <span class="admin-connected-dot"></span>
+    <span>Connecté : <strong id="admin-username">Admin</strong></span>
+  </div>
+
+  <!-- Modal logout -->
+  <div id="admin-logout-modal" class="admin-logout-modal">
+    <div class="admin-logout-card">
+      <div class="admin-logout-card-header">
+        <h5>Déconnexion</h5>
+        <button type="button" class="admin-logout-close" id="admin-logout-close">×</button>
+      </div>
+      <div class="admin-logout-card-body">
+        Voulez-vous vraiment vous déconnecter ?
+      </div>
+      <div class="admin-logout-card-actions">
+        <button type="button" class="admin-btn admin-btn-cancel" id="admin-cancel-logout">Annuler</button>
+        <button type="button" class="admin-btn admin-btn-danger" id="admin-confirm-logout">Déconnexion</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Navigation -->
+<!-- Contenu principal -->
+  <section class="section section-lg bg-default admin-wrapper">
+    <div class="container">
+      <div class="admin-big-logo">
+        <img src="images/logo.png" alt="BaslyAgro.Biotech Logo" />
+      </div>
+      
+      <h1 style="text-align: center; color: #222; margin-bottom: 10px;">Journal Souche Interne</h1>
+      <p style="text-align: center; color: #666; margin-bottom: 30px;">
+        Suivi du cycle biologique et manipulations • Stockage frigorifique 2-4°C
+      </p>
+      
+      <!-- Menu admin -->
+      <div class="admin-menu-bar">
+    <a href="admin.html">Tableau de bord</a>
+        <a href="admin-taches.html">TÂCHES OBLIGATOIRES</a>
+        <a href="admin-souches.html" class="active">SOUCHES</a>
+        <a href="admin-isolement.html">ISOLEMENT TISSULAIRE</a>
+        <a href="admin-myc-liquide.html">MYCÉLIUM LIQUIDE</a>
+        <a href="admin-myc-grain.html">MYCÉLIUM SUR GRAIN</a>
+      </div>
+
+      <div class="row">
+        <div class="col-12">
+          <!-- Info générale de la souche -->
+          <div class="admin-card">
+            <h3>📋 Informations de la souche</h3>
+            <div id="strain-info">
+              <p><strong>Code :</strong> <span id="strain-code">-</span></p>
+              <p><strong>Nom :</strong> <span id="strain-name">-</span></p>
+              <p><strong>Espèce :</strong> <span id="strain-species">-</span></p>
+              <p><strong>Origine :</strong> P3 validé #<span id="strain-source">-</span></p>
+              <p><strong>Créée le :</strong> <span id="strain-created">-</span></p>
+            </div>
+          </div>
+
+          <!-- Info stockage frigorifique -->
+          <div class="info-box">
+            <div class="info-box-title">
+              ❄️ Stockage frigorifique obligatoire
+            </div>
+            <div class="info-box-content">
+              <strong>Température :</strong> 2-4°C (frigo laboratoire)<br>
+              <strong>Durée de validité :</strong> 2 ans à partir de la date de création<br>
+              <strong>Manipulation :</strong> Toutes les manipulations doivent être enregistrées dans ce journal
+            </div>
+          </div>
+
+          <!-- Timeline des manipulations -->
+          <div class="admin-card">
+            <h3>📅 Timeline des manipulations</h3>
+            <div class="timeline" id="timeline">
+              <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                  <div class="timeline-date">Aujourd'hui - Aucune manipulation enregistrée</div>
+                  <p>Commencez par enregistrer une manipulation ci-dessous</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Formulaire nouvelle manipulation -->
+          <div class="admin-card">
+            <h3>➕ Enregistrer une manipulation</h3>
+            <form id="form-new-manipulation">
+              <label class="form-label">Type de manipulation *</label>
+              <select class="form-select" id="manipulation-type" required>
+                <option value="">-- Sélectionner --</option>
+                <option value="TRANSFERT">Transfert sur nouveau milieu</option>
+                <option value="VERIFICATION">Vérification visuelle</option>
+                <option value="PRELEVEMENT">Prélèvement pour production</option>
+                <option value="CONTAMINATION">Détection contamination</option>
+                <option value="STOCKAGE">Changement stockage</option>
+                <option value="AUTRE">Autre</option>
+              </select>
+
+              <label class="form-label">Observations *</label>
+              <textarea class="form-textarea" id="manipulation-notes" required placeholder="Décrivez la manipulation effectuée..."></textarea>
+
+              <label class="form-label">Photo (optionnel)</label>
+              <div class="photo-upload-zone" onclick="document.getElementById('photo-upload').click()">
+                📷 Cliquez pour ajouter une photo
+              </div>
+              <input type="file" id="photo-upload" accept="image/*" style="display: none;" />
+              <img id="photo-preview" class="photo-preview" style="display: none;" />
+
+              <label class="form-label">Température frigo (°C)</label>
+              <input type="number" class="form-input" id="manipulation-temp" step="0.1" placeholder="Ex: 3.5" />
+
+              <div class="action-buttons">
+                <button type="submit" class="btn-action btn-green">💾 Enregistrer la manipulation</button>
+                <button type="button" class="btn-action btn-brown" onclick="window.location.href='admin-souches.html'">← Retour aux souches</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Scripts -->
+<script src="js/admin-auth.js"></script>
+
+  <script>
+    const API_BASE = window.location.origin;
+
+    // Récupérer le petri_id depuis l'URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const petriId = urlParams.get('petri_id');
+
+    // Prévisualisation photo
+    document.getElementById('photo-upload').addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          const preview = document.getElementById('photo-preview');
+          preview.src = event.target.result;
+          preview.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    // Chargement initial
+    document.addEventListener('DOMContentLoaded', () => {
+      if (petriId) {
+        loadStrainInfo(petriId);
+        loadManipulations(petriId);
+      }
+    });
+
+    // Charger les infos de la souche
+    async function loadStrainInfo(id) {
+      try {
+        // TODO: Créer un endpoint pour récupérer les infos d'une souche par son source_ref (petri_id)
+        // Pour l'instant, on affiche des données fictives
+        document.getElementById('strain-code').textContent = `INT-P3-${id}`;
+        document.getElementById('strain-source').textContent = id;
+        document.getElementById('strain-created').textContent = new Date().toLocaleDateString('fr-FR');
+      } catch (err) {
+        console.error('Erreur chargement infos souche:', err);
+      }
+    }
+
+    // Charger les manipulations
+    async function loadManipulations(id) {
+      try {
+        // TODO: Créer un endpoint pour récupérer les manipulations d'une souche
+        // Pour l'instant, la timeline reste vide
+      } catch (err) {
+        console.error('Erreur chargement manipulations:', err);
+      }
+    }
+
+    // Soumettre une manipulation
+    document.getElementById('form-new-manipulation').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      // TODO: Implémenter la création de manipulation
+      // - Créer table strain_manipulations dans la BDD
+      // - Créer endpoint POST /api/strains/:id/manipulations
+      // - Upload de photo si présente
+      
+      alert('✅ Manipulation enregistrée avec succès !');
+      document.getElementById('form-new-manipulation').reset();
+      document.getElementById('photo-preview').style.display = 'none';
+      loadManipulations(petriId);
+    });
+  </script>
+</body>
+</html>

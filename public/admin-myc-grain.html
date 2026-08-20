@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html class="wide wow-animation" lang="fr">
+<head>
+  <title>Biotech Agro – Admin – Mycélium sur grain</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <link rel="icon" href="images/logo.png" type="image/png" />
+  <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Montserrat:300,400,700%7CPoppins:300,400,500,700,900" />
+  <link rel="stylesheet" href="css/bootstrap.css" />
+  <link rel="stylesheet" href="css/fonts.css" />
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    :root{--green:#2fa35a;--green-dark:#1f7a41;--brown:#6b4b2f;--orange:#d68a00;--red:#c0392b;--blue:#3498db;--purple:#6f42c1;--cream:#f7f3ec}
+    body{background-image:linear-gradient(rgba(255,255,255,.25),rgba(255,255,255,.45)),url("images/imagearriereplan.png");background-size:cover;background-position:center;background-attachment:fixed;color:#222}
+    .rd-navbar,.rd-navbar-main-outer,.rd-navbar-main,.rd-navbar-panel,.rd-navbar-nav-wrap{background:transparent!important;box-shadow:none!important}.rd-navbar{transition:transform .3s ease}.rd-navbar.nav-hidden{transform:translateY(-100%)}.brand-placeholder{display:inline-block;width:46px;height:46px}
+    .admin-userbar{display:flex;align-items:center;gap:10px;margin-left:18px;white-space:nowrap}.admin-user-badge{display:inline-flex;align-items:center;gap:8px;padding:6px 10px;border-radius:999px;background:rgba(255,255,255,.9);border:1px solid rgba(0,0,0,.08);font-size:12px;font-weight:700;color:#1f1f1f}.admin-user-dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 0 3px rgba(47,163,90,.15)}.admin-logout-btn{display:inline-flex;align-items:center;justify-content:center;padding:6px 10px;border-radius:999px;border:1px solid rgba(0,0,0,.12);background:rgba(255,255,255,.9);font-size:12px;font-weight:800;cursor:pointer}.admin-logout-btn:hover{border-color:var(--red);color:var(--red)}
+    .admin-big-logo{text-align:center;margin:10px 0}.admin-big-logo img{max-height:120px;width:auto;filter:drop-shadow(0 6px 10px rgba(0,0,0,.45));background:#fff;padding:10px;border-radius:50%;border:4px solid var(--green)}
+    .admin-menu-bar{background:#fff;padding:15px 0;border-bottom:2px solid #e5e5e5;text-align:center;margin-bottom:30px;position:relative;z-index:20}.admin-menu-bar a{margin:0 15px;font-weight:700;color:#444;text-transform:uppercase;letter-spacing:.05em;font-size:13px;text-decoration:none}.admin-menu-bar a:hover,.admin-menu-bar a.active{color:var(--green)}
+    .admin-wrapper{padding:30px 0 60px}h3.text-capitalize{color:#1a1a1a!important;text-shadow:0 1px 4px rgba(255,255,255,.9)}
+    .admin-card{background:#fff;padding:24px;border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,.08);margin-bottom:24px}.admin-card h4{margin:0 0 12px;font-weight:900}.admin-card-subtitle{font-size:13px;color:#666;margin-bottom:14px;line-height:1.45}
+    label,.admin-label,.form-label{position:static!important;display:block!important;margin:0 0 6px!important;font-weight:800;line-height:1.25!important;color:#444}.admin-input,select,input,textarea{width:100%;background:#fff!important;border:1px solid #ccc;border-radius:9px;padding:10px 12px;margin-bottom:11px;font-size:14px;box-shadow:none}.admin-input{height:43px}textarea.admin-input,textarea{height:auto;min-height:84px;resize:vertical}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px}.grid-2{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}.section-title-small{font-size:13px;text-transform:uppercase;letter-spacing:.08em;font-weight:900;margin:12px 0 8px;color:#555}
+    .info-header{background:linear-gradient(135deg,var(--green),var(--green-dark));color:#fff;padding:20px;border-radius:12px;margin-bottom:22px;box-shadow:0 8px 20px rgba(47,163,90,.3)}.info-header h4{color:#fff;margin:0 0 6px}.info-header p{margin:0;font-size:13px;opacity:.95}.info-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-top:15px}.info-item{background:rgba(255,255,255,.18);padding:12px;border-radius:9px}.info-label{font-size:11px;text-transform:uppercase;opacity:.9;font-weight:800}.info-value{font-size:17px;font-weight:900}
+    .btn-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}.btn-action,.btn-main{border:none;border-radius:11px;padding:11px 15px;font-size:13px;font-weight:900;cursor:pointer;transition:.15s;text-decoration:none!important;display:inline-flex;align-items:center;justify-content:center;gap:7px}.btn-action:disabled,.btn-main:disabled{opacity:.45;cursor:not-allowed}.btn-green{background:var(--green);color:#fff!important}.btn-green:hover{background:var(--green-dark)}.btn-blue{background:var(--blue);color:#fff!important}.btn-orange{background:var(--orange);color:#fff!important}.btn-purple{background:var(--purple);color:#fff!important}.btn-brown{background:var(--brown);color:#fff!important}.btn-grey{background:#6c757d;color:#fff!important}.btn-red{background:var(--red);color:#fff!important}.btn-light{background:#f1f2f6;color:#333!important;border:1px solid #ddd}.btn-full{width:100%}
+    .panel{display:none}.panel.show{display:block}.alert-box{border-radius:10px;padding:12px 14px;font-weight:800;margin:10px 0}.alert-green{background:#e8f8f0;border-left:5px solid var(--green);color:#145c2f}.alert-blue{background:#eaf4ff;border-left:5px solid var(--blue);color:#21618c}.alert-orange{background:#fff3cd;border-left:5px solid #ffc107;color:#856404}.alert-red{background:#ffe1dd;border-left:5px solid var(--red);color:#922b21}
+    .badge-pill{display:inline-block;border-radius:999px;padding:4px 9px;font-size:11px;font-weight:900;text-transform:uppercase;white-space:nowrap}.ok{background:#dff5e8;color:#116b35}.warn{background:#fff3cd;color:#856404}.bad{background:#ffe1dd;color:#922b21}.info{background:#eaf4ff;color:#21618c}.purple{background:#efe6ff;color:#4b2b83}.muted{background:#f1f2f6;color:#555}
+    .lots-table{width:100%;border-collapse:collapse;font-size:12px}.lots-table th,.lots-table td{padding:9px 7px;border-bottom:1px solid #e5e5e5;vertical-align:middle}.lots-table th{text-transform:uppercase;letter-spacing:.06em;font-size:11px;color:#777}.table-responsive{overflow:auto}.click-row{cursor:pointer}.click-row:hover{background:#f8fff9}
+    .lc-card,.unit-card{background:#f8f9fa;border:2px solid #e1e1e1;border-radius:12px;padding:12px;cursor:pointer}.lc-card.selected,.unit-card.selected{border-color:var(--green);background:#e8f8f0}.lc-card strong,.unit-card strong{color:var(--green-dark)}.unit-card.disabled{opacity:.55;cursor:not-allowed}.unit-card .small-line{font-size:11px;color:#666;margin-top:3px}.unit-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}.unit-check{display:flex!important;align-items:flex-start!important;gap:8px!important;margin:0!important}.unit-check input{width:18px!important;height:18px!important;margin-top:2px}
+    .lc-stock-card{background:linear-gradient(135deg,#2fa35a,#1f7a41);border-radius:14px;padding:14px;color:#fff;box-shadow:0 8px 22px rgba(0,0,0,.12);}.lc-stock-title{font-size:16px;font-weight:900;margin-bottom:10px}.lc-stock-table-wrap{background:rgba(255,255,255,.14);border-radius:10px;padding:8px;max-height:310px;overflow:auto}.lc-stock-table{width:100%;border-collapse:collapse;color:#fff;font-size:12px}.lc-stock-table th{padding:8px;text-align:left;border-bottom:1px solid rgba(255,255,255,.35);text-transform:uppercase;font-size:10px;opacity:.95}.lc-stock-table td{padding:8px;border-bottom:1px solid rgba(255,255,255,.16);vertical-align:middle}.lc-stock-row{cursor:pointer}.lc-stock-row:hover,.lc-stock-row.selected{background:rgba(255,255,255,.22);font-weight:900}.lc-stock-row.selected td:first-child{border-left:5px solid #fff}.lc-stock-muted{font-size:11px;opacity:.9;margin-top:3px}.btn-mini-white{background:#fff;color:#1f7a41!important;border:none;border-radius:999px;padding:5px 10px;font-size:11px;font-weight:900;cursor:pointer;white-space:nowrap}.btn-mini-white:hover{background:#e8f8f0}.selected-lc-banner{display:none;margin-top:10px;background:#e8f8f0;border-left:5px solid var(--green);border-radius:10px;padding:10px 12px;color:#145c2f;font-weight:900}.selected-lc-banner.show{display:block}
+    .extra-compositions{margin-top:4px}.extra-composition-row{display:grid;grid-template-columns:minmax(180px,1.5fr) minmax(130px,.8fr) minmax(100px,.55fr) auto;gap:10px;align-items:end;margin-bottom:8px}.extra-composition-row .admin-input{margin-bottom:0}.extra-composition-row .btn-main{height:43px;padding:8px 12px}.extra-composition-help{font-size:11px;color:#666;margin:4px 0 10px}@media(max-width:767.98px){.extra-composition-row{grid-template-columns:1fr}.extra-composition-row .btn-main{width:100%}}
+    .choice-row{display:flex;gap:12px;flex-wrap:wrap}.choice-card{flex:1;min-width:150px;background:#f8f9fa;border:2px solid #ddd;border-radius:12px;padding:12px;display:flex!important;align-items:center!important;gap:8px!important;cursor:pointer}.choice-card input{width:18px!important;height:18px!important}.choice-card.checked{background:#e8f8f0;border-color:var(--green);color:#145c2f}
+    .timeline-container{background:#fff;padding:18px;border-radius:12px;margin:14px 0}.timeline-days{display:flex;flex-wrap:wrap;gap:10px}.timeline-day{display:flex;flex-direction:column;align-items:center;gap:4px;min-width:48px}.day-marker{width:42px;height:42px;border-radius:50%;background:#fff;border:3px solid #e0e0e0;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:12px;cursor:pointer}.day-marker.current{background:var(--blue);border-color:var(--blue);color:#fff}.day-marker.treated{background:var(--green);border-color:var(--green);color:#fff}.day-marker.selected{box-shadow:0 0 0 4px rgba(47,163,90,.22)}.day-marker.warning{background:#ffc107;border-color:#ffc107;color:#000}.day-status{font-size:10px;padding:2px 6px;border-radius:10px;background:#f0f0f0;color:#555;font-weight:800}
+    .journal-entry{background:#f8f9fa;padding:18px;border-radius:12px;margin-bottom:15px;border-left:5px solid #e0e0e0}.journal-entry.active{background:#e8f8f0;border-left-color:var(--green)}.entry-header{font-size:16px;font-weight:900;margin-bottom:15px;color:var(--green-dark);display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}.section-box{background:#fff;padding:15px;border-radius:9px;margin-bottom:14px}.section-box h5{font-size:14px;font-weight:900;margin:0 0 12px;color:#333}.question-item{margin-bottom:10px;padding:10px;background:#f8f9fa;border-radius:7px}.question-item label{display:flex!important;align-items:center!important;gap:10px!important;cursor:pointer;font-size:13px;margin:0!important}.question-item input{width:18px!important;height:18px!important}.images-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px}.image-box{border:2px dashed #ccc;border-radius:9px;padding:15px;text-align:center;background:#fff}.image-box h6{font-size:13px;font-weight:900;color:#666;margin:0 0 10px}.image-box img{max-width:100%;border-radius:7px;margin-bottom:10px}.image-upload-btn{display:inline-block;background:var(--green);color:#fff;padding:8px 14px;border-radius:8px;font-weight:900;cursor:pointer;font-size:12px}.photo-file{display:none}.rating-display{text-align:center;font-size:24px;font-weight:900;color:var(--green);margin:6px 0}.rating-guide{font-size:11px;color:#666;line-height:1.4}.total-score{margin-top:10px;padding:10px;background:#e8f8f0;border-left:4px solid var(--green);border-radius:6px;font-weight:900}
+
+    .page-qr-box{background:rgba(255,255,255,.96);border:1px solid #d6e8ff;border-left:5px solid var(--blue);border-radius:12px;padding:12px;display:flex;align-items:center;gap:12px;margin:12px 0;box-shadow:0 6px 18px rgba(0,0,0,.10)}
+    .page-qr-box img{width:86px;height:86px;border:1px solid #ddd;border-radius:8px;background:#fff;padding:4px;object-fit:contain}
+    .page-qr-title{font-weight:900;color:#21618c;margin-bottom:4px}.page-qr-text{font-size:12px;line-height:1.35;color:#333}
+    .summary-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px;margin-top:10px}.summary-item{background:#f8fbff;border:1px solid #e2edf8;border-radius:9px;padding:10px}.summary-label{font-size:10px;color:#666;text-transform:uppercase;font-weight:900}.summary-value{font-size:14px;font-weight:900;color:#222;margin-top:4px}.stock-note{font-size:12px;color:#666;line-height:1.45;margin-top:10px}
+    .btn-mini-stack{display:flex;gap:6px;flex-wrap:wrap}.btn-mini-stack .btn-main{padding:7px 9px;font-size:11px;border-radius:8px}
+    .grain-batch-row-main td{background:#fff!important;vertical-align:middle!important;border-top:2px solid #e6e6e6!important}
+    .grain-unit-row-line td{background:#f8fff9!important;border-top:1px solid #d9eadf!important;padding-top:8px!important;padding-bottom:8px!important;font-size:12px!important}
+    .grain-group-start td{border-top:3px solid var(--green)!important}
+    .grain-source-cell{vertical-align:top!important;background:#fff!important;border-left:4px solid var(--green)!important;min-width:150px}
+    .grain-unit-indent{padding-left:28px!important;border-left:6px solid var(--green)!important}
+    .grain-unit-code{font-weight:900;color:var(--green-dark)}
+    .grain-small{color:#666;font-size:11px;line-height:1.35}
+    .grain-row-actions{display:flex;gap:6px;flex-wrap:nowrap;align-items:center}.grain-row-actions .btn-main{height:32px!important;min-height:32px!important;padding:6px 9px!important;font-size:11px!important;border-radius:7px!important;white-space:nowrap!important}
+    .grain-batch-actions{display:flex;gap:6px;flex-wrap:wrap}.grain-batch-actions .btn-main{padding:7px 9px;font-size:11px;border-radius:8px}
+    .protocol-card{background:#fff;border:1px solid #e5e5e5;border-left:5px solid var(--purple);border-radius:12px;padding:14px;margin-bottom:12px}.protocol-card h5{font-size:15px;font-weight:900;color:#4b2b83;margin:0 0 8px}.protocol-card p{font-size:13px;margin:0 0 8px;color:#555}.loading{text-align:center;padding:35px;color:#777;font-weight:800}
+    @media(max-width:991.98px){.admin-userbar{margin:10px 0 0 0;justify-content:center}}@media(max-width:767.98px){.admin-card{padding:16px}.admin-menu-bar a{display:inline-block;margin:6px}.btn-row{display:block}.btn-row .btn-action,.btn-row .btn-main{width:100%;margin-bottom:8px}.images-grid{grid-template-columns:1fr}.choice-row{display:block}.choice-card{width:100%;margin-bottom:8px}}
+  
+    .grain-history-wrap{max-width:100%;overflow-x:hidden}
+    .grain-history-table{width:100%;table-layout:fixed;font-size:11px}
+    .grain-history-table th,.grain-history-table td{padding:7px 6px!important;vertical-align:middle!important;overflow-wrap:anywhere;word-break:break-word}
+    .grain-history-table th{font-size:10px!important}
+    .grain-history-table .grain-group-start td{border-top:3px solid var(--green)!important}
+    .grain-history-table .grain-source-cell{background:#f8fff9!important;font-size:11px;line-height:1.35;min-width:0!important;border-left:3px solid var(--green)!important}
+    .grain-history-table .grain-row-actions{display:flex;gap:4px;flex-wrap:wrap;align-items:center}
+    .grain-history-table .grain-row-actions .btn-main{height:auto!important;min-height:28px!important;padding:5px 7px!important;font-size:10px!important;border-radius:7px!important;white-space:nowrap!important}
+    .grain-history-table .badge-pill{font-size:10px;padding:4px 7px}
+    .grain-history-table .grain-unit-indent{padding-left:10px!important;border-left:4px solid var(--green)!important}
+    .grain-history-table .grain-small{font-size:10px!important;line-height:1.3!important}
+    .grain-history-table .grain-unit-code{font-size:11px!important}
+  </style>
+</head>
+<body>
+<div class="admin-big-logo"><img src="images/logo.png" alt="BiotechAgro"></div>
+
+  <div class="admin-menu-bar">
+    <a href="admin.html">Tableau de bord</a>
+    <a href="admin-taches.html">Tâches obligatoires</a>
+    <a href="admin-souches.html">Souches</a>
+    <a href="admin-isolement.html">Isolement tissulaire</a>
+    <a href="admin-myc-liquide.html">Mycélium liquide</a>
+    <a href="admin-myc-grain.html" class="active">Mycélium sur grain</a>
+  </div>
+
+  <section class="section section-md admin-wrapper">
+    <div class="container">
+      <h3 class="text-capitalize mb-4 text-center">Gestion du <span style="color:var(--green);">Mycélium sur grain</span></h3>
+
+      <div class="info-header">
+        <h4>📋 Résumé</h4>
+        <p>Vue générale des LC validées, des pots/sacs préparés, des pots/sacs ensemencés et des unités prêtes.</p>
+        <div class="info-grid" id="dashboard-stats">
+          <div class="info-item"><div class="info-label">LC validées</div><div class="info-value">—</div></div>
+          <div class="info-item"><div class="info-label">Pots/sacs préparés</div><div class="info-value">—</div></div>
+          <div class="info-item"><div class="info-label">Ensemencés</div><div class="info-value">—</div></div>
+          <div class="info-item"><div class="info-label">Prêts</div><div class="info-value">—</div></div>
+        </div>
+      </div>
+
+      <div class="row justify-content-center">
+        <div class="col-lg-11">
+          <div class="admin-card">
+            <h4>🧬 Sélection isolation → P3 validé → LC validée</h4>
+            <div class="grid">
+              <div>
+                <label class="admin-label" for="isolation-select">Isolation de travail</label>
+                <select class="admin-input" id="isolation-select"><option value="">Chargement des isolations...</option></select>
+              </div>
+            </div>
+            <div class="section-title-small">P3 validés dans l’isolation sélectionnée</div>
+            <div id="valid-p3-container" class="unit-grid"></div>
+            <div class="section-title-small">LC validées issues de l’isolation sélectionnée</div>
+            <select class="admin-input" id="main-lc-select" style="display:none;"><option value="">Chargement des LC validées...</option></select>
+            <div id="valid-lc-container" class="loading">Chargement...</div>
+            <div id="selected-lc-banner" class="selected-lc-banner"></div>
+            <div class="btn-row" style="margin-top:14px;">
+              <button type="button" class="btn-action btn-green requires-isolation" id="btn-show-create">➕ Créer pot/sac grain</button>
+              <button type="button" class="btn-action btn-blue requires-lc" id="btn-show-seed">💉 Semencement</button>
+              <button type="button" class="btn-action btn-purple" id="btn-show-protocol">📊 Protocole</button>
+            </div>
+            <div id="main-message" style="display:none;"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row justify-content-center panel" id="panel-create">
+        <div class="col-lg-10">
+          <div class="admin-card">
+            <h4>➕ Créer un pot/sac de grain</h4>
+            <p class="admin-card-subtitle">Chaque pot ou sac créé reçoit son propre identifiant et appartient à l’isolation sélectionnée. La LC sera ajoutée plus tard, au moment du semencement.</p>
+            <div class="grid">
+              <div>
+                <label class="admin-label" for="type-grain">Type de grain</label>
+                <select class="admin-input" id="type-grain"><option value="ble">Blé</option></select>
+              </div>
+            </div>
+            <div class="section-title-small">Conditionnement</div>
+            <div class="choice-row">
+              <label class="choice-card checked" id="choice-sac"><input type="checkbox" id="container-sac" checked> Sac autoclavable</label>
+              <label class="choice-card" id="choice-pot"><input type="checkbox" id="container-pot"> Pot</label>
+            </div>
+            <div class="grid" style="margin-top:12px;">
+              <div><label class="admin-label" for="capacity-final">Capacité finale par pot/sac (kg)</label><input class="admin-input" id="capacity-final" type="number" step="0.01" min="0" placeholder="Ex: 1.00"></div>
+              <div><label class="admin-label" for="wheat-kg">Composition : blé (kg)</label><input class="admin-input" id="wheat-kg" type="number" step="0.01" min="0" placeholder="Ex: 0.65"></div>
+              <div><label class="admin-label" for="water-l">Composition : eau (L)</label><input class="admin-input" id="water-l" type="number" step="0.01" min="0" placeholder="Ex: 0.35"></div>
+              <div><label class="admin-label" for="nb-units">Nombre de pots/sacs à créer</label><input class="admin-input" id="nb-units" type="number" min="1" value="1"></div>
+              <div><label class="admin-label" for="date-preparation">Date préparation/stérilisation</label><input class="admin-input" id="date-preparation" type="date"></div>
+            </div>
+            <div class="section-title-small">Autres compositions du sac</div>
+            <div id="extra-compositions" class="extra-compositions"></div>
+            <button type="button" class="btn-main btn-light" id="btn-add-composition">➕ Ajouter une autre composition</button>
+            <div class="extra-composition-help">Exemples : gypse, carbonate de calcium, son. La quantité est enregistrée par pot/sac.</div>
+            <label class="admin-label" for="create-notes">Notes préparation</label>
+            <textarea class="admin-input" id="create-notes" placeholder="Ex: cycle autoclave, temps de refroidissement, observation... "></textarea>
+            <div class="alert-box alert-green" id="create-preview">Renseigne la composition pour calculer le rapport blé/eau.</div>
+            <button type="button" class="btn-main btn-green btn-full" id="btn-create-batch">Créer les identifiants pot/sac</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="row justify-content-center panel" id="panel-seed">
+        <div class="col-lg-11">
+          <div class="admin-card">
+            <h4>💉 Semencement des pots/sacs préparés</h4>
+            <p class="admin-card-subtitle">Sélectionne la LC à injecter puis coche les pots/sacs déjà préparés. Tu peux indiquer le nombre réellement ensemencé.</p>
+            <div class="grid">
+              <div><label class="admin-label" for="seed-lc-select">LC à injecter</label><select class="admin-input" id="seed-lc-select"></select></div>
+              <div><label class="admin-label" for="seed-volume">Volume LC par pot/sac (mL)</label><input class="admin-input" id="seed-volume" type="number" min="1" value="10"></div>
+              <div><label class="admin-label" for="seed-date">Date de semencement</label><input class="admin-input" id="seed-date" type="date"></div>
+            </div>
+            <div class="alert-box alert-blue" id="seed-counter">0 pot/sac sélectionné.</div>
+            <div class="unit-grid" id="prepared-units-grid"></div>
+            <label class="admin-label" for="seed-notes" style="margin-top:12px!important;">Notes semencement</label>
+            <textarea class="admin-input" id="seed-notes" placeholder="Ex: conditions aseptiques, aiguille utilisée, volume réel..."></textarea>
+            <button type="button" class="btn-main btn-blue btn-full" id="btn-seed-units">Enregistrer le semencement</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="row justify-content-center panel" id="panel-protocol">
+        <div class="col-lg-11">
+          <div class="admin-card">
+            <h4>📊 Protocole de comparaison grain</h4>
+            <p class="admin-card-subtitle">Toutes les comparaisons sont regroupées ici : vitesse de croissance sur grain entre isolations et comparaison des LC issues d’une même isolation.</p>
+            <div class="protocol-card"><h5>1) Vitesse de croissance sur grain</h5><div id="growth-protocol-container"></div></div>
+            <div class="protocol-card"><h5>2) Comparaison entre LC de même isolation</h5><div id="lc-protocol-container"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row justify-content-center panel" id="panel-summary">
+        <div class="col-lg-11">
+          <div class="admin-card">
+            <h4>📦 Résumé stock du pot/sac grain</h4>
+            <p class="admin-card-subtitle">Quand le QR d’une étiquette est scanné, le système ouvre automatiquement ce résumé si le pot/sac est déjà au stock. Sinon, il ouvre le journal quotidien.</p>
+            <div id="grain-summary-container" class="alert-box alert-blue">Sélectionne un pot/sac stocké pour afficher son résumé.</div>
+          </div>
+        </div>
+      </div>
+
+
+      <div class="row justify-content-center">
+        <div class="col-lg-11">
+          <div class="admin-card">
+            <h4>📋 Historique des lots de semencement grain</h4>
+            <div class="table-responsive grain-history-wrap"><table class="lots-table grain-history-table"><colgroup><col style="width:20%"><col style="width:11%"><col style="width:17%"><col style="width:6%"><col style="width:10%"><col style="width:7%"><col style="width:8%"><col style="width:9%"><col style="width:12%"></colgroup><thead><tr><th>Pot/sac</th><th>Date semencement</th><th>Source mycélium</th><th>Grain</th><th>Type / capacité</th><th>Jour</th><th>Propagation</th><th>Statut</th><th>Actions</th></tr></thead><tbody id="units-table-body"><tr><td colspan="9" class="text-center">Chargement...</td></tr></tbody></table></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row justify-content-center">
+        <div class="col-lg-11">
+          <div class="admin-card">
+            <h4>📋 Lots de préparation grain</h4>
+            <div class="table-responsive"><table class="lots-table"><thead><tr><th>Lot</th><th>LC source</th><th>Grain</th><th>Type</th><th>Unités</th><th>Date</th><th>Statut</th></tr></thead><tbody id="batches-table-body"><tr><td colspan="7" class="text-center">Chargement...</td></tr></tbody></table></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+<script src="js/admin-auth.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      if (typeof requireAdminAuth === "function") {
+        const auth = requireAdminAuth();
+        if (!auth) return;
+        const nameEl = document.getElementById("adminUserName");
+        if (nameEl) nameEl.textContent = auth.username || "Admin";
+      }
+      const btnLogout = document.getElementById("btnLogout");
+      if (btnLogout) btnLogout.addEventListener("click", () => { if (typeof logoutAdmin === "function") logoutAdmin(); else window.location.href = "login-admin.html"; });
+      const navbar = document.querySelector(".rd-navbar");
+      if (navbar) { let lastScroll = 0; window.addEventListener("scroll", () => { const current = window.pageYOffset || document.documentElement.scrollTop; if (current > lastScroll && current > 80) navbar.classList.add("nav-hidden"); else navbar.classList.remove("nav-hidden"); lastScroll = current; }); }
+    });
+  </script>
+  <script>
+  (function(){
+    const API_BASE = window.location.origin;
+    let validLcs = [], validP3s = [], batches = [], units = [], protocols = {growth_speed:[],lc_same_isolation:[],needs_growth_protocol:false,needs_lc_protocol:false};
+    let selectedIsolationId = 0, selectedP3Id = 0;
+    let currentPanel = '', selectedJournalUnit = null, journalEntries = [], selectedDay = 0, pendingPhotoUrl = '';
+
+    const $ = (id) => document.getElementById(id);
+    function esc(v){return String(v ?? '').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));}
+    function pad2Local(n){return String(n).padStart(2,'0')}
+    function today(){const d=new Date();return `${d.getFullYear()}-${pad2Local(d.getMonth()+1)}-${pad2Local(d.getDate())}`}
+    function makeSemisDateTime(dateStr){const d=/^\d{4}-\d{2}-\d{2}$/.test(String(dateStr||''))?String(dateStr):today();const n=new Date();return `${d}T${pad2Local(n.getHours())}:${pad2Local(n.getMinutes())}:00`;}
+    function fmtDate(v){if(!v)return '—';const s=String(v);const m=s.match(/^(\d{4})-(\d{2})-(\d{2})/);if(m)return `${m[3]}/${m[2]}/${m[1]}`;try{return new Date(v).toLocaleDateString('fr-FR');}catch(_){return s.slice(0,10);}}
+    function fmtDateTime(v){if(!v)return '—';const s=String(v);const m=s.match(/^(\d{4})-(\d{2})-(\d{2})(?:[T\s](\d{2}):(\d{2}))?/);if(m)return `${m[3]}/${m[2]}/${m[1]}${m[4]?' '+m[4]+':'+m[5]:''}`;try{return new Date(v).toLocaleString('fr-FR',{year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'});}catch(_){return s.slice(0,16).replace('T',' ');}}
+    function semisDateTimeOf(u){return u?.inoculation_created_at||u?.inoculated_at||u?.seeded_at||u?.inoculation_date||'';}
+    function normalizeText(v){return String(v ?? '').trim().toUpperCase().replace(/\s+/g,' ');}
+    function p3Label(u){
+      const raw=String(u?.p3_code || u?.source_petri_code || u?.petri_code || u?.p3_validated_code || u?.p3_valid_code || u?.p3_label || '').trim();
+      const m=raw.match(/P3[-_ ]*(\d+)/i);
+      if(m)return 'P3-'+m[1];
+      if(u?.source_petri_id)return 'P3-'+u.source_petri_id;
+      return raw || '—';
+    }
+    function capKg(v){const n=Number(v||0);if(!Number.isFinite(n)||n<=0)return '—';return n.toFixed(2).replace(/\.00$/,'').replace(/0$/,'')+' kg';}
+    function lcCodeOf(u){return u?.lc_code||u?.batch_lc_code||'—';}
+    function lcPotCodeOf(u){return u?.lc_pot_code||u?.batch_lc_pot_code||'—';}
+    function lcPotShortOf(u){
+      let raw=String(lcPotCodeOf(u)||'').trim();
+      const lc=String(lcCodeOf(u)||'').trim();
+      if(!raw||raw==='—')return '—';
+      if(lc&&raw.toUpperCase().startsWith(lc.toUpperCase())) raw=raw.slice(lc.length).replace(/^[-_\s]+/,'');
+      const m=raw.match(/POT[-_\s]*(\d+)/i);
+      if(m)return 'POT-'+String(m[1]).padStart(2,'0');
+      return raw;
+    }
+    function sourceMyceliumHtml(u){return `<strong>LC : ${esc(lcCodeOf(u))}</strong><br><span class="grain-small">Pot LC : ${esc(lcPotShortOf(u))}</span><br><span class="grain-small">P3 : ${esc(p3Label(u))}</span>`;}
+    function typeCapacityHtml(u){return `${esc(u?.container_type||'—')}<br><span class="grain-small">Capacité ${esc(capKg(u?.capacity_final_kg))}</span>`;}
+    function uniqueList(list,fn){const out=[];list.forEach(x=>{const v=String(fn(x)||'').trim();if(v&&!out.includes(v))out.push(v);});return out;}
+    function groupStatus(list){const vals=uniqueList(list,u=>String(u.statut||'').toUpperCase());return vals.length===1?vals[0]:'MIXTE';}
+    function unitLcGroupKey(u){
+      // Regrouper par même source LC réelle. On ignore la date de semencement, le lot de préparation
+      // et la forme du P3, car la même source peut arriver comme "P3-231" ou "ISO-...-P3-231".
+      return ['LC', normalizeText(lcCodeOf(u)), normalizeText(lcPotShortOf(u))].join('|');
+    }
+    function semisGroupDate(u){return u?.inoculation_created_at||u?.inoculated_at||u?.date_inoculation||u?.seeded_at||'';}
+    function lcKey(lc){return `${lc.lc_lot_id}|${lc.lc_pot_id || ''}`}
+    function selectedLcFromSelect(id){const val=$(id)?.value||'';return validLcs.find(l=>lcKey(l)===val)||null}
+    function statusBadge(st){st=String(st||'').toUpperCase(); if(st==='PREPARE')return '<span class="badge-pill info">Préparé</span>'; if(st==='ENSEMENCE')return '<span class="badge-pill warn">Ensemencé</span>'; if(st==='EN_INCUBATION')return '<span class="badge-pill purple">Incubation</span>'; if(st==='PRET')return '<span class="badge-pill ok">Prêt</span>'; if(st==='STOCK'||st==='EN_STOCK'||st==='STOCKE'||st==='STOCKEE'||st==='FRIGO')return '<span class="badge-pill ok">Stock</span>'; if(st==='CONTAMINE')return '<span class="badge-pill bad">Contaminé</span>'; return '<span class="badge-pill muted">'+esc(st||'—')+'</span>'}
+    function apiErrorMessage(e){return e && e.message ? e.message : 'Erreur API inconnue'}
+    async function parseApiResponse(r,path){
+      const text=await r.text();
+      let data=null;
+      try{data=text?JSON.parse(text):null}catch(_){data=null}
+      if(!r.ok){
+        if(data&&data.error)throw new Error(data.error);
+        if(data&&data.message)throw new Error(data.message);
+        if(/<!doctype html|<html/i.test(text||''))throw new Error(`API ${r.status}: route indisponible (${path})`);
+        throw new Error((text||r.statusText||`HTTP ${r.status}`).slice(0,500));
+      }
+      if(text&&data===null&&/<!doctype html|<html/i.test(text))throw new Error(`Réponse API invalide pour ${path}`);
+      return data;
+    }
+    async function getJSON(path){
+      const r=await fetch(API_BASE+path,{headers:{Accept:'application/json'}});
+      return parseApiResponse(r,path);
+    }
+    async function postJSON(path,data){
+      const r=await fetch(API_BASE+path,{method:'POST',headers:{'Content-Type':'application/json',Accept:'application/json'},body:JSON.stringify(data||{})});
+      return parseApiResponse(r,path);
+    }
+    async function postFile(path,file){
+      const fd=new FormData();
+      fd.append('photo',file);
+      const r=await fetch(API_BASE+path,{method:'POST',headers:{Accept:'application/json'},body:fd});
+      return parseApiResponse(r,path);
+    }
+
+    function uniqBy(arr,keyFn){const m=new Map();arr.forEach(x=>{const k=keyFn(x);if(k&&!m.has(k))m.set(k,x)});return Array.from(m.values())}
+    async function loadValidatedLcs(){
+      try{
+        const direct=await getJSON('/api/grain-lc-valides');
+        return Array.isArray(direct)?direct:[];
+      }catch(primaryError){
+        if(!String(primaryError.message||'').includes('404')) throw primaryError;
+      }
+      const lots=await getJSON('/api/lc-workflow/lots');
+      const valid=[];
+      for(const lot of (Array.isArray(lots)?lots:[])){
+        let pots=[];
+        try{pots=await getJSON(`/api/lc-workflow/lots/${Number(lot.id)}/pots`)}catch(_){pots=[]}
+        (Array.isArray(pots)?pots:[]).forEach(p=>{
+          const ok=p.lc_validated===true||p.lc_validated==='true'||p.lc_validated===1||String(p.status||'').toUpperCase()==='LC_VALIDEE';
+          if(!ok||p.deleted_at) return;
+          valid.push({
+            lc_lot_id:Number(lot.id),
+            lc_code:lot.code||lot.lot_code||`LC-${lot.id}`,
+            parent_iso_id:lot.parent_iso_id||lot.isolation_id||null,
+            parent_iso_code:lot.parent_iso_code||lot.iso_code||lot.isolation_code||'',
+            champignon:lot.champignon||lot.iso_champignon||'',
+            lc_pot_id:Number(p.id),
+            lc_pot_code:p.code||`${lot.code||lot.lot_code||('LC-'+lot.id)}-POT-${String(p.pot_number||p.unit_number||'').padStart(2,'0')}`,
+            pot_number:p.pot_number||p.unit_number||null,
+            volume_ml:p.volume_ml||lot.volume_par_pot_ml||lot.volume_ml_per_pot||null,
+            agar_test_validated:p.agar_test_validated===true||p.agar_test_validated==='true'||p.agar_test_validated===1,
+            lc_validated:true,
+            lc_validated_at:p.lc_validated_at||p.updated_at||lot.updated_at||lot.created_at,
+            fridge_stored:p.fridge_stored===true||p.fridge_stored==='true'||p.fridge_stored===1,
+            fridge_expiry_date:p.fridge_expiry_date||'',
+            j0_date:lot.j0_date||lot.prepared_on||'',
+            created_at:lot.created_at||''
+          });
+        });
+      }
+      return uniqBy(valid,lc=>lcKey(lc));
+    }
+
+    async function loadReadyP3s(){
+      try{
+        const rows=await getJSON('/api/lc-workflow/p3-ready');
+        return Array.isArray(rows)?rows:[];
+      }catch(e){
+        console.warn('P3 validés non chargés', e);
+        return [];
+      }
+    }
+
+    function isoIdFromAny(x){
+      const direct=Number(x?.parent_iso_id||x?.isolement_id||x?.isolation_id||0);
+      if(direct)return direct;
+      const bid=Number(x?.batch_id||0);
+      if(bid && Array.isArray(batches)){
+        const b=batches.find(bb=>Number(bb.id)===bid);
+        const fromBatch=Number(b?.parent_iso_id||b?.isolement_id||b?.isolation_id||0);
+        if(fromBatch)return fromBatch;
+      }
+      return 0;
+    }
+    function selectedIsolation(){return Number($('isolation-select')?.value||selectedIsolationId||0);}
+    function selectedP3(){return Number(selectedP3Id||0);}
+    function isolationMatches(x){const iso=selectedIsolation();return !iso || isoIdFromAny(x)===iso;}
+    function p3MatchesLc(lc){const p3=selectedP3();if(!p3)return true;const src=Number(lc?.source_petri_id||0);return !src || src===p3;}
+    function filteredLcs(){return validLcs.filter(lc=>isolationMatches(lc)&&p3MatchesLc(lc));}
+    function filteredBatches(){return batches.filter(b=>isolationMatches(b));}
+    function filteredUnits(){return units.filter(u=>isolationMatches(u));}
+    function filteredP3s(){const iso=selectedIsolation();return validP3s.filter(p=>!iso||Number(p.isolement_id||0)===iso);}
+    function isolationLabelFrom(id){
+      id=Number(id||0); if(!id)return '';
+      const lc=validLcs.find(x=>isoIdFromAny(x)===id);
+      const p3=validP3s.find(x=>Number(x.isolement_id||0)===id);
+      const b=batches.find(x=>isoIdFromAny(x)===id);
+      const u=units.find(x=>isoIdFromAny(x)===id);
+      const code=lc?.parent_iso_code||p3?.iso_code||b?.parent_iso_code||u?.parent_iso_code||('Isolation '+id);
+      const champ=lc?.champignon||p3?.champignon||b?.champignon||u?.champignon||'';
+      return champ?`${code} — ${champ}`:code;
+    }
+    function buildIsolationList(){
+      const map=new Map();
+      function add(id,code,champ){id=Number(id||0); if(!id)return; if(!map.has(id))map.set(id,{id,code:code||('Isolation '+id),champignon:champ||''});}
+      validLcs.forEach(x=>add(isoIdFromAny(x),x.parent_iso_code,x.champignon));
+      validP3s.forEach(x=>add(Number(x.isolement_id||0),x.iso_code,x.champignon));
+      batches.forEach(x=>add(isoIdFromAny(x),x.parent_iso_code,x.champignon));
+      units.forEach(x=>add(isoIdFromAny(x),x.parent_iso_code,x.champignon));
+      return Array.from(map.values()).sort((a,b)=>String(a.code).localeCompare(String(b.code)));
+    }
+
+    function isUnitStored(u){const st=String(u?.statut||u?.status||'').toUpperCase();return !!(u?.storage_at||['STOCK','EN_STOCK','STOCKE','STOCKEE','FRIGO'].includes(st));}
+    function getGrainPublicBaseUrl(){let origin=window.location.origin;let host=window.location.hostname;let saved=localStorage.getItem('biotechagro_grain_public_base_url');if(saved&&/^https?:\/\//i.test(saved))return saved.replace(/\/$/,'');if(host==='localhost'||host==='127.0.0.1'){let suggested=origin.replace('localhost','192.168.1.26').replace('127.0.0.1','192.168.1.26');let value=prompt("Adresse du serveur à mettre dans les QR codes grain pour le téléphone.\n\nExemple : http://192.168.1.26:3000\n\nSi tu imprimes depuis localhost, le téléphone ne peut pas ouvrir localhost.",suggested);let clean=String(value||suggested).trim().replace(/\/$/,'');localStorage.setItem('biotechagro_grain_public_base_url',clean);return clean;}return origin.replace(/\/$/,'');}
+    function resetGrainPublicBaseUrl(){localStorage.removeItem('biotechagro_grain_public_base_url');alert("Adresse QR grain réinitialisée. À la prochaine impression depuis localhost, le système redemandera l’adresse du serveur.");}
+    function qrUrl(data){return 'https://api.qrserver.com/v1/create-qr-code/?size=260x260&margin=10&data='+encodeURIComponent(data);}
+    function grainUnitQrTarget(u,forceJournal=false){let url=`${getGrainPublicBaseUrl()}/admin-myc-grain-journal.html?grain_unit_id=${encodeURIComponent(u.id)}&from_qr=1`;if(forceJournal)url+='&mode=journal';return url;}
+    function grainUnitLabelHtml(u){const target=grainUnitQrTarget(u,false);const datePrep=fmtDate(u.date_preparation||u.created_at);const inoc=fmtDateTime(semisDateTimeOf(u));const inoculated=!!(u.inoculated_at||u.lc_code||u.batch_lc_code);const lcSource=inoculated?`<div class="line lcline">LC : <span class="value">${esc(lcCodeOf(u))}</span></div><div class="line lcline">Pot LC : <span class="value">${esc(lcPotShortOf(u))}</span></div><div class="line p3line">P3 : <span class="value">${esc(p3Label(u))}</span></div>`:'';return `<div class="label"><div class="info"><div class="brand">BiotechAgro</div><div class="line">Grain : <span class="value">${esc(u.code||'—')}</span></div><div class="line">Type : <span class="value">${esc(u.container_type||'—')} · ${esc(u.type_grain||'blé')}</span></div>${lcSource}<div class="line">Date prep. : <span class="value">${esc(datePrep)}</span></div><div class="line">Semis : <span class="value">${esc(inoc)}</span></div></div><div class="qr"><img src="${qrUrl(target)}" alt="QR grain"><div class="small">Scanner QR<br>Journal ou résumé stock</div></div></div>`;}
+    function printGrainUnitLabels(list){const rows=(list&&list.length?list:[]).filter(Boolean);if(!rows.length)return alert('Aucun pot/sac à imprimer.');const html=`<!doctype html><html lang="fr"><head><meta charset="utf-8"><title>Étiquettes grain</title><style>body{font-family:Arial,sans-serif;margin:0;padding:10px}.sheet{display:flex;flex-wrap:wrap;gap:8px}.label{width:64mm;height:42mm;border:1px dashed #777;border-radius:6px;padding:5mm;box-sizing:border-box;display:grid;grid-template-columns:1fr 24mm;gap:4mm;page-break-inside:avoid;align-items:center}.brand{font-size:13px;font-weight:900;color:#1f7a41;margin-bottom:3mm}.line{font-size:9.5px;line-height:1.25;margin-bottom:1.7mm;color:#222}.value{font-weight:900}.lcline{color:#8a5a00;font-weight:900;background:#fff8e8;border-left:3px solid #d68a00;padding:1mm;border-radius:3px}.p3line{color:#0b5ed7;font-weight:900;background:#eef7ff;border-left:3px solid #0d6efd;padding:1mm;border-radius:3px}.qr img{width:24mm;height:24mm}.small{font-size:7.5px;color:#555;margin-top:2px;text-align:center;line-height:1.2}@media print{body{padding:0}.label{margin:2mm}}</style></head><body><div class="sheet">${rows.map(grainUnitLabelHtml).join('')}</div><script>window.onload=function(){setTimeout(function(){window.print();},300)};<\/script></body></html>`;const w=window.open('','_blank','width=900,height=700');if(!w)return alert('Autorise les popups pour imprimer les étiquettes QR.');w.document.open();w.document.write(html);w.document.close();}
+    window.printGrainUnitLabelsById=function(id){const u=units.find(x=>Number(x.id)===Number(id));if(!u)return alert('Pot/sac introuvable.');printGrainUnitLabels([u]);}
+    window.printCurrentGrainLabels=function(){const lc=selectedLcFromSelect('main-lc-select');let list=filteredUnits();if(lc){list=list.filter(u=>Number(u.lc_lot_id||0)===Number(lc.lc_lot_id)&&(!lc.lc_pot_id||Number(u.lc_pot_id||0)===Number(lc.lc_pot_id)));}if(!list.length)return alert('Aucun pot/sac à imprimer pour cette isolation.');printGrainUnitLabels(list);}
+    window.printInoculationLabels=function(key){const list=filteredUnits().filter(u=>isInoculatedUnit(u)&&unitLcGroupKey(u)===String(key));if(!list.length)return alert('Aucun sac/pot trouvé pour cette LC.');printGrainUnitLabels(list);}
+    window.stockUnit=function(id){const u=units.find(x=>Number(x.id)===Number(id));if(!u)return alert('Pot/sac introuvable.');const location=prompt('Emplacement stock / frigo / étagère pour '+u.code+' :','Stock grain');if(location===null)return;const note=prompt('Note de stockage (optionnel) :','');postJSON(`/api/grain-units/${id}/stock`,{storage_location:location,storage_note:note||''}).then(async()=>{alert('✅ Pot/sac mis au stock. Le QR ouvrira maintenant le résumé.');await loadAll(false);await openSummaryForUnit(id,false);}).catch(e=>alert('❌ '+apiErrorMessage(e)));}
+    window.openSummaryForUnit=async function(id,fromQr=false){showPanel('panel-summary');const box=$('grain-summary-container');if(box)box.innerHTML='<div class="loading">Chargement du résumé...</div>';try{const data=await getJSON(`/api/grain-units/${id}/summary`);renderGrainSummary(data,fromQr);setTimeout(()=>$('panel-summary')?.scrollIntoView({behavior:'smooth',block:'start'}),60);}catch(e){if(box)box.innerHTML='<div class="alert-box alert-red">Erreur résumé : '+esc(apiErrorMessage(e))+'</div>';}}
+    function renderGrainSummary(data,fromQr=false){const box=$('grain-summary-container');if(!box)return;const u=data.unit||{};const s=data.summary||{};const last=s.last_entry||{};const stored=isUnitStored(u);const qrTarget=grainUnitQrTarget(u,false);box.className='';box.innerHTML=`<div class="page-qr-box"><img src="${qrUrl(qrTarget)}" alt="QR grain"><div><div class="page-qr-title">Étiquette QR — ${esc(u.code||'Pot/sac grain')}</div><div class="page-qr-text">${fromQr?'QR scanné : ':''}${stored?'Ce pot/sac est au stock, le QR ouvre ce résumé.':'Ce pot/sac n’est pas stocké, le QR ouvre le journal quotidien.'}<br><strong>Statut :</strong> ${statusBadge(u.statut)}</div></div></div><div class="summary-grid"><div class="summary-item"><div class="summary-label">Identifiant</div><div class="summary-value">${esc(u.code||'—')}</div></div><div class="summary-item"><div class="summary-label">Lot</div><div class="summary-value">${esc(u.batch_code||'—')}</div></div><div class="summary-item"><div class="summary-label">LC source</div><div class="summary-value">${esc(lcCodeOf(u))}<br><small>Pot LC : ${esc(lcPotShortOf(u))}</small></div></div><div class="summary-item"><div class="summary-label">Capacité</div><div class="summary-value">${Number(u.capacity_final_kg||0)} kg</div></div><div class="summary-item"><div class="summary-label">Semencement</div><div class="summary-value">${fmtDateTime(semisDateTimeOf(u))}<br><small>${Number(u.inoculation_volume_ml||0)} mL LC</small></div></div><div class="summary-item"><div class="summary-label">Stockage</div><div class="summary-value">${u.storage_at?fmtDate(u.storage_at):'—'}<br><small>${esc(u.storage_location||'')}</small></div></div><div class="summary-item"><div class="summary-label">Dernier suivi</div><div class="summary-value">${last.day_index!=null?'J'+esc(last.day_index):'—'}<br><small>${last.propagation_pct!=null?esc(last.propagation_pct)+' % · score '+esc(last.score20)+'/20':''}</small></div></div></div><p class="stock-note"><strong>Dernière observation :</strong> ${esc(last.observations||'Aucune')}<br><strong>Note stock :</strong> ${esc(u.storage_note||'—')}</p><div class="btn-row"><button type="button" class="btn-main btn-orange" onclick="openJournalForUnit(${Number(u.id)})">📔 Ouvrir journal</button><button type="button" class="btn-main btn-blue" onclick="printGrainUnitLabelsById(${Number(u.id)})">🏷️ Imprimer étiquette</button><button type="button" class="btn-main btn-grey" onclick="resetGrainPublicBaseUrl()">Réinitialiser adresse QR</button></div>`;}
+    async function handleInitialGrainRoute(){if(window.__grainInitialRouteDone)return;window.__grainInitialRouteDone=true;const qs=new URLSearchParams(window.location.search);const id=Number(qs.get('grain_unit_id')||qs.get('unit_id')||0);if(!id)return;let u=units.find(x=>Number(x.id)===id);if(!u){try{const data=await getJSON(`/api/grain-units/${id}/summary`);u=data.unit;}catch(e){$('main-message').innerHTML='<div class="alert-box alert-red">QR grain introuvable : '+esc(apiErrorMessage(e))+'</div>';return;}}const forceJournal=String(qs.get('mode')||qs.get('view')||'').toLowerCase()==='journal';if(!forceJournal&&isUnitStored(u))await openSummaryForUnit(id,true);else openJournalForUnit(id);}
+
+    function grainSummaryAlbum(summary,unit){const rows=(summary.history||[]).filter(j=>j.photo_url);if(!rows.length)return '<div class="protocol-card"><h5>📷 Album photo</h5><p>Aucune photo enregistrée.</p></div>';return `<div class="protocol-card"><h5>📷 Album photo</h5><div class="summary-grid">${rows.map(j=>`<div class="summary-item"><div class="summary-label">J${esc(j.day_index)}</div><a href="${esc(j.photo_url)}" target="_blank"><img src="${esc(j.photo_url)}" alt="Photo grain J${esc(j.day_index)}" style="width:100%;height:140px;object-fit:cover;border-radius:8px;"></a><button type="button" class="btn-main btn-red" style="width:100%;margin-top:8px;" onclick="deleteGrainSummaryPhoto(${Number(unit.id)},${Number(j.id)},${Number(j.day_index)})">🗑️ Supprimer</button></div>`).join('')}</div></div>`;}
+    window.deleteGrainSummaryPhoto=async function(unitId,journalId,day){if(!confirm(`Supprimer définitivement la photo grain de J${day} ?\n\nSa référence commune sera aussi retirée si nécessaire.`))return;try{const r=await fetch(`/api/grain-units/${unitId}/journal/${journalId}/photo`,{method:'DELETE'});const data=await parseApiResponse(r,'suppression photo grain');await openSummaryForUnit(unitId,false);if(data?.pending)return alert('⏳ Demande envoyée à un administrateur. La photo reste visible jusqu’à son approbation.');if(data?.storage_warning)alert('Photo retirée, mais le fichier distant n’a pas pu être supprimé : '+data.storage_warning);}catch(e){alert('❌ '+apiErrorMessage(e));}};
+    const renderGrainSummaryWithoutAlbum=renderGrainSummary;
+    renderGrainSummary=function(data,fromQr=false){renderGrainSummaryWithoutAlbum(data,fromQr);$('grain-summary-container')?.insertAdjacentHTML('beforeend',grainSummaryAlbum(data.summary||{},data.unit||{}));};
+
+    function showPanel(id){['panel-create','panel-seed','panel-protocol','panel-summary'].forEach(p=>$(p)?.classList.remove('show')); if(id){$(id)?.classList.add('show'); currentPanel=id; if(id==='panel-protocol') renderProtocols();}}
+    function syncIsolationSelect(){
+      const el=$('isolation-select'); if(!el)return;
+      const list=buildIsolationList();
+      const old=String(el.value||selectedIsolationId||'');
+      el.innerHTML='<option value="">Choisir une isolation</option>';
+      list.forEach(iso=>{
+        const opt=document.createElement('option');
+        opt.value=iso.id;
+        opt.textContent=`${iso.code}${iso.champignon?' — '+iso.champignon:''}`;
+        el.appendChild(opt);
+      });
+      if(old && list.some(x=>Number(x.id)===Number(old))) el.value=old;
+      selectedIsolationId=Number(el.value||0);
+    }
+
+    function syncLcSelects(){
+      syncIsolationSelect();
+      const mainValue=$('main-lc-select')?.value||'';
+      const lcs=filteredLcs();
+      ['main-lc-select','create-lc-select','seed-lc-select'].forEach(id=>{
+        const el=$(id);if(!el)return;
+        const old=el.value||mainValue;
+        el.innerHTML='<option value="">Sélectionner une LC validée</option>';
+        lcs.forEach(lc=>{
+          const opt=document.createElement('option');
+          opt.value=lcKey(lc);
+          opt.textContent=`${lc.lc_code} / ${lc.lc_pot_code} – ${lc.champignon||'champignon'}${lc.parent_iso_code?' – '+lc.parent_iso_code:''}${lc.p3_code?' – '+lc.p3_code:''}`;
+          el.appendChild(opt);
+        });
+        if(old && lcs.some(l=>lcKey(l)===old)) el.value=old;
+        else el.value='';
+      });
+      const main=$('main-lc-select');
+      const create=$('create-lc-select');
+      const seed=$('seed-lc-select');
+      if(create && main?.value) create.value=main.value;
+      if(seed && main?.value) seed.value=main.value;
+      updateLcActionState();
+    }
+
+    function updateLcActionState(){
+      const iso=selectedIsolation();
+      const selected=selectedLcFromSelect('main-lc-select');
+      document.querySelectorAll('.requires-isolation').forEach(btn=>{btn.disabled=!iso;});
+      document.querySelectorAll('.requires-lc').forEach(btn=>{btn.disabled=!(iso&&selected);});
+      const hint=$('isolation-hint');
+      if(hint){
+        if(!iso){hint.className='alert-box alert-blue';hint.innerHTML='Sélectionne une isolation pour afficher uniquement ses P3, LC et pots/sacs grain.';}
+        else{hint.className='alert-box alert-green';hint.innerHTML=`Isolation active : <strong>${esc(isolationLabelFrom(iso))}</strong>. Les pots/sacs affichés et sélectionnables appartiennent à cette isolation.`;}
+      }
+      const banner=$('selected-lc-banner');
+      if(banner){
+        if(iso&&selected){
+          banner.classList.add('show');
+          banner.innerHTML=`✅ LC sélectionnée : <strong>${esc(selected.lc_code)} / ${esc(selected.lc_pot_code)}</strong> — ${esc(selected.champignon||'champignon')} ${selected.parent_iso_code?'· '+esc(selected.parent_iso_code):''} · P3 : ${esc(selected.p3_code||'—')}.`;
+        }else{
+          banner.classList.remove('show');
+          banner.innerHTML='';
+        }
+      }
+    }
+
+    function renderStats(){
+      const list=filteredUnits();
+      const lcs=filteredLcs();
+      const prepared=list.filter(u=>u.statut==='PREPARE').length;
+      const seeded=list.filter(u=>['ENSEMENCE','EN_INCUBATION'].includes(String(u.statut).toUpperCase())).length;
+      const ready=list.filter(u=>String(u.statut).toUpperCase()==='PRET').length;
+      const stock=list.filter(isUnitStored).length;
+      $('dashboard-stats').innerHTML=`<div class="info-item"><div class="info-label">LC validées</div><div class="info-value">${lcs.length}</div></div><div class="info-item"><div class="info-label">P3 validés</div><div class="info-value">${filteredP3s().length}</div></div><div class="info-item"><div class="info-label">Pots/sacs préparés</div><div class="info-value">${prepared}</div></div><div class="info-item"><div class="info-label">Ensemencés</div><div class="info-value">${seeded}</div></div><div class="info-item"><div class="info-label">Prêts</div><div class="info-value">${ready}</div></div><div class="info-item"><div class="info-label">Stock</div><div class="info-value">${stock}</div></div>`
+    }
+
+    function renderValidP3s(){
+      const box=$('valid-p3-container'); if(!box)return;
+      const iso=selectedIsolation();
+      if(!iso){box.innerHTML='';return;}
+      const rows=filteredP3s();
+      if(!rows.length){box.innerHTML='<div class="alert-box alert-orange">Aucun P3 validé/piquable trouvé pour cette isolation.</div>';return;}
+      box.innerHTML=rows.map(p=>{
+        const id=Number(p.petri_id||0);
+        const selected=selectedP3()===id;
+        const lcCount=validLcs.filter(l=>Number(l.source_petri_id||0)===id&&Number(l.parent_iso_id||0)===iso).length;
+        return `<div class="unit-card ${selected?'selected':''}" onclick="selectP3(${id})"><strong>${esc(p.iso_code||'ISO')} — P3-${esc(id)}</strong><div class="small-line">${esc(p.champignon||'—')} · jour ${esc(p.last_day??'—')} · note ${esc(p.visual_note20??'—')}/20</div><div class="small-line">LC validées issues de ce P3 : <strong>${lcCount}</strong></div><div class="small-line">${p.already_transferred?'Déjà transféré vers LC':'Disponible pour LC'}</div></div>`;
+      }).join('');
+    }
+
+    function renderValidLcs(){
+      const box=$('valid-lc-container');
+      const iso=selectedIsolation();
+      if(!iso){box.innerHTML='';updateLcActionState();return;}
+      const lcs=filteredLcs();
+      if(!validLcs.length){
+        box.innerHTML='<div class="alert-box alert-orange">Aucune LC validée trouvée. Valide d’abord un pot LC dans le journal LC : test gélose validé + LC validée.</div>';
+        updateLcActionState();
+        return;
+      }
+      if(!lcs.length){
+        box.innerHTML='<div class="alert-box alert-orange">Aucune LC validée pour cette isolation/P3. Vérifie que le P3 a bien été transféré en LC et qu’un pot LC est marqué “LC validée”.</div>';
+        updateLcActionState();
+        return;
+      }
+      const selectedKey=$('main-lc-select')?.value||'';
+      let html='<div class="lc-stock-card"><div class="lc-stock-title">✅ LC validées de l’isolation sélectionnée</div><div class="lc-stock-table-wrap"><table class="lc-stock-table"><thead><tr><th>LC</th><th>Pot LC</th><th>P3 associé</th><th>Isolation</th><th>Volume</th><th>Statut</th><th>Action</th></tr></thead><tbody>';
+      lcs.forEach(lc=>{
+        const key=lcKey(lc);
+        const selected=selectedKey===key;
+        html+=`<tr class="lc-stock-row ${selected?'selected':''}" onclick="selectLcKey('${esc(key)}')"><td><strong>${esc(lc.lc_code||'—')}</strong><div class="lc-stock-muted">J0 ${esc(fmtDate(lc.j0_date||lc.created_at))}</div></td><td>${esc(lcPotShortOf({lc_code:lc.lc_code, lc_pot_code:lc.lc_pot_code}))}<div class="lc-stock-muted">Pot ${esc(lc.pot_number||'—')}</div></td><td>${esc(lc.p3_code||'P3-'+(lc.source_petri_id||'—'))}</td><td>${esc(lc.parent_iso_code||'—')}<div class="lc-stock-muted">${esc(lc.champignon||'—')}</div></td><td>${lc.volume_ml?esc(lc.volume_ml)+' mL':'—'}</td><td><span class="badge-pill ok">LC validée</span> ${lc.agar_test_validated?'<span class="badge-pill info">Gélose OK</span>':''} ${lc.fridge_stored?'<span class="badge-pill info">Stock LC</span>':''}</td><td><button type="button" class="btn-mini-white" onclick="event.stopPropagation();selectLcKey('${esc(key)}')">${selected?'Sélectionnée':'Sélectionner'}</button></td></tr>`;
+      });
+      html+='</tbody></table></div><div class="lc-stock-muted">Clique sur une LC : elle devient la source de mycélium uniquement pour le semencement grain.</div></div>';
+      box.innerHTML=html;
+      updateLcActionState();
+    }
+
+    window.selectP3=function(id){
+      selectedP3Id=Number(id||0);
+      const main=$('main-lc-select'); if(main) main.value='';
+      syncLcSelects();renderValidP3s();renderValidLcs();renderBatches();renderUnits();renderPreparedUnits();renderStats();
+      $('main-message').innerHTML='✅ P3 sélectionné. La liste LC est maintenant filtrée sur ce P3.';
+    }
+
+    window.selectLcKey=function(key){
+      const lc=validLcs.find(l=>lcKey(l)===key);
+      if(lc && selectedIsolation() && Number(lc.parent_iso_id||0)!==selectedIsolation())return alert('Cette LC ne correspond pas à l’isolation sélectionnée.');
+      const main=$('main-lc-select');
+      if(main) main.value=key;
+      if($('create-lc-select')) $('create-lc-select').value=key;
+      if($('seed-lc-select')) $('seed-lc-select').value=key;
+      updateLcActionState();
+      renderValidLcs();
+      $('main-message').innerHTML='✅ LC sélectionnée. Elle sera utilisée comme source mycélium au moment du semencement.';
+    }
+
+    function renderBatches(){
+      const rows=filteredBatches();
+      const body=$('batches-table-body');
+      if(!rows.length){body.innerHTML='<tr><td colspan="7" class="text-center">Aucun lot de préparation grain pour cette isolation</td></tr>';return;}
+      body.innerHTML=rows.map(b=>`<tr><td><strong>${esc(b.code)}</strong></td><td>${esc(b.lc_code||'—')}<br><small>${esc(b.lc_pot_code||'')}</small></td><td>${esc(b.type_grain||'ble')}</td><td>${esc(b.container_type||'SAC')}</td><td>${Number(b.units_total||0)} total · ${Number(b.units_prepared||0)} dispo · ${Number(b.units_inoculated||0)} semés</td><td>${esc(fmtDate(b.date_preparation))}</td><td>${statusBadge(b.statut)}</td></tr>`).join('')
+    }
+    function isInoculatedUnit(u){return String(u?.statut||'').toUpperCase()!=='PREPARE'||!!u?.inoculated_at}
+    function renderUnits(){
+      const body=$('units-table-body');
+      const inoc=filteredUnits().filter(isInoculatedUnit);
+      if(!inoc.length){body.innerHTML='<tr><td colspan="9" class="text-center">Aucun pot/sac ensemencé pour le moment</td></tr>';return;}
+
+      // Regroupement uniquement par source mycélium : même LC / même pot LC / même P3.
+      // On n'ajoute plus de ligne résumé : le groupe est séparé visuellement et la source est affichée une seule fois.
+      const grouped=new Map();
+      inoc.forEach(u=>{
+        const k=unitLcGroupKey(u);
+        if(!grouped.has(k))grouped.set(k,[]);
+        grouped.get(k).push(u);
+      });
+      let groups=Array.from(grouped.entries()).map(([key,list])=>({
+        key,
+        list,
+        date:Math.max(...list.map(u=>new Date(semisGroupDate(u)||0).getTime()).filter(Number.isFinite))
+      }));
+      groups.sort((a,b)=>(b.date||0)-(a.date||0));
+
+      let html='';
+      groups.forEach(g=>{
+        const list=g.list;
+        list.sort((a,b)=>new Date(semisGroupDate(a)||a.created_at||0)-new Date(semisGroupDate(b)||b.created_at||0)||Number(a.unit_number||0)-Number(b.unit_number||0)||Number(a.id)-Number(b.id));
+        const first=list[0]||{};
+        const rowSpan=list.length;
+
+        list.forEach((u,idx)=>{
+          const stockBtn=isUnitStored(u)?`<button class="btn-main btn-grey" type="button" onclick="openSummaryForUnit(${Number(u.id)})">Résumé</button>`:`<button class="btn-main btn-brown" type="button" onclick="stockUnit(${Number(u.id)})">Stockage</button>`;
+          const jour=u.last_day_index!=null?'J'+esc(u.last_day_index):'J0';
+          const groupStart=idx===0?' grain-group-start':'';
+          const sourceCell=idx===0?`<td rowspan="${rowSpan}" class="grain-source-cell">${sourceMyceliumHtml(first)}</td>`:'';
+          html+=`<tr class="grain-unit-row-line${groupStart}"><td class="grain-unit-indent"><span class="grain-unit-code">↳ ${esc(u.code)}</span><div class="grain-small">${esc(u.container_type||'—')} n°${esc(u.unit_number||'—')}</div></td><td>${esc(fmtDateTime(semisGroupDate(u)))}</td>${sourceCell}<td>${esc(u.type_grain||'Blé')}</td><td>${typeCapacityHtml(u)}</td><td><strong>${jour}</strong><div class="grain-small">${u.last_treated_at?fmtDate(u.last_treated_at):'non suivi'}</div></td><td>${u.last_propagation_pct!=null?esc(u.last_propagation_pct)+' %':'—'}<br><span class="grain-small">${u.last_score20!=null?'score '+esc(u.last_score20)+'/20':''}</span></td><td>${statusBadge(u.statut)}</td><td><div class="grain-row-actions"><button class="btn-main btn-orange" type="button" onclick="openJournalForUnit(${Number(u.id)})">Journal</button>${stockBtn}<button class="btn-main btn-blue" type="button" onclick="printGrainUnitLabelsById(${Number(u.id)})">🏷️ Étiquette</button><button class="btn-main btn-red" type="button" onclick="deleteGrainUnit(${Number(u.id)})">🗑️ Supprimer</button></div></td></tr>`;
+        });
+      });
+      body.innerHTML=html;
+    }
+
+    function renderPreparedUnits(){
+      const grid=$('prepared-units-grid');
+      const available=filteredUnits().filter(u=>String(u.statut).toUpperCase()==='PREPARE');
+      if(!available.length){grid.innerHTML='<div class="alert-box alert-orange">Aucun pot/sac préparé disponible pour cette isolation. Crée d’abord un pot ou sac de grain.</div>';updateSeedCounter();return;}
+      grid.innerHTML=available.map(u=>`<div class="unit-card"><label class="unit-check"><input type="checkbox" class="seed-unit-check" value="${Number(u.id)}" onchange="updateSeedCounter()"><span><strong>${esc(u.code)}</strong><div class="small-line">Lot ${esc(u.batch_code)} · ${esc(u.container_type)} · ${Number(u.capacity_final_kg||0)} kg</div></span></label></div>`).join('');
+      updateSeedCounter();
+    }
+    window.updateSeedCounter=function(){const n=document.querySelectorAll('.seed-unit-check:checked').length;const vol=Number($('seed-volume')?.value||0);$('seed-counter').innerHTML=`<strong>${n}</strong> pot/sac sélectionné(s). Besoin total : <strong>${(n*vol).toFixed(1)} mL</strong> de LC.`}
+
+    function renderProtocols(){renderGrowthProtocol();renderLcProtocol()}
+    function renderGrowthProtocol(){const box=$('growth-protocol-container');const rows=protocols.growth_speed||[]; if(!rows.length){box.innerHTML='<div class="alert-box alert-orange">Aucune donnée grain suffisante pour lancer une comparaison.</div>';return;} let msg=protocols.needs_growth_protocol?'<div class="alert-box alert-green">✅ Protocole né automatiquement : plusieurs isolations ont des pots/sacs grain. Compare la vitesse via propagation %, score /20 et jour de colonisation.</div>':'<div class="alert-box alert-blue">Une seule isolation détectée pour le moment. Le protocole de comparaison sera réellement utile dès qu’une deuxième isolation sera créée.</div>'; box.innerHTML=msg+`<div class="table-responsive"><table class="lots-table"><thead><tr><th>Isolation</th><th>Lots</th><th>Unités</th><th>LC</th><th>Propagation moyenne</th><th>Score moyen</th></tr></thead><tbody>${rows.map(r=>`<tr><td><strong>${esc(r.isolation)}</strong></td><td>${esc(r.batches_count)}</td><td>${esc(r.units_count)}</td><td>${esc(r.lc_count)}</td><td>${r.avg_propagation!=null?esc(r.avg_propagation)+' %':'—'}</td><td>${r.avg_score!=null?esc(r.avg_score)+'/20':'—'}</td></tr>`).join('')}</tbody></table></div><div class="protocol-card"><h5>Critères de comparaison proposés</h5><p>Comparer à date identique : J3, J5, J7, J10, puis noter le jour où le grain atteint 25 %, 50 %, 75 % et 100 % de colonisation.</p><p>Garder le même type de grain, même rapport blé/eau, même capacité et même volume LC injecté pour rendre la comparaison propre.</p></div>`}
+    function renderLcProtocol(){const box=$('lc-protocol-container');const rows=protocols.lc_same_isolation||[]; if(!rows.length){box.innerHTML='<div class="alert-box alert-blue">Pas encore de comparaison LC nécessaire : aucune isolation avec plusieurs LC utilisées sur grain n’a été détectée.</div>';return;} box.innerHTML='<div class="alert-box alert-green">✅ Protocole né automatiquement : au moins une même isolation possède plusieurs LC testées sur grain.</div>'+`<div class="table-responsive"><table class="lots-table"><thead><tr><th>Isolation</th><th>Nombre LC</th><th>Unités testées</th><th>Propagation moyenne</th><th>Score moyen</th></tr></thead><tbody>${rows.map(r=>`<tr><td><strong>${esc(r.isolation)}</strong></td><td>${esc(r.lc_count)}</td><td>${esc(r.units_count)}</td><td>${r.avg_propagation!=null?esc(r.avg_propagation)+' %':'—'}</td><td>${r.avg_score!=null?esc(r.avg_score)+'/20':'—'}</td></tr>`).join('')}</tbody></table></div><div class="protocol-card"><h5>Méthode de comparaison LC</h5><p>Pour la même isolation : utiliser des pots/sacs identiques, injecter le même volume de chaque LC et suivre la vitesse de propagation, l’homogénéité et l’absence de contamination.</p></div>`}
+
+    function addCompositionRow(values={}){const box=$('extra-compositions');if(!box)return;const row=document.createElement('div');row.className='extra-composition-row';row.innerHTML=`<div><label class="admin-label">Composition ajoutée</label><input class="admin-input extra-component-name" type="text" placeholder="Ex : gypse" value="${esc(values.name||'')}"></div><div><label class="admin-label">Quantité par pot/sac</label><input class="admin-input extra-component-qty" type="number" step="0.001" min="0" placeholder="Ex : 0.01" value="${esc(values.quantity??'')}"></div><div><label class="admin-label">Unité</label><select class="admin-input extra-component-unit"><option value="kg">kg</option><option value="g">g</option><option value="L">L</option><option value="mL">mL</option></select></div><button type="button" class="btn-main btn-red extra-component-remove">✕ Retirer</button>`;row.querySelector('.extra-component-unit').value=values.unit||'g';row.querySelector('.extra-component-remove').addEventListener('click',()=>{row.remove();updateCreatePreview()});row.querySelectorAll('input,select').forEach(el=>el.addEventListener('input',updateCreatePreview));box.appendChild(row);updateCreatePreview()}
+    function readExtraCompositions(){return Array.from(document.querySelectorAll('.extra-composition-row')).map(row=>({name:String(row.querySelector('.extra-component-name')?.value||'').trim(),quantity:Number(row.querySelector('.extra-component-qty')?.value||0),unit:String(row.querySelector('.extra-component-unit')?.value||'g')})).filter(x=>x.name&&Number.isFinite(x.quantity)&&x.quantity>0)}
+    function updateCreatePreview(){const cap=Number($('capacity-final')?.value||0), nb=Number($('nb-units')?.value||0), wheat=Number($('wheat-kg')?.value||0), water=Number($('water-l')?.value||0);const extras=readExtraCompositions();const box=$('create-preview'); if(!cap||!nb){box.textContent='Renseigne la capacité et le nombre de pots/sacs.';return;}const extraText=extras.length?'<br>Autres compositions : '+extras.map(x=>`<strong>${esc(x.name)}</strong> ${x.quantity} ${esc(x.unit)}`).join(' · '):'';box.innerHTML=`Préparation : <strong>${nb}</strong> unité(s). Capacité finale cible : <strong>${cap.toFixed(2)} kg/unité</strong>.<br>Base : <strong>${wheat||0} kg blé</strong> / <strong>${water||0} L eau</strong>.${extraText}`;}
+    function syncContainerChoice(active){const sac=$('container-sac'), pot=$('container-pot'); if(active==='POT'){pot.checked=true;sac.checked=false}else{sac.checked=true;pot.checked=false}$('choice-sac')?.classList.toggle('checked',sac.checked);$('choice-pot')?.classList.toggle('checked',pot.checked)}
+
+    async function createBatch(){const iso=selectedIsolation(); if(!iso)return alert('Sélectionne une isolation.'); const payload={parent_iso_id:iso,type_grain:'ble',container_type:$('container-pot')?.checked?'POT':'SAC',capacity_final_kg:Number($('capacity-final').value||0),wheat_kg:Number($('wheat-kg').value||0),water_l:Number($('water-l').value||0),additional_components:readExtraCompositions(),nb_units:Number($('nb-units').value||1),date_preparation:$('date-preparation').value||today(),notes:$('create-notes').value||''}; if(!payload.capacity_final_kg||!payload.wheat_kg||payload.water_l<0||!payload.nb_units)return alert('Complète la capacité, la composition blé/eau et le nombre de pots/sacs.'); const incomplete=Array.from(document.querySelectorAll('.extra-composition-row')).some(row=>{const n=String(row.querySelector('.extra-component-name')?.value||'').trim();const q=Number(row.querySelector('.extra-component-qty')?.value||0);return (n&&!q)||(!n&&q)});if(incomplete)return alert('Complète le nom et la quantité de chaque composition ajoutée, ou retire la ligne incomplète.'); try{const r=await postJSON('/api/grain-batches',payload);alert(`✅ Lot créé : ${r.code}
+Unités générées : ${r.units?.length||payload.nb_units}`);await loadAll();showPanel('panel-seed')}catch(e){alert('❌ '+apiErrorMessage(e))}}
+    async function seedUnits(){const lc=selectedLcFromSelect('seed-lc-select')||selectedLcFromSelect('main-lc-select'); if(!lc)return alert('Sélectionne une LC validée à injecter.'); const ids=Array.from(document.querySelectorAll('.seed-unit-check:checked')).map(x=>Number(x.value)).filter(Boolean); if(!ids.length)return alert('Coche les pots/sacs à ensemencer.'); const vol=Number($('seed-volume').value||0); if(!vol)return alert('Indique le volume de LC par pot/sac.'); const semisDate=$('seed-date').value||today(); const semisDateTime=makeSemisDateTime(semisDate); const selectedBeforePrint=ids.map(id=>{const u=units.find(x=>Number(x.id)===Number(id))||{};return {...u, lc_lot_id:lc.lc_lot_id, lc_pot_id:lc.lc_pot_id, lc_code:lc.lc_code, lc_pot_code:lc.lc_pot_code, source_petri_id:lc.source_petri_id||u.source_petri_id, p3_code:lc.p3_code||u.p3_code, inoculated_at:semisDateTime, inoculation_created_at:semisDateTime, inoculation_volume_ml:vol, statut:'ENSEMENCE'};}); try{const r=await postJSON('/api/grain-inoculations',{lc_lot_id:lc.lc_lot_id,lc_pot_id:lc.lc_pot_id,unit_ids:ids,inoculation_volume_ml:vol,date_inoculation:semisDate,date_inoculation_datetime:semisDateTime,notes:$('seed-notes').value||''}); if(selectedBeforePrint.length)printGrainUnitLabels(selectedBeforePrint); alert(`✅ Semencement enregistré : ${r.code}\nPots/sacs ensemencés : ${r.nb_units}\nLes étiquettes viennent de s’ouvrir pour impression.`);await loadAll();showPanel('panel-seed')}catch(e){alert('❌ '+apiErrorMessage(e))}}
+
+    window.openJournalForUnit=function(id){if(!id)return alert('Pot/sac introuvable.');window.location.href='admin-myc-grain-journal.html?grain_unit_id='+encodeURIComponent(id)+'&mode=journal';}
+
+    window.deleteGrainUnit=async function(id){
+      const u=units.find(x=>Number(x.id)===Number(id));
+      if(!u)return alert('Pot/sac introuvable.');
+      if(!confirm('Supprimer ce pot/sac ?\n\n'+(u.code||'')+'\n\nCette action supprimera aussi son journal s’il existe.'))return;
+      try{
+        const r=await fetch('/api/grain-units/'+encodeURIComponent(id),{method:'DELETE'});
+        const txt=await r.text(); let data=null; try{data=txt?JSON.parse(txt):null}catch(_){data={error:txt}}
+        if(!r.ok)throw new Error((data&&data.error)||txt||r.statusText);
+        alert('✅ Pot/sac supprimé : '+(data.deleted_code||u.code||id));
+        await loadAll();
+      }catch(e){alert('❌ '+apiErrorMessage(e));}
+    }
+
+    async function loadAll(renderPanels=true){try{const results=await Promise.allSettled([loadValidatedLcs(),loadReadyP3s(),getJSON('/api/grain-batches'),getJSON('/api/grain-units'),getJSON('/api/grain-protocols')]); if(results[0].status==='fulfilled')validLcs=Array.isArray(results[0].value)?results[0].value:[]; else throw results[0].reason; validP3s=results[1].status==='fulfilled'&&Array.isArray(results[1].value)?results[1].value:[]; batches=results[2].status==='fulfilled'&&Array.isArray(results[2].value)?results[2].value:[]; units=results[3].status==='fulfilled'&&Array.isArray(results[3].value)?results[3].value:[]; protocols=results[4].status==='fulfilled'?results[4].value:protocols; syncLcSelects();renderStats();renderValidP3s();renderValidLcs();renderBatches();renderUnits();renderPreparedUnits();renderProtocols();if(results[2].status==='rejected'||results[3].status==='rejected'){$('main-message').innerHTML='Les LC validées sont chargées. Pour créer/ensemencer les pots/sacs grain, remplace aussi <strong>server.js</strong> par celui du ZIP puis redémarre Node.';}}catch(e){$('valid-lc-container').innerHTML='<div class="alert-box alert-red">Erreur chargement API : '+esc(apiErrorMessage(e))+'<br>Vérifie que le serveur est lancé et que la base PostgreSQL est accessible.</div>';console.error(e)}}
+
+    document.addEventListener('DOMContentLoaded',()=>{
+      $('date-preparation').value=today();$('seed-date').value=today();
+      $('btn-show-create')?.addEventListener('click',()=>showPanel('panel-create'));
+      $('btn-show-seed')?.addEventListener('click',()=>showPanel('panel-seed'));
+      $('btn-show-protocol')?.addEventListener('click',()=>showPanel('panel-protocol'));
+      $('btn-print-selected-labels')?.addEventListener('click',printCurrentGrainLabels);
+      $('isolation-select')?.addEventListener('change',()=>{selectedIsolationId=Number($('isolation-select').value||0);selectedP3Id=0;['main-lc-select','create-lc-select','seed-lc-select'].forEach(id=>{const el=$(id);if(el)el.value='';});syncLcSelects();renderStats();renderValidP3s();renderValidLcs();renderBatches();renderUnits();renderPreparedUnits();});
+      $('main-lc-select')?.addEventListener('change',()=>{const v=$('main-lc-select').value;if($('create-lc-select'))$('create-lc-select').value=v;if($('seed-lc-select'))$('seed-lc-select').value=v;updateLcActionState();renderValidLcs();});
+      $('container-sac').addEventListener('change',()=>syncContainerChoice('SAC'));
+      $('container-pot').addEventListener('change',()=>syncContainerChoice('POT'));
+      ['capacity-final','wheat-kg','water-l','nb-units'].forEach(id=>$(id).addEventListener('input',updateCreatePreview));
+      $('seed-volume').addEventListener('input',updateSeedCounter);
+      $('btn-add-composition')?.addEventListener('click',()=>addCompositionRow());
+      $('btn-create-batch').addEventListener('click',createBatch);
+      $('btn-seed-units').addEventListener('click',seedUnits);
+      loadAll().then(()=>handleInitialGrainRoute());
+    });
+  })();
+  </script>
+</body>
+</html>
