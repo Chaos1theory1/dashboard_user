@@ -6,7 +6,7 @@
   <title>Tableau de bord — Mycelium Tech Digital</title>
   <link rel="icon" href="images/logo-agro.jpeg" type="image/jpeg">
   <link rel="stylesheet" href="css/admin-dashboard-shell.css?v=20260820-2">
-  <link rel="stylesheet" href="css/admin-dashboard-home.css?v=20260820-4">
+  <link rel="stylesheet" href="css/admin-dashboard-home.css?v=20260820-5">
   <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
 </head>
 <body>
@@ -79,7 +79,6 @@
         </section>
       </aside>
     </section>
-    <div class="mtd-dashboard-source-note" id="dashboard-source-note">Chargement des sources…</div>
   </main>
 
   <script src="js/admin-auth.js"></script>
@@ -119,7 +118,6 @@
         if(summary.users){document.getElementById('metric-users-card').hidden=false;document.getElementById('metric-users').textContent=Number(summary.users.active||0);document.getElementById('metric-users-note').textContent=`${Number(summary.users.online||0)} en ligne`}
         document.getElementById('data-p3').textContent=Number(summary.counts?.p3_ready||0);document.getElementById('data-lc-valid').textContent=Number(summary.counts?.validated_lc||0);document.getElementById('data-strains').textContent=Number(summary.counts?.strains_active||0);document.getElementById('data-deletions').textContent=Number(summary.counts?.pending_deletions||0);
         renderQuickActions(summary.quick_actions||[]);renderTrend(summary.activity_trend||[]);renderStatus(summary.status_distribution||[]);renderRecent(summary.recent_activity||[]);if(tasksRes.ok)renderAlerts(tasks,summary);else renderAlerts({tasks:[],counts:{total:0,urgent:0}},summary);
-        document.getElementById('dashboard-source-note').textContent='Sources: '+Object.entries(summary.sources||{}).map(([k,v])=>`${k}: ${Array.isArray(v)?v.join(', '):v}`).join(' · ');
       }catch(error){console.error(error);['metric-petri','metric-lc','metric-grain','metric-tasks','metric-users'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent='—'});document.getElementById('quick-actions').innerHTML='<div class="mtd-shell-empty">Impossible de charger les actions.</div>';document.getElementById('trend-chart').innerHTML='<div class="mtd-empty-chart">Impossible de charger les données réelles.</div>';document.getElementById('status-key').innerHTML='<div class="mtd-alert-empty">Données indisponibles.</div>';document.getElementById('recent-activity').innerHTML='<tr><td colspan="5"><div class="mtd-alert-empty">Données indisponibles.</div></td></tr>';document.getElementById('dashboard-alerts').innerHTML='<div class="mtd-alert-empty">Alertes indisponibles.</div>';}
     }
 
