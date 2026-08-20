@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Tableau de bord — Mycelium Tech Digital</title>
   <link rel="icon" href="images/logo-agro.jpeg" type="image/jpeg">
-  <link rel="stylesheet" href="css/admin-dashboard-shell.css">
-  <link rel="stylesheet" href="css/admin-dashboard-home.css">
+  <link rel="stylesheet" href="css/admin-dashboard-shell.css?v=20260820-2">
+  <link rel="stylesheet" href="css/admin-dashboard-home.css?v=20260820-2">
   <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
 </head>
 <body>
@@ -16,37 +16,46 @@
       <div class="mtd-dashboard-hero-copy">
         <h1>Bonjour, <span id="welcome-name">Utilisateur</span></h1>
         <p>Voici l’état réel de votre laboratoire aujourd’hui.</p>
-        <div class="mtd-dashboard-live"><i></i><span id="dashboard-generated">Chargement des données de production…</span></div>
       </div>
       <aside class="mtd-quick-panel">
         <h2>Actions rapides</h2>
         <div class="mtd-quick-actions" id="quick-actions"><div class="mtd-shell-empty">Chargement…</div></div>
       </aside>
-    </section>
 
-    <section class="mtd-kpi-grid" aria-label="Indicateurs clés">
-      <a class="mtd-kpi kpi-green" href="admin-isolement.html"><span class="mtd-kpi-icon"><i data-lucide="flask-conical"></i></span><span><small>Boîtes d’isolement actives</small><strong id="metric-petri">—</strong><em id="metric-petri-note">Données réelles</em></span></a>
-      <a class="mtd-kpi kpi-blue" href="admin-myc-liquide.html"><span class="mtd-kpi-icon"><i data-lucide="beaker"></i></span><span><small>Pots LC actifs</small><strong id="metric-lc">—</strong><em id="metric-lc-note">Données réelles</em></span></a>
-      <a class="mtd-kpi kpi-amber" href="admin-myc-grain.html"><span class="mtd-kpi-icon"><i data-lucide="wheat"></i></span><span><small>Unités grain actives</small><strong id="metric-grain">—</strong><em id="metric-grain-note">Données réelles</em></span></a>
-      <a class="mtd-kpi kpi-purple" href="admin-taches.html"><span class="mtd-kpi-icon"><i data-lucide="clipboard-check"></i></span><span><small>Tâches obligatoires</small><strong id="metric-tasks">—</strong><em id="metric-tasks-note">Calculées depuis les journaux</em></span></a>
-      <a class="mtd-kpi kpi-teal" id="metric-users-card" href="admin-users.html" hidden><span class="mtd-kpi-icon"><i data-lucide="users"></i></span><span><small>Utilisateurs actifs</small><strong id="metric-users">—</strong><em id="metric-users-note">—</em></span></a>
+      <section class="mtd-kpi-grid" aria-label="Indicateurs clés">
+        <a class="mtd-kpi kpi-green" href="admin-isolement.html"><span class="mtd-kpi-icon"><i data-lucide="flask-conical"></i></span><span><small>Boîtes d’isolement actives</small><strong id="metric-petri">—</strong><em id="metric-petri-note">Données réelles</em></span></a>
+        <a class="mtd-kpi kpi-blue" href="admin-myc-liquide.html"><span class="mtd-kpi-icon"><i data-lucide="beaker"></i></span><span><small>Pots LC actifs</small><strong id="metric-lc">—</strong><em id="metric-lc-note">Données réelles</em></span></a>
+        <a class="mtd-kpi kpi-amber" href="admin-myc-grain.html"><span class="mtd-kpi-icon"><i data-lucide="wheat"></i></span><span><small>Unités grain actives</small><strong id="metric-grain">—</strong><em id="metric-grain-note">Données réelles</em></span></a>
+        <a class="mtd-kpi kpi-purple" href="admin-taches.html"><span class="mtd-kpi-icon"><i data-lucide="clipboard-check"></i></span><span><small>Tâches obligatoires</small><strong id="metric-tasks">—</strong><em id="metric-tasks-note">Calculées depuis les journaux</em></span></a>
+        <a class="mtd-kpi kpi-teal" id="metric-users-card" href="admin-users.html" hidden><span class="mtd-kpi-icon"><i data-lucide="users"></i></span><span><small>Utilisateurs actifs</small><strong id="metric-users">—</strong><em id="metric-users-note">—</em></span></a>
+      </section>
     </section>
 
     <section class="mtd-dashboard-grid">
       <div class="mtd-dashboard-stack">
-        <section class="mtd-panel">
-          <header class="mtd-panel-head"><h2>Évolution des activités</h2><span class="mtd-panel-meta"><i data-lucide="database"></i>7 derniers jours · journaux réels</span></header>
-          <div class="mtd-panel-body">
-            <div class="mtd-chart-legend"><span><i style="background:#2f9f57"></i>Isolements</span><span><i style="background:#2d6cdf"></i>LC</span><span><i style="background:#e59a18"></i>Grain</span></div>
-            <div class="mtd-chart-wrap" id="trend-chart">
-              <svg viewBox="0 0 620 155" preserveAspectRatio="none" role="img" aria-label="Activités des sept derniers jours">
-                <g class="mtd-chart-grid"><line x1="25" y1="18" x2="600" y2="18"/><line x1="25" y1="49" x2="600" y2="49"/><line x1="25" y1="80" x2="600" y2="80"/><line x1="25" y1="111" x2="600" y2="111"/></g>
-                <path class="mtd-chart-line" id="trend-petri" stroke="#2f9f57" d=""/><path class="mtd-chart-line" id="trend-lc" stroke="#2d6cdf" d=""/><path class="mtd-chart-line" id="trend-grain" stroke="#e59a18" d=""/>
-                <g id="trend-dots"></g><g class="mtd-chart-labels" id="trend-labels"></g>
-              </svg>
+        <div class="mtd-insights-grid">
+          <section class="mtd-panel">
+            <header class="mtd-panel-head"><h2>Évolution des activités</h2><span class="mtd-panel-meta"><i data-lucide="database"></i>7 derniers jours · journaux réels</span></header>
+            <div class="mtd-panel-body">
+              <div class="mtd-chart-legend"><span><i style="background:#2f9f57"></i>Isolements</span><span><i style="background:#2d6cdf"></i>LC</span><span><i style="background:#e59a18"></i>Grain</span></div>
+              <div class="mtd-chart-wrap" id="trend-chart">
+                <svg viewBox="0 0 620 155" preserveAspectRatio="none" role="img" aria-label="Activités des sept derniers jours">
+                  <g class="mtd-chart-grid"><line x1="25" y1="18" x2="600" y2="18"/><line x1="25" y1="49" x2="600" y2="49"/><line x1="25" y1="80" x2="600" y2="80"/><line x1="25" y1="111" x2="600" y2="111"/></g>
+                  <path class="mtd-chart-line" id="trend-petri" stroke="#2f9f57" d=""/><path class="mtd-chart-line" id="trend-lc" stroke="#2d6cdf" d=""/><path class="mtd-chart-line" id="trend-grain" stroke="#e59a18" d=""/>
+                  <g id="trend-dots"></g><g class="mtd-chart-labels" id="trend-labels"></g>
+                </svg>
+              </div>
             </div>
-          </div>
-        </section>
+          </section>
+
+          <section class="mtd-panel">
+            <header class="mtd-panel-head"><h2>Répartition par statut</h2><span class="mtd-panel-meta"><i data-lucide="pie-chart"></i>Petri + LC + grain</span></header>
+            <div class="mtd-donut-layout">
+              <div class="mtd-donut-wrap"><div class="mtd-donut" id="status-donut"></div><div class="mtd-donut-center"><strong id="status-total">—</strong><small>Total</small></div></div>
+              <div class="mtd-status-list" id="status-key"><div class="mtd-shell-empty">Chargement…</div></div>
+            </div>
+          </section>
+        </div>
 
         <section class="mtd-panel">
           <header class="mtd-panel-head"><h2>Activités récentes</h2><span class="mtd-panel-meta" id="activity-status"><i data-lucide="history"></i>Journal d’audit</span></header>
@@ -57,14 +66,6 @@
       </div>
 
       <aside class="mtd-dashboard-stack">
-        <section class="mtd-panel">
-          <header class="mtd-panel-head"><h2>Répartition par statut</h2><span class="mtd-panel-meta"><i data-lucide="pie-chart"></i>Petri + LC + grain</span></header>
-          <div class="mtd-donut-layout">
-            <div class="mtd-donut-wrap"><div class="mtd-donut" id="status-donut"></div><div class="mtd-donut-center"><strong id="status-total">—</strong><small>Total</small></div></div>
-            <div class="mtd-status-list" id="status-key"><div class="mtd-shell-empty">Chargement…</div></div>
-          </div>
-        </section>
-
         <section class="mtd-panel">
           <header class="mtd-panel-head"><h2>Alertes importantes</h2><span class="mtd-panel-meta"><i data-lucide="bell-ring"></i>Actions dues</span></header>
           <div class="mtd-alert-list" id="dashboard-alerts"><div class="mtd-alert-empty">Chargement…</div></div>
@@ -93,7 +94,7 @@
 
     function applySession(auth){const user=auth||window.mtdSession||{};document.getElementById('welcome-name').textContent=user.username||'Utilisateur';}
 
-    function renderQuickActions(rows){const host=document.getElementById('quick-actions');host.innerHTML=rows.length?rows.map(row=>{const tag=row.enabled?'a':'div',href=row.enabled?` href="${esc(row.href)}"`:'';return `<${tag} class="mtd-quick-action ${row.enabled?'':'disabled'}"${href}><span class="mtd-quick-icon"><i data-lucide="${esc(row.icon||'circle-plus')}"></i></span><span><strong>${esc(row.label)}</strong><small>${esc(row.description||'')}</small></span><span>${esc(row.badge||'')}</span></${tag}>`}).join(''):'<div class="mtd-shell-empty">Aucune action disponible.</div>';refreshIcons();}
+    function renderQuickActions(rows){const host=document.getElementById('quick-actions');host.innerHTML=rows.length?rows.map(row=>{const tag=row.enabled?'a':'div',href=row.enabled?` href="${esc(row.href)}"`:'',title=row.description?` title="${esc(row.description)}"`:'';return `<${tag} class="mtd-quick-action ${row.enabled?'':'disabled'}"${href}${title}><span class="mtd-quick-icon"><i data-lucide="${esc(row.icon||'circle-plus')}"></i></span><span><strong>${esc(row.label)}</strong><small>${esc(row.description||'')}</small></span><span class="mtd-quick-badge">${esc(row.badge||'Ouvrir')}</span></${tag}>`}).join(''):'<div class="mtd-shell-empty">Aucune action disponible.</div>';refreshIcons();}
 
     function renderTrend(rows){
       const chart=document.getElementById('trend-chart');if(!rows.length){chart.innerHTML='<div class="mtd-empty-chart">Aucune activité de journal enregistrée sur cette période.</div>';return}
@@ -112,7 +113,6 @@
     async function loadDashboard(){
       try{
         const [summaryRes,tasksRes]=await Promise.all([fetch('/api/dashboard/summary',{credentials:'same-origin',cache:'no-store'}),fetch('/api/tasks/today',{credentials:'same-origin',cache:'no-store'})]);const summary=await summaryRes.json().catch(()=>({}));if(!summaryRes.ok)throw new Error(summary.error||'Résumé indisponible');const tasks=await tasksRes.json().catch(()=>({}));
-        document.getElementById('dashboard-generated').textContent=`Synchronisé ${new Date(summary.generated_at).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})}`;
         document.getElementById('metric-petri').textContent=Number(summary.counts?.petri_active||0);document.getElementById('metric-petri-note').textContent=`${Number(summary.counts?.petri_total||0)} boîtes suivies`;
         document.getElementById('metric-lc').textContent=Number(summary.counts?.lc_active||0);document.getElementById('metric-lc-note').textContent=`${Number(summary.counts?.lc_total||0)} pots suivis`;
         document.getElementById('metric-grain').textContent=Number(summary.counts?.grain_active||0);document.getElementById('metric-grain-note').textContent=`${Number(summary.counts?.grain_total||0)} unités suivies`;
@@ -120,7 +120,7 @@
         document.getElementById('data-p3').textContent=Number(summary.counts?.p3_ready||0);document.getElementById('data-lc-valid').textContent=Number(summary.counts?.validated_lc||0);document.getElementById('data-strains').textContent=Number(summary.counts?.strains_active||0);document.getElementById('data-deletions').textContent=Number(summary.counts?.pending_deletions||0);
         renderQuickActions(summary.quick_actions||[]);renderTrend(summary.activity_trend||[]);renderStatus(summary.status_distribution||[]);renderRecent(summary.recent_activity||[]);if(tasksRes.ok)renderAlerts(tasks,summary);else renderAlerts({tasks:[],counts:{total:0,urgent:0}},summary);
         document.getElementById('dashboard-source-note').textContent='Sources: '+Object.entries(summary.sources||{}).map(([k,v])=>`${k}: ${Array.isArray(v)?v.join(', '):v}`).join(' · ');
-      }catch(error){console.error(error);document.getElementById('dashboard-generated').textContent='Données indisponibles';['metric-petri','metric-lc','metric-grain','metric-tasks','metric-users'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent='—'});document.getElementById('quick-actions').innerHTML='<div class="mtd-shell-empty">Impossible de charger les actions.</div>';document.getElementById('trend-chart').innerHTML='<div class="mtd-empty-chart">Impossible de charger les données réelles.</div>';document.getElementById('status-key').innerHTML='<div class="mtd-alert-empty">Données indisponibles.</div>';document.getElementById('recent-activity').innerHTML='<tr><td colspan="5"><div class="mtd-alert-empty">Données indisponibles.</div></td></tr>';document.getElementById('dashboard-alerts').innerHTML='<div class="mtd-alert-empty">Alertes indisponibles.</div>';}
+      }catch(error){console.error(error);['metric-petri','metric-lc','metric-grain','metric-tasks','metric-users'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent='—'});document.getElementById('quick-actions').innerHTML='<div class="mtd-shell-empty">Impossible de charger les actions.</div>';document.getElementById('trend-chart').innerHTML='<div class="mtd-empty-chart">Impossible de charger les données réelles.</div>';document.getElementById('status-key').innerHTML='<div class="mtd-alert-empty">Données indisponibles.</div>';document.getElementById('recent-activity').innerHTML='<tr><td colspan="5"><div class="mtd-alert-empty">Données indisponibles.</div></td></tr>';document.getElementById('dashboard-alerts').innerHTML='<div class="mtd-alert-empty">Alertes indisponibles.</div>';}
     }
 
     document.addEventListener('DOMContentLoaded',()=>{window.requireAdminAuth?.();applySession(window.mtdSession);loadDashboard();refreshIcons()});

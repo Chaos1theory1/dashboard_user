@@ -351,12 +351,12 @@
       if (!document.querySelector('link[href*="admin-dashboard-shell.css"]')) {
         const shellCss = document.createElement("link");
         shellCss.rel = "stylesheet";
-        shellCss.href = "css/admin-dashboard-shell.css";
+        shellCss.href = "css/admin-dashboard-shell.css?v=20260820-2";
         document.head.appendChild(shellCss);
       }
       const loadShell = () => {
         const shellScript = document.createElement("script");
-        shellScript.src = "js/admin-dashboard-shell.js";
+        shellScript.src = "js/admin-dashboard-shell.js?v=20260820-2";
         document.body.appendChild(shellScript);
       };
       if (window.lucide) loadShell();
